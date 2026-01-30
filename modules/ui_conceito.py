@@ -1,17 +1,5 @@
-# =====================================================
-# zAz — MÓDULO 02
-# CONCEITO VISUAL + GERAÇÃO DE IMAGENS (IA AQUI)
-# =====================================================
-
 import streamlit as st
 from modules.ia_engine import gerar_texto
-
-from openai import OpenAI
-import base64
-from PIL import Image
-import io
-
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 
 # -------------------------------------------------
@@ -22,44 +10,28 @@ def _gerar_conceito(ideias: list[str]):
     texto = "\n".join(ideias)
 
     prompt = f"""
-Com base nas ideias abaixo, crie UM conceito visual forte.
+Crie UM conceito visual extremamente detalhado para geração de imagem por IA.
 
-Ideias:
+Ideias base:
 {texto}
 
-Regras:
-- descreva apenas a cena visual
-- tom cinematográfico
-- 2 a 4 frases curtas
-- sem explicações
+Requisitos obrigatórios:
+- descrição rica em detalhes visuais
+- cenário completo (ambiente, luz, cores, clima, objetos, textura, profundidade)
+- enquadramento fotográfico
+- estilo cinematográfico
+- qualidade ultra realista
+- iluminação profissional
+- lente de cinema (bokeh, profundidade de campo)
+- composição forte
+- pronto para render 4K
+- proporção 1:1 (feed Instagram)
+
+Escreva como descrição de cena.
+Parágrafo único.
 """
 
     return gerar_texto(prompt).strip()
-
-
-# -------------------------------------------------
-# IA — GERAR IMAGENS (OPENAI REAL)
-# -------------------------------------------------
-def _gerar_imagens_ia(prompt: str):
-
-    imagens = []
-
-    # 🔥 CORREÇÃO: agora gera somente 1 imagem (antes eram 3)
-    for _ in range(1):
-
-        result = client.images.generate(
-            model="gpt-image-1",
-            prompt=prompt,
-            size="1024x1024"
-        )
-
-        img_base64 = result.data[0].b64_json
-        img_bytes = base64.b64decode(img_base64)
-        img = Image.open(io.BytesIO(img_bytes))
-
-        imagens.append(img)
-
-    return imagens
 
 
 # -------------------------------------------------
@@ -76,21 +48,12 @@ def render_etapa_conceito():
     if "historico_conceitos" not in st.session_state:
         st.session_state.historico_conceitos = []
 
-    if "imagens_geradas" not in st.session_state:
-        st.session_state.imagens_geradas = []
-
-    if "imagem_escolhida" not in st.session_state:
-        st.session_state.imagem_escolhida = None
-
-    if "ideias_cache" not in st.session_state:
-        st.session_state.ideias_cache = []
-
-    if st.session_state.ideias_cache != st.session_state.ideias:
-        st.session_state.conceito_visual = None
-        st.session_state.historico_conceitos = []
-        st.session_state.imagens_geradas = []
-        st.session_state.imagem_escolhida = None
-        st.session_state.ideias_cache = st.session_state.ideias.copy()
+    # gerar automaticamente se não existir
+    if not st.session_state.conceito_visual:
+        with st.spinner("Criando conceito..."):
+            st.session_state.conceito_visual = _gerar_conceito(
+                st.session_state.ideias
+            )
 
     st.markdown(
         """
@@ -101,39 +64,32 @@ def render_etapa_conceito():
         unsafe_allow_html=True
     )
 
-    if not st.session_state.conceito_visual:
-        with st.spinner("Criando conceito..."):
-            st.session_state.conceito_visual = _gerar_conceito(
-                st.session_state.ideias
-            )
-
     st.info(st.session_state.conceito_visual)
 
-    col1, col2 = st.columns(2)
+    # -------------------------------------------------
+    # BOTÕES
+    # -------------------------------------------------
+    col1, col2, col3 = st.columns(3)
 
+    # 🔁 Novo conceito
     with col1:
         if st.button("🔁 Novo conceito", use_container_width=True):
-
-            st.session_state.historico_conceitos.insert(
-                0, st.session_state.conceito_visual
-            )
-
-            st.session_state.historico_conceitos = \
-                st.session_state.historico_conceitos[:5]
-
             with st.spinner("Gerando novo conceito..."):
                 st.session_state.conceito_visual = _gerar_conceito(
                     st.session_state.ideias
                 )
-
-            st.session_state.imagens_geradas = []
-            st.session_state.imagem_escolhida = None
             st.rerun()
 
+    # 📋 Copiar texto
     with col2:
-        if st.button("🎨 Gerar imagens", use_container_width=True):
+        if st.button("📋 Copiar", use_container_width=True):
+            st.code(st.session_state.conceito_visual)
+            st.toast("Texto pronto para copiar.")
 
-            with st.spinner("Criando imagens com IA..."):
-                st.session_state.imagens_geradas = _gerar_imagens_ia(
-                    st.session_state.conceito_visual
-                )
+    # 🎨 Abrir ImageFX (externo)
+    with col3:
+        st.link_button(
+            "🎨 Gerar imagens",
+            "https://labs.google/fx/tools/image-fx",
+            use_container_width=True
+        )
