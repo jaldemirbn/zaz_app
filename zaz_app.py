@@ -1,16 +1,40 @@
 import streamlit as st
 
-# 🔥 PRIMEIRA COISA DO APP (antes de QUALQUER st.*)
+
+# =====================================
+# CONFIG GLOBAL (sempre primeiro)
+# =====================================
 st.set_page_config(
     page_title="zAz",
     layout="wide",
     page_icon="🚀"
 )
 
-from modules.ui_logo import render_logo
-from modules.ui_login import tela_login
+
+# =====================================
+# LOGO CENTRALIZADA
+# =====================================
+st.markdown("<br><br>", unsafe_allow_html=True)
+
+col1, col2, col3 = st.columns([1, 2, 1])
+
+with col2:
+    st.image("assets/logo.png", width=450)
+
+st.markdown("<br><br>", unsafe_allow_html=True)
 
 
-render_logo()
-tela_login()
+# =====================================
+# LOGIN SIMPLES
+# =====================================
+col1, col2, col3 = st.columns([1, 2, 1])
 
+with col2:
+
+    st.subheader("Entrar")
+
+    email = st.text_input("Email")
+    senha = st.text_input("Senha", type="password")
+
+    if st.button("Entrar", use_container_width=True):
+        st.success("Login clicado (backend vem depois)")
