@@ -50,12 +50,13 @@ def render_etapa_conceito():
         unsafe_allow_html=True
     )
 
-    st.info(st.session_state.conceito_visual)
+    # ✅ COPIAR NATIVO (ícone 📋 automático)
+    st.code(st.session_state.conceito_visual, language=None)
 
     # -------------------------------------------------
-    # COLUNAS (ESCOPO CORRETO)
+    # BOTÕES
     # -------------------------------------------------
-    col1, col2, col3 = st.columns(3)
+    col1, col3 = st.columns(2)
 
     # 🔁 Novo conceito
     with col1:
@@ -65,22 +66,8 @@ def render_etapa_conceito():
             )
             st.rerun()
 
-   with col2:
-    if st.button("📋 Copiar", use_container_width=True):
-        st.markdown(
-            f"""
-            <script>
-            navigator.clipboard.writeText(`{st.session_state.conceito_visual}`);
-            </script>
-            """,
-            unsafe_allow_html=True
-        )
-        st.toast("Copiado")
-
-
-    # 🎨 Gerar imagens (ALINHADO + COR)
+    # 🎨 Abrir ImageFX
     with col3:
-
         st.markdown("""
             <style>
             div[data-testid="stLinkButton"] a {
@@ -99,4 +86,3 @@ def render_etapa_conceito():
             "https://labs.google/fx/tools/image-fx",
             use_container_width=True
         )
-
