@@ -2,7 +2,7 @@ import streamlit as st
 from supabase import create_client
 
 from modules.ui_ideias import render_etapa_ideias
-from modules.ui_conceito import render_etapa_conceito   # ← ADICIONADO
+from modules.ui_conceito import render_etapa_conceito
 from modules.ui_imagens import render_etapa_imagens
 
 # =====================================================
