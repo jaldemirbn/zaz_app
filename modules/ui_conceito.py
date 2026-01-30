@@ -70,7 +70,7 @@ def render_etapa_conceito():
      with col2:
         if st.button("📋 Copiar", use_container_width=True):
             st.code(st.session_state.conceito_visual, language=None)
-            )
+            
     # 🎨 Gerar imagens (link externo)
     with col3:
         st.markdown("""
@@ -87,6 +87,7 @@ def render_etapa_conceito():
             "https://labs.google/fx/tools/image-fx",
             use_container_width=True
         )
+
 
 
 
