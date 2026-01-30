@@ -67,10 +67,13 @@ def render_etapa_conceito():
             st.rerun()
 
     # 📋 Copiar (visual apenas, como estava antes)
-    with col2:
-    if st.button("📋 Copiar", use_container_width=True):
-        st.code(st.session_state.conceito_visual, language=None)
-
+     with col2:
+        if st.button("📋 Copiar", use_container_width=True):
+            st.text_area(
+                "Copie o texto:",
+                value=st.session_state.conceito_visual,
+                height=120
+            )
     # 🎨 Gerar imagens (link externo)
     with col3:
         st.markdown("""
@@ -87,4 +90,5 @@ def render_etapa_conceito():
             "https://labs.google/fx/tools/image-fx",
             use_container_width=True
         )
+
 
