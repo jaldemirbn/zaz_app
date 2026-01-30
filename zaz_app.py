@@ -1,4 +1,4 @@
-import streamlit as st
+ntrarimport streamlit as st
 
 
 # =====================================
@@ -41,5 +41,5 @@ with col2:
     email = st.text_input("Email")
     senha = st.text_input("Senha", type="password")
 
-    if st.button("", use_container_width=True):
+    if st.button("Entrar", use_container_width=True):
         st.success("Login clicado (backend vem depois)")
