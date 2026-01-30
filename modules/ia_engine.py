@@ -8,17 +8,16 @@ import streamlit as st
 from openai import OpenAI
 
 
-# -----------------------------------------------------
-# Cliente OpenAI
-# -----------------------------------------------------
+# =====================================================
+# CLIENTE OPENAI
+# =====================================================
 def _client():
-    api_key = st.secrets.get("OPENAI_API_KEY")
-    return OpenAI(api_key=api_key)
+    return OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 
-# -----------------------------------------------------
-# Função base (genérica)
-# -----------------------------------------------------
+# =====================================================
+# FUNÇÃO BASE (GENÉRICA)
+# =====================================================
 def gerar_texto(prompt: str) -> str:
 
     client = _client()
@@ -34,10 +33,9 @@ def gerar_texto(prompt: str) -> str:
     return r.choices[0].message.content.strip()
 
 
-# -----------------------------------------------------
-# IDEIAS
-# Retorna STRING (quebra depois no UI)
-# -----------------------------------------------------
+# =====================================================
+# IDEIAS (usada pelo ui_ideias.py)
+# =====================================================
 def gerar_ideias(tema: str) -> str:
 
     prompt = f"""
