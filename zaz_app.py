@@ -31,6 +31,11 @@ col1, col2, col3 = st.columns([1, 2, 1])
 
 with col2:
 
+    st.markdown(
+    "<h2 style='text-align:center; color:#ff9d28;'>Entrar</h2>",
+    unsafe_allow_html=True
+)
+
     st.subheader("Entrar")
 
     email = st.text_input("Email")
