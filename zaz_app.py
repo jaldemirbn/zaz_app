@@ -2,7 +2,7 @@ import streamlit as st
 
 
 # =====================================
-# CONFIG GLOBAL (SEMPRE PRIMEIRO)
+# CONFIG GLOBAL
 # =====================================
 st.set_page_config(
     page_title="zAz",
@@ -25,20 +25,12 @@ st.markdown("<br><br>", unsafe_allow_html=True)
 
 
 # =====================================
-# LOGIN SIMPLES
+# LOGIN
 # =====================================
 col1, col2, col3 = st.columns([1, 2, 1])
 
 with col2:
 
-    # 🔥 TÍTULO LARANJA
+    # 🔥 TEXTO LARANJA
     st.markdown(
-        "<h2 style='color:#ff9d28;'>Entrar</h2>",
-        unsafe_allow_html=True
-    )
-
-    email = st.text_input("Email")
-    senha = st.text_input("Senha", type="password")
-
-    if st.button("Entrar", use_container_width=True, type="primary"):
-        st.success("Login clicado (backend vem depois)")
+        "<h2 style=
