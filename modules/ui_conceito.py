@@ -50,11 +50,10 @@ def render_etapa_conceito():
         unsafe_allow_html=True
     )
 
-    # exibição normal (como antes)
     st.info(st.session_state.conceito_visual)
 
     # -------------------------------------------------
-    # BOTÕES (layout original)
+    # COLUNAS (ESCOPO CORRETO)
     # -------------------------------------------------
     col1, col2, col3 = st.columns(3)
 
@@ -66,16 +65,29 @@ def render_etapa_conceito():
             )
             st.rerun()
 
-    # 📋 Copiar (visual apenas, como estava antes)
+    # 📋 Copiar
     with col2:
         if st.button("📋 Copiar", use_container_width=True):
-            st.toast("Copie manualmente o texto acima")
+            st.markdown(
+                f"""
+                <script>
+                navigator.clipboard.writeText(`{st.session_state.conceito_visual}`);
+                </script>
+                """,
+                unsafe_allow_html=True
+            )
+            st.toast("Copiado")
 
-    # 🎨 Gerar imagens (link externo)
+    # 🎨 Gerar imagens (ALINHADO + COR)
     with col3:
+
         st.markdown("""
             <style>
             div[data-testid="stLinkButton"] a {
+                display:flex !important;
+                align-items:center !important;
+                justify-content:center !important;
+                height:38px !important;
                 color:#FF9D28 !important;
                 font-weight:600;
             }
