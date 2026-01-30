@@ -12,19 +12,17 @@ st.set_page_config(
 
 
 # =====================================
-# 🔥 ESTILO DO BOTÃO (COLE AQUI)
+# LOGO
 # =====================================
-st.markdown("""
-<style>
-div.stButton > button {
-    background-color: #ff9d28;
-    color: black;
-    font-weight: 700;
-    border-radius: 10px;
-    height: 45px;
-}
-</style>
-""", unsafe_allow_html=True)
+st.markdown("<br><br>", unsafe_allow_html=True)
+
+col1, col2, col3 = st.columns([1, 2, 1])
+
+with col2:
+    st.image("assets/logo.png", width=450)
+
+st.markdown("<br><br>", unsafe_allow_html=True)
+
 
 # =====================================
 # LOGIN SIMPLES
@@ -33,10 +31,7 @@ col1, col2, col3 = st.columns([1, 2, 1])
 
 with col2:
 
-    st.markdown(
-        "<h2 style='color:#ff9d28;'>Entrar</h2>",
-        unsafe_allow_html=True
-    )
+    st.subheader("Entrar")
 
     email = st.text_input("Email")
     senha = st.text_input("Senha", type="password")
