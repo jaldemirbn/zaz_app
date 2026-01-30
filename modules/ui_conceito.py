@@ -2,6 +2,9 @@ import streamlit as st
 from modules.ia_engine import gerar_texto
 
 
+# -------------------------------------------------
+# IA — GERAR CONCEITO
+# -------------------------------------------------
 def _gerar_conceito(ideias: list[str]):
 
     texto = "\n".join(ideias)
@@ -25,6 +28,9 @@ Parágrafo único.
     return gerar_texto(prompt).strip()
 
 
+# -------------------------------------------------
+# RENDER PRINCIPAL
+# -------------------------------------------------
 def render_etapa_conceito():
 
     if not st.session_state.get("modo_filtrado"):
@@ -44,11 +50,11 @@ def render_etapa_conceito():
         unsafe_allow_html=True
     )
 
-    # mantém visual original
+    # exibição normal (como antes)
     st.info(st.session_state.conceito_visual)
 
     # -------------------------------------------------
-    # MESMO LAYOUT (3 COLUNAS)
+    # BOTÕES (layout original)
     # -------------------------------------------------
     col1, col2, col3 = st.columns(3)
 
@@ -60,16 +66,12 @@ def render_etapa_conceito():
             )
             st.rerun()
 
-    # 📋 Copiar (AGORA FUNCIONAL)
+    # 📋 Copiar (visual apenas, como estava antes)
     with col2:
         if st.button("📋 Copiar", use_container_width=True):
-            st.text_area(
-                "Copie o texto abaixo:",
-                value=st.session_state.conceito_visual,
-                height=120
-            )
+            st.toast("Copie manualmente o texto acima")
 
-    # 🎨 Link externo (igual antes)
+    # 🎨 Gerar imagens (link externo)
     with col3:
         st.markdown("""
             <style>
