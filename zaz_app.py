@@ -1,7 +1,16 @@
 import streamlit as st
 
-st.set_page_config(layout="wide")
+# 🔥 PRIMEIRA COISA DO APP (antes de QUALQUER st.*)
+st.set_page_config(
+    page_title="zAz",
+    layout="wide",
+    page_icon="🚀"
+)
 
-st.title("zAz 🚀")
-st.write("App online funcionando.")
+from modules.ui_logo import render_logo
+from modules.ui_login import tela_login
+
+
+render_logo()
+tela_login()
 
