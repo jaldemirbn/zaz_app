@@ -33,4 +33,13 @@ with col2:
 
     # 🔥 TEXTO LARANJA
     st.markdown(
-        "<h2 style=
+        "<h2 style='color:#ff9d28;'>Entrar</h2>",
+        unsafe_allow_html=True
+    )
+
+    email = st.text_input("Email")
+    senha = st.text_input("Senha", type="password")
+
+    # ✅ BOTÃO PADRÃO (SEM primary)
+    if st.button("Entrar", use_container_width=True):
+        st.success("Login clicado (backend vem depois)")
