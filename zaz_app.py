@@ -1,9 +1,8 @@
 import streamlit as st
 from supabase import create_client
 from modules.ui_ideias import render_etapa_ideias
-
-
-# ======================
+from modules.ui_conceito import render_etapa_conceito  
+from modules.ui_imagens import render_etapa_imagens    
 # SUPABASE
 # ======================
 @st.cache_resource
@@ -59,3 +58,5 @@ if not st.session_state.logado:
 # ======================
 else:
     render_etapa_ideias()
+    render_etapa_conceito()
+    render_etapa_imagens()
