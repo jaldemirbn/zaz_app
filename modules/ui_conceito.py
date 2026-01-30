@@ -2,9 +2,6 @@ import streamlit as st
 from modules.ia_engine import gerar_texto
 
 
-# -------------------------------------------------
-# IA — GERAR CONCEITO
-# -------------------------------------------------
 def _gerar_conceito(ideias: list[str]):
 
     texto = "\n".join(ideias)
@@ -28,9 +25,6 @@ Parágrafo único.
     return gerar_texto(prompt).strip()
 
 
-# -------------------------------------------------
-# RENDER PRINCIPAL
-# -------------------------------------------------
 def render_etapa_conceito():
 
     if not st.session_state.get("modo_filtrado"):
@@ -50,13 +44,13 @@ def render_etapa_conceito():
         unsafe_allow_html=True
     )
 
-    # ✅ COPIAR NATIVO (ícone 📋 automático)
-    st.code(st.session_state.conceito_visual, language=None)
+    # mantém visual original
+    st.info(st.session_state.conceito_visual)
 
     # -------------------------------------------------
-    # BOTÕES
+    # MESMO LAYOUT (3 COLUNAS)
     # -------------------------------------------------
-    col1, col3 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     # 🔁 Novo conceito
     with col1:
@@ -66,15 +60,20 @@ def render_etapa_conceito():
             )
             st.rerun()
 
-    # 🎨 Abrir ImageFX
+    # 📋 Copiar (AGORA FUNCIONAL)
+    with col2:
+        if st.button("📋 Copiar", use_container_width=True):
+            st.text_area(
+                "Copie o texto abaixo:",
+                value=st.session_state.conceito_visual,
+                height=120
+            )
+
+    # 🎨 Link externo (igual antes)
     with col3:
         st.markdown("""
             <style>
             div[data-testid="stLinkButton"] a {
-                display:flex !important;
-                align-items:center !important;
-                justify-content:center !important;
-                height:38px !important;
                 color:#FF9D28 !important;
                 font-weight:600;
             }
