@@ -1,7 +1,8 @@
 import streamlit as st
 from supabase import create_client
-from modules.ui_ideias import render_etapa_ideias
 
+from modules.ui_ideias import render_etapa_ideias
+from modules.ui_imagens import render_etapa_imagens 
 
 # =====================================================
 # CONFIG
@@ -83,7 +84,8 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# APP
+#     FLUXO APP
 # =====================================================
 else:
-    render_etapa_ideias()
+   render_etapa_ideias()
+   render_etapa_imagens()  
