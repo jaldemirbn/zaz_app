@@ -17,17 +17,16 @@ Ideias base:
 
 Requisitos obrigatórios:
 - descrição rica em detalhes visuais
-- cenário completo (ambiente, luz, cores, clima, objetos, textura, profundidade)
+- cenário completo (ambiente, luz, cores, clima, textura, profundidade)
 - enquadramento fotográfico
 - estilo cinematográfico
 - qualidade ultra realista
 - iluminação profissional
-- lente de cinema (bokeh, profundidade de campo)
+- lente de cinema
 - composição forte
-- pronto para render 4K
-- proporção 1:1 (feed Instagram)
+- render 4K
+- proporção 1:1 (Instagram feed)
 
-Escreva como descrição de cena.
 Parágrafo único.
 """
 
@@ -45,10 +44,7 @@ def render_etapa_conceito():
     if "conceito_visual" not in st.session_state:
         st.session_state.conceito_visual = None
 
-    if "historico_conceitos" not in st.session_state:
-        st.session_state.historico_conceitos = []
-
-    # gerar automaticamente se não existir
+    # gerar automaticamente
     if not st.session_state.conceito_visual:
         with st.spinner("Criando conceito..."):
             st.session_state.conceito_visual = _gerar_conceito(
@@ -67,7 +63,7 @@ def render_etapa_conceito():
     st.info(st.session_state.conceito_visual)
 
     # -------------------------------------------------
-    # BOTÕES
+    # BOTÕES (MESMO ESCOPO — CORRIGE NameError)
     # -------------------------------------------------
     col1, col2, col3 = st.columns(3)
 
@@ -80,35 +76,7 @@ def render_etapa_conceito():
                 )
             st.rerun()
 
-    # 📋 Copiar texto
-   # 📋 Copiar texto (FUNCIONAL)
-with col2:
-    if st.button("📋 Copiar", use_container_width=True):
-        st.markdown(
-            f"""
-            <script>
-            navigator.clipboard.writeText(`{st.session_state.conceito_visual}`);
-            </script>
-            """,
-            unsafe_allow_html=True
-        )
-        st.toast("Copiado para a área de transferência")
-
-
-    # 🎨 Abrir ImageFX (externo)
-   # 🎨 Abrir ImageFX (cor personalizada)
-with col3:
-    st.markdown("""
-        <style>
-        div[data-testid="stLinkButton"] a {
-            color: #FF9D28 !important;
-            font-weight: 600;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    st.link_button(
-        "🎨 Gerar imagens",
-        "https://labs.google/fx/tools/image-fx",
-        use_container_width=True
-    )
+    # 📋 Copiar (clipboard real)
+    with col2:
+        if st.button("📋 Copiar", use_container_width=True):
+            st.mar
