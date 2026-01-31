@@ -49,23 +49,14 @@ Retorne somente o texto da descrição.
 
 def render_etapa_post():
 
-    # 🔒 GATE
     if not st.session_state.get("criar_descricao_post"):
         return
 
-
-    # -------------------------------------------------
-    # TÍTULO
-    # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28;'>06 • Post visual</h3>",
         unsafe_allow_html=True
     )
 
-
-    # -------------------------------------------------
-    # BOTÃO
-    # -------------------------------------------------
     if st.button(
         "Criar descrição do post",
         use_container_width=True,
@@ -82,14 +73,10 @@ def render_etapa_post():
                     headline
                 )
 
-
-    # -------------------------------------------------
-    # RESULTADO
-    # -------------------------------------------------
     if st.session_state.get("descricao_post"):
 
         st.text_area(
             "Descrição do post",
             st.session_state["descricao_post"],
-            height=200
+            height=400  # 👈 aumentado
         )
