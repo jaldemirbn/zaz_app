@@ -8,16 +8,16 @@ from modules.ia_engine import gerar_texto
 
 
 # -------------------------------------------------
-# IA — GERAR HEADLINES
+# IA — GERAR HEADLINES (AGORA 5)
 # -------------------------------------------------
 def _gerar_headlines(tema: str, ideias: list[str], conceito: str):
 
     ideias_txt = "\n".join(ideias)
 
     prompt = f"""
-Você é um copywriter sênior.
+Você é um copywriter sênior especialista em marketing digital.
 
-Crie 3 headlines persuasivas para Instagram.
+Crie 5 headlines altamente persuasivas para Instagram.
 
 Contexto:
 Tema: {tema}
@@ -29,15 +29,17 @@ Regras:
 - frase única
 - impacto forte
 - linguagem direta
+- estilo marketing profissional
+- parar o scroll
 
-Retorne lista numerada com 3 headlines.
+Retorne lista numerada com 5 headlines.
 """
 
     resposta = gerar_texto(prompt)
 
     linhas = [l.strip("-• ").strip() for l in resposta.split("\n") if l.strip()]
 
-    return linhas[:3]
+    return linhas[:5]
 
 
 # -------------------------------------------------
@@ -53,6 +55,9 @@ def render_etapa_headline():
         unsafe_allow_html=True
     )
 
+    # -------------------------------------------------
+    # STATES
+    # -------------------------------------------------
     if "headlines" not in st.session_state:
         st.session_state.headlines = []
 
@@ -60,7 +65,7 @@ def render_etapa_headline():
         st.session_state.headline_escolhida = None
 
     # -------------------------------------------------
-    # GERAR
+    # BOTÃO GERAR (5 headlines)
     # -------------------------------------------------
     if st.button("Gerar Headline", use_container_width=True):
 
@@ -79,7 +84,7 @@ def render_etapa_headline():
         st.rerun()
 
     # -------------------------------------------------
-    # ANTES DE ESCOLHER → LISTA NORMAL
+    # SE AINDA NÃO ESCOLHEU → MOSTRA TODAS
     # -------------------------------------------------
     if st.session_state.headline_escolhida is None:
 
@@ -87,7 +92,7 @@ def render_etapa_headline():
             "",
             st.session_state.headlines,
             index=None,
-            key="headline_radio"   # ← key 1
+            key="headline_radio_full"
         )
 
         if escolha:
@@ -95,7 +100,7 @@ def render_etapa_headline():
             st.rerun()
 
     # -------------------------------------------------
-    # DEPOIS DE ESCOLHER → SOMENTE 1 VISÍVEL
+    # SE JÁ ESCOLHEU → MOSTRA SÓ A ESCOLHIDA
     # -------------------------------------------------
     else:
 
@@ -103,5 +108,10 @@ def render_etapa_headline():
             "",
             [st.session_state.headline_escolhida],
             index=0,
-            key="headline_radio_locked"  # ← key 2 (novo componente)
+            key="headline_radio_locked"
         )
+
+        # 🔥 NOVO BOTÃO
+        if st.button("Escolher outra headline", use_container_width=True):
+            st.session_state.headline_escolhida = None
+            st.rerun()
