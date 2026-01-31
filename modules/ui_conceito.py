@@ -51,7 +51,8 @@ Apenas a descrição visual detalhada da imagem em um único parágrafo.
 # -------------------------------------------------
 def render_etapa_conceito():
 
-    if not st.session_state.get("modo_filtrado"):
+    # 🔒 GATE CORRIGIDO (ANTES: modo_filtrado)
+    if not st.session_state.get("headline_escolhida"):
         return
 
     if "conceito_visual" not in st.session_state:
@@ -103,7 +104,7 @@ def render_etapa_conceito():
             unsafe_allow_html=True
         )
 
-    # Colar imagem (libera etapa 04) ✅ CORREÇÃO AQUI
+    # Colar imagem
     with col3:
         if st.button(
             "Colar imagem",
