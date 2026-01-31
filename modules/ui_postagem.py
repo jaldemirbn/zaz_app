@@ -1,6 +1,6 @@
 # =====================================================
 # zAz — MÓDULO POSTAGEM
-# ETAPA FINAL — POST COMPLETO (COPY)
+# ETAPA 05 — POSTAGEM
 # =====================================================
 
 import streamlit as st
@@ -8,7 +8,7 @@ from modules.ia_engine import gerar_texto
 
 
 # -------------------------------------------------
-# IA — GERAR LEGENDA
+# IA
 # -------------------------------------------------
 def _gerar_postagem(tema, ideias, headline, conceito):
 
@@ -17,11 +17,10 @@ def _gerar_postagem(tema, ideias, headline, conceito):
     prompt = f"""
 Você é um copywriter sênior especialista em Instagram.
 
-Crie a melhor legenda possível para um post profissional.
+Crie a legenda perfeita para um post.
 
-Base estratégica:
-
-Tema do post:
+Base:
+Tema:
 {tema}
 
 Ideias:
@@ -34,28 +33,14 @@ Conceito visual:
 {conceito}
 
 Objetivo:
-- abrir com gancho forte
-- linguagem humana e natural
-- persuasiva
-- gerar desejo/curiosidade
-- conduzir para ação
-- incluir CTA
-- finalizar com hashtags relevantes
+- gancho forte na primeira linha
+- texto persuasivo
+- linguagem humana
+- CTA claro
+- hashtags relevantes
 
-Estrutura:
-Gancho
-Texto principal persuasivo
-CTA
-5 a 10 hashtags
-
-Regras:
-- português brasileiro
-- tom moderno profissional
-- fluido
-- sem texto robótico
-- sem emojis excessivos
-
-Retorne apenas a legenda final pronta.
+Português brasileiro.
+Retorne somente a legenda final.
 """
 
     return gerar_texto(prompt).strip()
@@ -76,39 +61,33 @@ def render_etapa_postagem():
     headline = st.session_state.get("headline_escolhida")
     conceito = st.session_state.get("conceito_visual")
 
-    # 🔒 só depende de dados estratégicos (não imagem)
+    # 🔒 só aparece se dados mínimos existirem
     if not (tema and ideias and headline and conceito):
         return
 
 
-    # -------------------------------------------------
-    # GERAR
-    # -------------------------------------------------
-    if st.button("✨ Gerar legenda", use_container_width=True):
+    # =================================================
+    # BOTÃO CRIAR POSTAGEM
+    # =================================================
+    if st.button("✨ Criar postagem", use_container_width=True):
 
-        with st.spinner("Escrevendo legenda..."):
-            st.session_state["post_legenda"] = _gerar_postagem(
+        with st.spinner("Gerando postagem..."):
+            st.session_state["postagem_final"] = _gerar_postagem(
                 tema, ideias, headline, conceito
             )
 
 
-    # -------------------------------------------------
-    # EXIBIR
-    # -------------------------------------------------
-    if "post_legenda" in st.session_state:
+    # =================================================
+    # EXIBIR RESULTADO
+    # =================================================
+    if "postagem_final" in st.session_state:
 
-        legenda = st.text_area(
-            "Legenda pronta",
-            st.session_state["post_legenda"],
+        st.text_area(
+            "Postagem pronta",
+            st.session_state["postagem_final"],
             height=260
         )
 
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.code(legenda, language="text")
-
-        with col2:
-            if st.button("🔁 Nova legenda", use_container_width=True):
-                del st.session_state["post_legenda"]
-                st.rerun()
+        if st.button("🔁 Criar novamente", use_container_width=True):
+            del st.session_state["postagem_final"]
+            st.rerun()
