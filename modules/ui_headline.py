@@ -42,7 +42,6 @@ def render_etapa_headline():
     if not st.session_state.get("etapa_4_liberada"):
         return
 
-    # ✅ TÍTULO LARANJA
     st.markdown(
         "<h3 style='color:#FF9D28;'>05 • Headline</h3>",
         unsafe_allow_html=True
@@ -66,36 +65,26 @@ def render_etapa_headline():
 
 
     # -------------------------------------------------
-    # LISTA
+    # LISTA / FILTRO
     # -------------------------------------------------
     if "headlines" in st.session_state:
 
-        escolha = st.radio(
-            "Escolha a headline:",
-            st.session_state["headlines"],
-            key="radio_headline"
-        )
-
-        st.session_state["headline_escolhida"] = escolha
+        headlines = st.session_state["headlines"]
+        escolhida = st.session_state.get("headline_escolhida")
 
 
-        # -------------------------------------------------
-        # BOTÕES
-        # -------------------------------------------------
-        if st.session_state.get("headline_escolhida"):
+        # 🔥 SE JÁ ESCOLHEU → MOSTRA SÓ ELA
+        if escolhida:
 
-            col1, col2 = st.columns(2)
+            st.radio(
+                "Headline escolhida:",
+                [escolhida],
+                index=0,
+                key="radio_headline_unica"
+            )
 
-            with col1:
-                if st.button("🔁 Escolher outra headline", use_container_width=True):
-                    del st.session_state["headlines"]
-                    del st.session_state["headline_escolhida"]
-                    st.rerun()
+        # 🔥 SENÃO → MOSTRA TODAS
+        else:
 
-            with col2:
-                if st.button(
-                    "Criar descrição do post",
-                    use_container_width=True,
-                    key="btn_descricao_post"
-                ):
-                    st.session_state["criar_descricao_post"] = True
+            escolha = st.radio(
+                "Esco
