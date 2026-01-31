@@ -9,14 +9,10 @@ import streamlit.components.v1 as components
 
 def render_etapa_imagens():
 
-    # -------------------------------------------------
-    # 🔒 Estado padrão (garantia de bloqueio)
-    # -------------------------------------------------
-    if "etapa_4_liberada" not in st.session_state:
-        st.session_state["etapa_4_liberada"] = False
+    # 🔒 BLOQUEIO FORÇADO (sempre começa escondido)
+    liberada = st.session_state.get("etapa_4_liberada", False)
 
-    # 🔒 Gate: só aparece após clicar "Colar imagem"
-    if not st.session_state["etapa_4_liberada"]:
+    if liberada is not True:
         return
 
 
