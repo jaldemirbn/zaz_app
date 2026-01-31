@@ -56,7 +56,7 @@ def render_etapa_post():
     # GERAR HEADLINE
     # -------------------------------------------------
 
-    if st.button("✨ Gerar headline", use_container_width=True):
+    if st.button("✨ Gerar headline", use_container_width=True, key="btn_headline"):
 
         with st.spinner("Gerando headline..."):
             st.session_state["headline_post"] = _gerar_headline(ideias, conceito)
@@ -82,9 +82,17 @@ def render_etapa_post():
         col1, col2 = st.columns(2)
 
         with col1:
-            if st.button("🔁 Escolher outra headline", use_container_width=True):
+            if st.button(
+                "🔁 Escolher outra headline",
+                use_container_width=True,
+                key="btn_reset_headline"
+            ):
                 del st.session_state["headline_post"]
 
         with col2:
-            if st.button("Criar descrição do post", use_container_width=True):
+            if st.button(
+                "Criar descrição do post",
+                use_container_width=True,
+                key="btn_criar_descricao"   # ✅ NOVO BOTÃO GARANTIDO
+            ):
                 st.session_state["criar_descricao_post"] = True
