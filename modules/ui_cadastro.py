@@ -25,9 +25,7 @@ def _init_states():
 def dialog_termos():
 
     st.markdown("""
-    ## Termos de Uso
-
-    Bem-vindo ao **zAz**.
+    ## Bem-vindo ao **zAz**.
 
 Estes Termos de Uso estabelecem as regras, direitos e responsabilidades aplicáveis ao acesso e utilização da plataforma.
 
