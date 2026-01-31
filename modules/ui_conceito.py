@@ -4,15 +4,38 @@ from modules.ia_engine import gerar_texto
 
 
 def _gerar_conceito(ideias: list[str]):
+prompt = f"""
+Crie a descrição de UMA IMAGEM estática, fotográfica, de alta qualidade.
 
-    texto = "\n".join(ideias)
-
-    prompt = f"""
-Crie um conceito visual cinematográfico e detalhado.
-
-Ideias:
+Ideias base:
 {texto}
+
+Regras obrigatórias:
+- NÃO é cena de filme
+- NÃO é capa de filme
+- NÃO é pôster
+- NÃO é narrativa cinematográfica
+- é apenas UMA FOTO realista
+
+- descreva somente elementos visuais (ambiente, luz, cores, objetos, textura, profundidade, enquadramento)
+- linguagem objetiva e descritiva
+- estilo fotográfico profissional
+- qualidade alta, nítida, detalhada
+- composição equilibrada
+- proporção 1:1 (Instagram)
+
+Proibido:
+- texto na imagem
+- letras
+- tipografia
+- títulos
+- logotipos
+- marcas d’água
+
+Saída:
+apenas a descrição visual da imagem, em um único parágrafo.
 """
+
 
     return gerar_texto(prompt).strip()
 
@@ -83,3 +106,4 @@ def render_etapa_conceito():
         )
 
         st.session_state["etapa_4_liberada"] = True
+
