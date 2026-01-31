@@ -1,86 +1,114 @@
 # =====================================================
-# zAz — MÓDULO 08
-# Postagem (somente montagem final)
+# zAz — MÓDULO POSTAGEM
+# ETAPA FINAL — POST COMPLETO (COPY)
 # =====================================================
 
 import streamlit as st
-from io import BytesIO
+from modules.ia_engine import gerar_texto
 
 
-def _to_bytes(img):
-    buf = BytesIO()
-    img.save(buf, format="PNG")
-    return buf.getvalue()
+# -------------------------------------------------
+# IA — GERAR LEGENDA
+# -------------------------------------------------
+def _gerar_postagem(tema, ideias, headline, conceito):
+
+    ideias_txt = "\n".join(ideias)
+
+    prompt = f"""
+Você é um copywriter sênior especialista em Instagram.
+
+Crie a melhor legenda possível para um post profissional.
+
+Base estratégica:
+
+Tema do post:
+{tema}
+
+Ideias:
+{ideias_txt}
+
+Headline:
+{headline}
+
+Conceito visual:
+{conceito}
+
+Objetivo:
+- abrir com gancho forte
+- linguagem humana e natural
+- persuasiva
+- gerar desejo/curiosidade
+- conduzir para ação
+- incluir CTA
+- finalizar com hashtags relevantes
+
+Estrutura:
+Gancho
+Texto principal persuasivo
+CTA
+5 a 10 hashtags
+
+Regras:
+- português brasileiro
+- tom moderno profissional
+- fluido
+- sem texto robótico
+- sem emojis excessivos
+
+Retorne apenas a legenda final pronta.
+"""
+
+    return gerar_texto(prompt).strip()
 
 
+# -------------------------------------------------
+# RENDER
+# -------------------------------------------------
 def render_etapa_postagem():
 
-    imagem = st.session_state.get("post_final_img")
-    legenda = st.session_state.get("legenda")
-
-    # só aparece quando já existir legenda (etapa 07 concluída)
-    if not legenda:
-        return
-
-
-    # estados visuais
-    if "mostrar_post" not in st.session_state:
-        st.session_state["mostrar_post"] = False
-
-    if "mostrar_legenda" not in st.session_state:
-        st.session_state["mostrar_legenda"] = False
-
-
-    # ---------------------------------
-    # TÍTULO
-    # ---------------------------------
-
     st.markdown(
-        "<h3 style='color:#ff9d28;'>08. Postagem</h3>",
+        "<h3 style='color:#FF9D28;'>05 • Postagem</h3>",
         unsafe_allow_html=True
     )
 
+    tema = st.session_state.get("tema")
+    ideias = st.session_state.get("ideias")
+    headline = st.session_state.get("headline_escolhida")
+    conceito = st.session_state.get("conceito_visual")
 
-    # ---------------------------------
-    # BOTÃO COLAR POST
-    # ---------------------------------
-
-    if st.button("📌 Colar post"):
-        st.session_state["mostrar_post"] = True
-
-
-    # ---------------------------------
-    # MOSTRAR POST
-    # ---------------------------------
-
-    if st.session_state["mostrar_post"] and imagem:
-
-        st.image(imagem)
-
-        st.download_button(
-            "⬇️ Baixar imagem",
-            data=_to_bytes(imagem),
-            file_name="post_zaz.png",
-            mime="image/png"
-        )
+    # 🔒 só depende de dados estratégicos (não imagem)
+    if not (tema and ideias and headline and conceito):
+        return
 
 
-        # ---------------------------------
-        # BOTÃO COLAR LEGENDA
-        # ---------------------------------
+    # -------------------------------------------------
+    # GERAR
+    # -------------------------------------------------
+    if st.button("✨ Gerar legenda", use_container_width=True):
 
-        if st.button("📝 Colar legenda"):
-            st.session_state["mostrar_legenda"] = True
+        with st.spinner("Escrevendo legenda..."):
+            st.session_state["post_legenda"] = _gerar_postagem(
+                tema, ideias, headline, conceito
+            )
 
 
-    # ---------------------------------
-    # MOSTRAR LEGENDA
-    # ---------------------------------
+    # -------------------------------------------------
+    # EXIBIR
+    # -------------------------------------------------
+    if "post_legenda" in st.session_state:
 
-    if st.session_state["mostrar_legenda"]:
-
-        st.text_area(
+        legenda = st.text_area(
             "Legenda pronta",
-            legenda,
-            height=280
+            st.session_state["post_legenda"],
+            height=260
         )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.code(legenda, language="text")
+
+        with col2:
+            if st.button("🔁 Nova legenda", use_container_width=True):
+                del st.session_state["post_legenda"]
+                st.rerun()
