@@ -3,54 +3,86 @@ from modules.ia_engine import gerar_texto
 
 
 # -------------------------------------------------
-# IA — GERAR CONCEITO
+# IA — GERAR CONCEITO (PADRÃO PROFISSIONAL ESTRUTURADO)
 # -------------------------------------------------
 def _gerar_conceito(ideias: list[str], headline: str):
 
     texto = "\n".join(ideias)
 
     prompt = f"""
-Você é especialista em:
-- copywriting
-- design gráfico
-- direção de arte
-- persuasão visual
+Crie um prompt profissional de geração de imagem para IA seguindo EXATAMENTE a estrutura:
 
-Crie o conceito visual de um POST profissional para Instagram.
+[Sujeito] + [Ação] + [Ambiente] + [Estilo Artístico] + [Técnicas] +
+[Configurações de Câmera] + [Paleta de Cores] + [Atmosfera] + [Qualidade]
 
-Base criativa:
+Objetivo:
+Criar a descrição visual de um post publicitário de Instagram.
+
+Informações base:
 Ideias estratégicas:
 {texto}
 
-Headline principal:
+Headline:
 {headline}
 
 Diretrizes obrigatórias:
-- imagem fotográfica hiper-realista
-- qualidade cinematográfica
-- composição publicitária premium
-- iluminação profissional
-- forte impacto emocional
+
+SUJEITO:
+- elemento principal claro e impactante relacionado à headline
+
+AÇÃO:
+- pose ou interação dinâmica que comunique a mensagem
+
+AMBIENTE:
+- cenário coerente com marketing profissional
+
+ESTILO:
+- photorealistic
+- cinematic
+- publicidade premium
+
+TÉCNICAS:
+- depth of field
+- sharp focus
+- volumetric lighting
+- cinematic lighting
+- rim light
+
+CÂMERA:
+- DSLR
+- lente 50mm ou 85mm
+- f/1.8 ou f/2.8
+- bokeh natural
+
+CORES:
+- paleta harmoniosa
+- contraste profissional
+- tons estratégicos para conversão
+
+ATMOSFERA:
+- persuasiva
+- moderna
+- emocional
+- impacto visual forte
+
+QUALIDADE:
+- ultra-detailed
+- hyper-realistic
+- 8K
+- HDR
 
 FORMATO OBRIGATÓRIO:
-- proporção 1:1 (quadrado perfeito)
-- resolução 1080x1080 pixels
+- proporção 1:1
+- resolução 1080x1080
 - composição centralizada
-- otimizado para feed do Instagram
-- elementos equilibrados dentro de um quadro quadrado
-- layout pensado especificamente para feed do Instagram
-- nada panorâmico
-- nada vertical
-- foco total no enquadramento quadrado
+- layout pensado para feed do Instagram
 
-TEXTO NA IMAGEM:
-- obrigatoriamente em português do Brasil
+TEXTO:
+- qualquer texto visível deve estar obrigatoriamente em português
+- prever espaço limpo para encaixar a headline
 
-Tarefa:
-Descrever detalhadamente a cena visual do post já adaptada ao formato 1080x1080 pixels,
-prevendo espaço ideal para aplicação da headline dentro desse enquadramento.
-
-Retorne apenas a descrição visual em português.
+Saída:
+Retorne APENAS a descrição estruturada da imagem, em um único parágrafo técnico, sem explicações.
 """
 
     return gerar_texto(prompt).strip()
