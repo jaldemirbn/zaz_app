@@ -113,14 +113,27 @@ if not st.session_state.logado:
 
 
     # =================================================
-    # CADASTRO
+    # CADASTRO (COM ACEITE OBRIGATÓRIO)
     # =================================================
     with tab_cadastro:
 
         email_novo = st.text_input("Email", key="cad_email")
         senha_nova = st.text_input("Senha", type="password", key="cad_senha")
 
-        if st.button("Criar conta", use_container_width=True):
+        st.markdown("---")
+
+        aceite_termos = st.checkbox("Li e aceito os Termos de Uso")
+        aceite_privacidade = st.checkbox("Li e aceito a Política de Privacidade")
+
+        st.caption("Termos: /termos  •  Privacidade: /privacidade")
+
+        pode_criar = aceite_termos and aceite_privacidade
+
+        if st.button(
+            "Criar conta",
+            use_container_width=True,
+            disabled=not pode_criar
+        ):
 
             try:
                 criar_usuario(email_novo, senha_nova)
