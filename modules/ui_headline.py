@@ -1,5 +1,5 @@
 # =====================================================
-# zAz — MÓDULO 04
+# zAz — MÓDULO 05
 # ETAPA HEADLINE
 # =====================================================
 
@@ -8,38 +8,30 @@ from modules.ia_engine import gerar_texto
 
 
 # -------------------------------------------------
-# IA — GERAR HEADLINES (AGORA 5)
+# IA
 # -------------------------------------------------
-def _gerar_headlines(tema: str, ideias: list[str], conceito: str):
-
-    ideias_txt = "\n".join(ideias)
+def _gerar_headlines(tema, ideias, conceito):
 
     prompt = f"""
-Você é um copywriter sênior especialista em marketing digital.
+Você é um copywriter sênior.
 
-Crie 5 headlines altamente persuasivas para Instagram.
+Tema:
+{tema}
 
-Contexto:
-Tema: {tema}
-Ideias: {ideias_txt}
-Imagem: {conceito}
+Ideias:
+{ideias}
 
-Regras:
-- máximo 7 palavras
-- frase única
-- impacto forte
-- linguagem direta
-- estilo marketing profissional
-- parar o scroll
+Descrição da imagem:
+{conceito}
 
-Retorne lista numerada com 5 headlines.
+Crie 5 headlines curtas, fortes e chamativas.
+
+Retorne uma por linha.
 """
 
     resposta = gerar_texto(prompt)
 
-    linhas = [l.strip("-• ").strip() for l in resposta.split("\n") if l.strip()]
-
-    return linhas[:5]
+    return [h.strip() for h in resposta.split("\n") if h.strip()]
 
 
 # -------------------------------------------------
@@ -50,68 +42,58 @@ def render_etapa_headline():
     if not st.session_state.get("etapa_4_liberada"):
         return
 
-    st.markdown(
-        "<h3 style='color:#FF9D28; margin-top:24px;'>05. Headline</h3>",
-        unsafe_allow_html=True
-    )
+    st.markdown("### 05 • Headline")
+
+    tema = st.session_state.get("tema")
+    ideias = st.session_state.get("ideias")
+    conceito = st.session_state.get("conceito_visual")
+
 
     # -------------------------------------------------
-    # STATES
+    # GERAR
     # -------------------------------------------------
-    if "headlines" not in st.session_state:
-        st.session_state.headlines = []
+    if st.button("✨ Gerar headline", use_container_width=True):
 
-    if "headline_escolhida" not in st.session_state:
-        st.session_state.headline_escolhida = None
-
-    # -------------------------------------------------
-    # BOTÃO GERAR (5 headlines)
-    # -------------------------------------------------
-    if st.button("Gerar Headline", use_container_width=True):
-
-        tema = st.session_state.get("tema", "")
-        ideias = st.session_state.get("ideias", [])
-        conceito = st.session_state.get("conceito_visual", "")
-
-        with st.spinner("Gerando..."):
-            st.session_state.headlines = _gerar_headlines(
-                tema,
-                ideias,
-                conceito
+        with st.spinner("Gerando headlines..."):
+            st.session_state["headlines"] = _gerar_headlines(
+                tema, ideias, conceito
             )
+            st.session_state["headline_escolhida"] = None
 
-        st.session_state.headline_escolhida = None
-        st.rerun()
 
     # -------------------------------------------------
-    # SE AINDA NÃO ESCOLHEU → MOSTRA TODAS
+    # LISTA
     # -------------------------------------------------
-    if st.session_state.headline_escolhida is None:
+    if "headlines" in st.session_state:
 
         escolha = st.radio(
-            "",
-            st.session_state.headlines,
-            index=None,
-            key="headline_radio_full"
+            "Escolha a headline:",
+            st.session_state["headlines"],
+            key="radio_headline"
         )
 
-        if escolha:
-            st.session_state.headline_escolhida = escolha
-            st.rerun()
+        st.session_state["headline_escolhida"] = escolha
 
-    # -------------------------------------------------
-    # SE JÁ ESCOLHEU → MOSTRA SÓ A ESCOLHIDA
-    # -------------------------------------------------
-    else:
 
-        st.radio(
-            "",
-            [st.session_state.headline_escolhida],
-            index=0,
-            key="headline_radio_locked"
-        )
+        # -------------------------------------------------
+        # BOTÕES (apenas após escolha)
+        # -------------------------------------------------
+        if st.session_state.get("headline_escolhida"):
 
-        # 🔥 NOVO BOTÃO
-        if st.button("Escolher outra headline", use_container_width=True):
-            st.session_state.headline_escolhida = None
-            st.rerun()
+            col1, col2 = st.columns(2)
+
+            # reset
+            with col1:
+                if st.button("🔁 Escolher outra headline", use_container_width=True):
+                    del st.session_state["headlines"]
+                    del st.session_state["headline_escolhida"]
+                    st.rerun()
+
+            # novo botão solicitado
+            with col2:
+                if st.button(
+                    "Criar descrição do post",
+                    use_container_width=True,
+                    key="btn_descricao_post"
+                ):
+                    st.session_state["criar_descricao_post"] = True
