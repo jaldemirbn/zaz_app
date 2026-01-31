@@ -7,9 +7,6 @@ import streamlit as st
 from modules.ia_engine import gerar_texto
 
 
-# -------------------------------------------------
-# IA
-# -------------------------------------------------
 def _gerar_headlines(tema, ideias, conceito):
 
     prompt = f"""
@@ -30,13 +27,9 @@ Retorne uma por linha.
 """
 
     resposta = gerar_texto(prompt)
-
     return [h.strip() for h in resposta.split("\n") if h.strip()]
 
 
-# -------------------------------------------------
-# RENDER
-# -------------------------------------------------
 def render_etapa_headline():
 
     if not st.session_state.get("etapa_4_liberada"):
@@ -65,7 +58,7 @@ def render_etapa_headline():
 
 
     # -------------------------------------------------
-    # LISTA
+    # LISTA (AJUSTE AQUI SOMENTE)
     # -------------------------------------------------
     if "headlines" in st.session_state:
 
@@ -73,25 +66,31 @@ def render_etapa_headline():
         escolhida = st.session_state.get("headline_escolhida")
 
 
-        # 🔹 SE NÃO ESCOLHEU → TODAS DESMARCADAS (checkbox)
-        if not escolhida:
+        # 🔹 se já escolheu → mostra só ela
+        if escolhida:
+            st.radio(
+                "Headline escolhida:",
+                [escolhida],
+                index=0,
+                key="radio_headline_single"
+            )
 
-            for i, h in enumerate(headlines):
-
-                if st.checkbox(h, key=f"chk_head_{i}"):
-
-                    st.session_state["headline_escolhida"] = h
-                    st.rerun()
-
-
-        # 🔹 SE ESCOLHEU → MOSTRA SÓ A ESCOLHIDA
+        # 🔹 se não escolheu → todas desmarcadas
         else:
+            escolha = st.radio(
+                "Escolha a headline:",
+                headlines,
+                index=None,  # 👈 todas desmarcadas
+                key="radio_headline"
+            )
 
-            st.checkbox(escolhida, value=True, disabled=True)
+            if escolha:
+                st.session_state["headline_escolhida"] = escolha
+                st.rerun()
 
 
         # -------------------------------------------------
-        # BOTÕES
+        # BOTÕES (inalterado)
         # -------------------------------------------------
         if st.session_state.get("headline_escolhida"):
 
