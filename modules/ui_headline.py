@@ -15,30 +15,21 @@ def _gerar_headlines(tema: str, ideias: list[str], conceito: str):
     ideias_txt = "\n".join(ideias)
 
     prompt = f"""
-Você é um COPYWRITER SÊNIOR especialista em marketing digital.
+Você é um copywriter sênior de marketing.
 
-Crie headlines altamente persuasivas para Instagram.
+Crie 3 headlines altamente persuasivas para Instagram.
 
 Contexto:
-
-Tema:
-{tema}
-
-Ideias:
-{ideias_txt}
-
-Descrição da imagem:
-{conceito}
+Tema: {tema}
+Ideias: {ideias_txt}
+Imagem: {conceito}
 
 Regras:
-- gerar apenas 3 headlines
 - máximo 7 palavras
 - frase única
 - impacto forte
 - linguagem direta
-- estilo marketing profissional
 - sem explicações
-- sem emojis
 
 Retorne lista numerada com 3 headlines.
 """
@@ -70,7 +61,7 @@ def render_etapa_headline():
         st.session_state.headline_escolhida = None
 
     # -------------------------------------------------
-    # BOTÃO GERAR
+    # GERAR
     # -------------------------------------------------
     if st.button("Gerar Headline", use_container_width=True):
 
@@ -78,7 +69,7 @@ def render_etapa_headline():
         ideias = st.session_state.get("ideias", [])
         conceito = st.session_state.get("conceito_visual", "")
 
-        with st.spinner("Copywriting estratégico..."):
+        with st.spinner("Gerando..."):
             st.session_state.headlines = _gerar_headlines(
                 tema,
                 ideias,
@@ -89,12 +80,12 @@ def render_etapa_headline():
         st.rerun()
 
     # -------------------------------------------------
-    # LISTA (SÓ APARECE SE AINDA NÃO ESCOLHEU)
+    # SE NÃO ESCOLHEU → MOSTRA LISTA
     # -------------------------------------------------
-    if st.session_state.headlines and st.session_state.headline_escolhida is None:
+    if st.session_state.headline_escolhida is None and st.session_state.headlines:
 
         escolha = st.radio(
-            "Escolha a headline:",
+            "",
             st.session_state.headlines,
             index=None
         )
@@ -104,7 +95,7 @@ def render_etapa_headline():
             st.rerun()
 
     # -------------------------------------------------
-    # APÓS ESCOLHER → MOSTRA SÓ A SELECIONADA
+    # ESCOLHEU → MOSTRA SÓ ELA
     # -------------------------------------------------
     if st.session_state.headline_escolhida:
-        st.success(f"Selecionada: {st.session_state.headline_escolhida}")
+        st.markdown(f"### {st.session_state.headline_escolhida}")
