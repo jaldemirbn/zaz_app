@@ -8,7 +8,7 @@ from modules.ia_engine import gerar_texto
 
 
 # -------------------------------------------------
-# IA — GERAR HEADLINES (COPY SENIOR)
+# IA — GERAR HEADLINES
 # -------------------------------------------------
 def _gerar_headlines(tema: str, ideias: list[str], conceito: str):
 
@@ -80,22 +80,23 @@ def render_etapa_headline():
         st.rerun()
 
     # -------------------------------------------------
-    # SE NÃO ESCOLHEU → MOSTRA LISTA
+    # FILTRAR LISTA (APÓS ESCOLHA)
     # -------------------------------------------------
-    if st.session_state.headline_escolhida is None and st.session_state.headlines:
+    opcoes = st.session_state.headlines
+
+    if st.session_state.headline_escolhida:
+        opcoes = [st.session_state.headline_escolhida]
+
+    # -------------------------------------------------
+    # RADIO NORMAL (LAYOUT NÃO MUDA)
+    # -------------------------------------------------
+    if opcoes:
 
         escolha = st.radio(
             "",
-            st.session_state.headlines,
-            index=None
+            opcoes,
+            index=0 if st.session_state.headline_escolhida else None
         )
 
         if escolha:
             st.session_state.headline_escolhida = escolha
-            st.rerun()
-
-    # -------------------------------------------------
-    # ESCOLHEU → MOSTRA SÓ ELA
-    # -------------------------------------------------
-    if st.session_state.headline_escolhida:
-        st.markdown(f"### {st.session_state.headline_escolhida}")
