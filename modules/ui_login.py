@@ -2,7 +2,8 @@ import streamlit as st
 from supabase import create_client
 
 from modules.ui_ideias import render_etapa_ideias
-from modules.ui_headline import render_etapa_headline   # 👈 adicionado
+from modules.ui_headline import render_etapa_headline
+from modules.ui_conceito import render_etapa_conceito   # 👈 ADICIONADO
 
 # =====================================================
 # CONFIG
@@ -81,8 +82,4 @@ if not st.session_state.logado:
 
 # =====================================================
 # FLUXO APP (NOVA ORDEM)
-# =====================================================
-else:
-    render_etapa_ideias()      # 01
-    render_etapa_headline()   # 02
-   
+# ==============================
