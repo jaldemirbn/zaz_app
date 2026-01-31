@@ -14,30 +14,28 @@ from modules.ia_engine import gerar_texto
 def _gerar_descricao_post(conceito, headline):
 
     prompt = f"""
-Você é um designer gráfico sênior especialista em posts para redes sociais.
-
-Sua tarefa é descrever o MESMO POST utilizando:
-- a imagem já definida
-- a headline escolhida
+Você é um designer gráfico sênior especialista em criação de posts para redes sociais.
 
 IMPORTANTE:
-- NÃO criar nova cena
+- escrever SOMENTE em português do Brasil
 - NÃO alterar a imagem
-- NÃO inventar elementos
-- usar EXATAMENTE a mesma imagem descrita
-- apenas detalhar como o post será composto visualmente
+- NÃO criar nova cena
+- NÃO adicionar novos elementos
+- usar EXATAMENTE a mesma imagem já definida
+- apenas descrever como o post será composto
 
-Descrição da imagem (base fixa):
+Base fixa da imagem (não modificar):
 {conceito}
 
-Headline:
+Headline escolhida:
 {headline}
 
-Crie uma descrição estratégica, profissional e clara,
-explicando composição, posicionamento do texto, hierarquia visual,
-equilíbrio, contraste, tipografia e intenção do design.
+Tarefa:
+Criar a melhor descrição possível do post final,
+explicando composição, posicionamento do texto,
+hierarquia visual, contraste, tipografia e intenção do design.
 
-Retorne somente o texto da descrição.
+Retorne somente a descrição em português.
 """
 
     return gerar_texto(prompt).strip()
@@ -78,5 +76,5 @@ def render_etapa_post():
         st.text_area(
             "Descrição do post",
             st.session_state["descricao_post"],
-            height=400  # 👈 aumentado
+            height=400
         )
