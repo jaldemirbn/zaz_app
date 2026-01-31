@@ -24,6 +24,11 @@ def _init_states():
 @st.dialog("Termos de Uso", width="large")
 def dialog_termos():
 
+
+
+    #===========================================
+    # TERMO DE USO
+    #===========================================
     st.markdown("""
     ## Bem-vindo ao **zAz**.
 
