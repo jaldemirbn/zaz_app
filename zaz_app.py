@@ -4,19 +4,9 @@
 
 import streamlit as st
 from supabase import create_client
-import secrets
-
-from modules.ui_login import render_login
-from modules.ui_cadastro import render_cadastro
-from modules.ui_senha import render_trocar_senha
-from modules.email_service import enviar_email_confirmacao
-
-from modules.ui_ideias import render_etapa_ideias
-from modules.ui_headline import render_etapa_headline
-from modules.ui_conceito import render_etapa_conceito
-from modules.ui_imagens import render_etapa_imagens
-from modules.ui_postagem import render_etapa_postagem
-from modules.ui_historico import render_etapa_historico
+import uuid
+import requests
+import os
 
 
 # =====================================================
@@ -37,59 +27,90 @@ def conectar():
 
 
 # =====================================================
-# LOGIN
+# EMAIL (RESEND)
+# =====================================================
+def enviar_confirmacao(email, token):
+
+    link = f"https://SEUAPP.streamlit.app/?token={token}"  # ⚠️ TROQUE PELO SEU LINK
+
+    requests.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {st.secrets['RESEND_API_KEY']}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "from": "zAz <no-reply@appzaz.com.br>",
+            "to": [email],
+            "subject": "Confirme sua conta no zAz",
+            "html": f"""
+                <h2>Confirme sua conta</h2>
+                <p>Clique abaixo:</p>
+                <a href="{link}"
+                style="background:#FFC107;padding:12px 20px;border-radius:8px;text-decoration:none;color:#000;font-weight:bold;">
+                Confirmar conta
+                </a>
+            """
+        },
+    )
+
+
+# =====================================================
+# FUNÇÕES DB
 # =====================================================
 def validar_usuario(email, senha):
+
     r = (
         conectar()
         .table("usuarios")
         .select("*")
         .eq("email", email)
         .eq("senha", senha)
+        .eq("email_confirmado", True)
         .execute()
     )
+
     return len(r.data) > 0
 
 
-# =====================================================
-# 🔥 CADASTRO (SEM ERRO ESCONDIDO)
-# =====================================================
 def criar_usuario(email, senha):
 
-    supabase = conectar()
-
-    token = secrets.token_urlsafe(32)
+    token = str(uuid.uuid4())
 
     dados = {
         "email": email,
         "senha": senha,
-        "email_confirmado": False,
-        "token_confirmacao": token
+        "token_confirmacao": token,
+        "email_confirmado": False
     }
 
-    resposta = supabase.table("usuarios").insert(dados).execute()
+    conectar().table("usuarios").insert(dados).execute()
 
-    # 👉 se falhar, mostra erro real
-    if not resposta.data:
-        st.error(f"Erro Supabase: {resposta}")
-        return
-
-    # só envia email se realmente inseriu
-    base = st.get_option("browser.serverAddress") or ""
-    link = f"{base}?confirm={token}"
-
-    enviar_email_confirmacao(email, link)
-
-    st.success("Conta criada. Verifique seu email para confirmar.")
+    enviar_confirmacao(email, token)
 
 
-# =====================================================
-# SENHA
-# =====================================================
 def atualizar_senha(email, senha):
     conectar().table("usuarios").update({
         "senha": senha
     }).eq("email", email).execute()
+
+
+# =====================================================
+# CONFIRMAÇÃO VIA TOKEN
+# =====================================================
+params = st.query_params
+
+if "token" in params:
+
+    token = params["token"]
+
+    conectar().table("usuarios").update({
+        "email_confirmado": True,
+        "token_confirmacao": None
+    }).eq("token_confirmacao", token).execute()
+
+    st.success("Conta confirmada. Agora você pode entrar.")
+    st.stop()
 
 
 # =====================================================
@@ -100,7 +121,22 @@ if "logado" not in st.session_state:
 
 
 # =====================================================
-# AUTH TABS
+# IMPORT UI
+# =====================================================
+from modules.ui_login import render_login
+from modules.ui_cadastro import render_cadastro
+from modules.ui_senha import render_trocar_senha
+
+from modules.ui_ideias import render_etapa_ideias
+from modules.ui_headline import render_etapa_headline
+from modules.ui_conceito import render_etapa_conceito
+from modules.ui_imagens import render_etapa_imagens
+from modules.ui_postagem import render_etapa_postagem
+from modules.ui_historico import render_etapa_historico
+
+
+# =====================================================
+# AUTH
 # =====================================================
 if not st.session_state.logado:
 
@@ -115,7 +151,7 @@ if not st.session_state.logado:
         render_cadastro(criar_usuario)
 
     with tab_senha:
-        render_trocar_senha(conectar)
+        render_trocar_senha(atualizar_senha)
 
     st.stop()
 
