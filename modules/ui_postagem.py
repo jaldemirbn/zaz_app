@@ -51,23 +51,25 @@ Retorne somente a legenda final.
 # -------------------------------------------------
 def render_etapa_postagem():
 
+    # 🔒 AGORA depende só da imagem
+    if not st.session_state.get("etapa_4_liberada"):
+        return
+
+
     st.markdown(
         "<h3 style='color:#FF9D28;'>05 • Postagem</h3>",
         unsafe_allow_html=True
     )
+
 
     tema = st.session_state.get("tema")
     ideias = st.session_state.get("ideias")
     headline = st.session_state.get("headline_escolhida")
     conceito = st.session_state.get("conceito_visual")
 
-    # 🔒 só aparece se dados mínimos existirem
-    if not (tema and ideias and headline and conceito):
-        return
-
 
     # =================================================
-    # BOTÃO CRIAR POSTAGEM
+    # BOTÃO APARECE AUTOMÁTICO
     # =================================================
     if st.button("✨ Criar postagem", use_container_width=True):
 
@@ -78,7 +80,7 @@ def render_etapa_postagem():
 
 
     # =================================================
-    # EXIBIR RESULTADO
+    # RESULTADO
     # =================================================
     if "postagem_final" in st.session_state:
 
