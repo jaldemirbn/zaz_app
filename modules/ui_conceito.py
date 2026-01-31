@@ -76,7 +76,7 @@ def render_etapa_conceito():
     st.caption("Copie o texto (Ctrl+C) e gere a imagem no site.")
 
     # -------------------------------------------------
-    # BOTÕES ORGANIZADOS (nova ordem)
+    # BOTÕES
     # -------------------------------------------------
     col1, col2, col3 = st.columns(3)
 
@@ -88,12 +88,25 @@ def render_etapa_conceito():
             )
             st.rerun()
 
-    # 2️⃣ Abrir ImageFX
+    # 2️⃣ Criar imagem (abre ImageFX) — TEXTO LARANJA
     with col2:
-        st.link_button(
-            "🎨 Abrir ImageFX",
-            "https://labs.google/fx/tools/image-fx",
-            use_container_width=True
+        st.markdown(
+            """
+            <a href="https://labs.google/fx/tools/image-fx" target="_blank"
+               style="
+                    display:block;
+                    text-align:center;
+                    padding:10px 0;
+                    border:1px solid #333;
+                    border-radius:8px;
+                    text-decoration:none;
+                    font-weight:600;
+                    color:#FF9D28;
+               ">
+               🎨 Criar imagem
+            </a>
+            """,
+            unsafe_allow_html=True
         )
 
     # 3️⃣ Liberar etapa imagem
