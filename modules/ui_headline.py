@@ -1,41 +1,81 @@
 # =====================================================
-# zAz — MÓDULO 06
-# ETAPA POST VISUAL
+# zAz — MÓDULO 03
+# ETAPA 04 — COLAR IMAGEM (CTRL+V)
 # =====================================================
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 
-# =====================================================
-# RENDER
-# =====================================================
+def render_etapa_imagens():
 
-def render_etapa_post():
-
-    # 🔒 GATE — só libera após clicar no botão "Criar descrição do post"
-    if not st.session_state.get("criar_descricao_post", False):
+    # 🔒 Gate: só aparece após clicar "Colar imagem"
+    if not st.session_state.get("etapa_4_liberada"):
         return
 
-
     # -------------------------------------------------
-    # TÍTULO
+    # Título (ajuste: aproximado do bloco acima)
     # -------------------------------------------------
     st.markdown(
-        "<h3 style='color:#FF9D28;'>06 • Post visual</h3>",
+        "<h3 style='color:#FF9D28; margin-top:0;'>04. Colar imagem</h3>",
         unsafe_allow_html=True
     )
 
+    st.caption("Copie a imagem no site e cole aqui (Ctrl+V).")
 
     # -------------------------------------------------
-    # CONTEÚDO (inalterado)
+    # Área de colagem
     # -------------------------------------------------
-    headline = st.session_state.get("headline_escolhida")
+    html_code = """
+    <div id="paste-area"
+         tabindex="0"
+         style="
+            border:2px dashed #444;
+            padding:50px;
+            text-align:center;
+            border-radius:10px;
+            color:#aaa;
+            font-size:14px;
+         ">
+        Clique aqui e pressione CTRL+V para colar a imagem
+    </div>
 
-    if not headline:
-        return
+    <script>
+    const area = document.getElementById("paste-area");
 
-    st.text_area(
-        "Headline do post",
-        headline,
-        height=120
-    )
+    area.focus();
+
+    area.addEventListener("paste", (e) => {
+
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+
+        for (const item of items) {
+
+            if (item.type.indexOf("image") !== -1) {
+
+                const blob = item.getAsFile();
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+
+                    area.innerHTML = "";
+
+                    const img = document.createElement("img");
+                    img.src = event.target.result;
+
+                    img.style.maxWidth = "100%";
+                    img.style.height = "auto";
+                    img.style.objectFit = "contain";
+                    img.style.borderRadius = "8px";
+
+                    area.appendChild(img);
+                };
+
+                reader.readAsDataURL(blob);
+            }
+        }
+    });
+    </script>
+    """
+
+    components.html(html_code, height=600)
