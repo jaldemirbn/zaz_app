@@ -1,40 +1,9 @@
 # =====================================================
-# zAz — MÓDULO 05
+# zAz — MÓDULO 06
 # ETAPA POST VISUAL
 # =====================================================
 
 import streamlit as st
-from openai import OpenAI
-
-# 🔒 SEMPRE usar key explícita
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-
-
-# =====================================================
-# IA
-# =====================================================
-
-def _gerar_headline(ideias, conceito):
-
-    prompt = f"""
-Crie uma headline curta, forte e chamativa.
-
-Ideias:
-{ideias}
-
-Conceito visual:
-{conceito}
-
-Retorne somente a headline.
-"""
-
-    r = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.7,
-    )
-
-    return r.choices[0].message.content.strip()
 
 
 # =====================================================
@@ -43,25 +12,43 @@ Retorne somente a headline.
 
 def render_etapa_post():
 
-    st.markdown("### 04 • Post visual")
-
-    ideias = st.session_state.get("ideias")
-    conceito = st.session_state.get("conceito")
-
-    if not ideias or not conceito:
+    # 🔒 GATE — só aparece após clicar "Criar descrição do post"
+    if not st.session_state.get("criar_descricao_post"):
         return
 
 
     # -------------------------------------------------
-    # GERAR HEADLINE
+    # TÍTULO
     # -------------------------------------------------
-
-    if st.button("✨ Gerar headline", use_container_width=True):
-
-        with st.spinner("Gerando headline..."):
-            st.session_state["headline_post"] = _gerar_headline(ideias, conceito)
+    st.markdown(
+        "<h3 style='color:#FF9D28;'>06 • Post visual</h3>",
+        unsafe_allow_html=True
+    )
 
 
     # -------------------------------------------------
-    # EXIBIR RESULTADO
-    # --
+    # DADOS NECESSÁRIOS
+    # -------------------------------------------------
+    headline = st.session_state.get("headline_escolhida")
+
+    if not headline:
+        st.warning("Escolha uma headline primeiro.")
+        return
+
+
+    # -------------------------------------------------
+    # PREVIEW SIMPLES (placeholder por enquanto)
+    # -------------------------------------------------
+    st.text_area(
+        "Headline do post",
+        headline,
+        height=120
+    )
+
+
+    # -------------------------------------------------
+    # BOTÃO VOLTAR (opcional reset)
+    # -------------------------------------------------
+    if st.button("🔁 Voltar", use_container_width=True):
+        st.session_state["criar_descricao_post"] = False
+        st.rerun()
