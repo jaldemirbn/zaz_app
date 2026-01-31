@@ -66,9 +66,17 @@ def render_etapa_conceito():
             st.rerun()
 
     # 📋 Copiar
-   with col2:
-    st.code(st.session_state.conceito_visual, language=None)
-
+    with col2:
+        if st.button("📋 Copiar", use_container_width=True):
+            st.markdown(
+                f"""
+                <script>
+                navigator.clipboard.writeText(`{st.session_state.conceito_visual}`);
+                </script>
+                """,
+                unsafe_allow_html=True
+            )
+            st.toast("Copiado")
 
     # 🎨 Gerar imagens (ALINHADO + COR)
     with col3:
@@ -91,4 +99,3 @@ def render_etapa_conceito():
             "https://labs.google/fx/tools/image-fx",
             use_container_width=True
         )
-
