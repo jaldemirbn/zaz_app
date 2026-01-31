@@ -4,10 +4,12 @@
 
 import streamlit as st
 from supabase import create_client
+import secrets
 
 from modules.ui_login import render_login
 from modules.ui_cadastro import render_cadastro
 from modules.ui_senha import render_trocar_senha
+from modules.email_service import enviar_email_confirmacao
 
 from modules.ui_ideias import render_etapa_ideias
 from modules.ui_headline import render_etapa_headline
@@ -46,11 +48,24 @@ def validar_usuario(email, senha):
     return len(r.data) > 0
 
 
+# =====================================================
+# CADASTRO COM EMAIL DE CONFIRMAÇÃO 🔥
+# =====================================================
 def criar_usuario(email, senha):
+
+    token = secrets.token_urlsafe(32)
+
     conectar().table("usuarios").insert({
         "email": email,
-        "senha": senha
+        "senha": senha,
+        "email_confirmado": False,
+        "token_confirmacao": token
     }).execute()
+
+    base_url = st.get_option("browser.serverAddress") or ""
+    link = f"{base_url}?confirm={token}"
+
+    enviar_email_confirmacao(email, link)
 
 
 def atualizar_senha(email, senha):
@@ -96,5 +111,3 @@ render_etapa_conceito()
 render_etapa_imagens()
 render_etapa_postagem()
 render_etapa_historico()
-
-
