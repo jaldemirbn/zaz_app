@@ -33,7 +33,6 @@ Retorne uma por linha.
 # -------------------------------------------------
 def render_etapa_headline():
 
-    # 🔒 aparece só depois das ideias
     if not st.session_state.get("modo_filtrado"):
         return
 
@@ -54,37 +53,28 @@ def render_etapa_headline():
         with st.spinner("Gerando headlines..."):
             st.session_state["headlines"] = _gerar_headlines(tema, ideias)
             st.session_state["headline_escolhida"] = None
-            st.session_state.pop("radio_headline", None)
 
 
     # -------------------------------------------------
-    # LISTA
+    # LISTA (BOTÕES — SEM RADIO, SEM BUG)
     # -------------------------------------------------
     if "headlines" in st.session_state:
 
         escolhida = st.session_state.get("headline_escolhida")
 
-        # 🔹 se já escolheu → renderiza só ela
-        if escolhida:
-            lista_render = [escolhida]
+        # 🔹 ainda não escolheu → mostra todas
+        if not escolhida:
+
+            for i, h in enumerate(st.session_state["headlines"]):
+                if st.button(h, key=f"btn_head_{i}", use_container_width=True):
+                    st.session_state["headline_escolhida"] = h
+                    st.rerun()
+
+        # 🔹 já escolheu → mostra só ela
         else:
-            lista_render = st.session_state["headlines"]
 
-        escolha = st.radio(
-            "Escolha a headline:",
-            lista_render,
-            index=0 if escolhida else None,
-            key="radio_headline"
-        )
+            st.success(escolhida)
 
-        if escolha:
-            st.session_state["headline_escolhida"] = escolha
-
-
-        # -------------------------------------------------
-        # RESET
-        # -------------------------------------------------
-        if escolhida:
             if st.button("🔁 Escolher outra headline", use_container_width=True):
                 st.session_state["headline_escolhida"] = None
-                st.session_state.pop("radio_headline", None)  #
+                st.rerun()
