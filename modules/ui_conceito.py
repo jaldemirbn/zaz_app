@@ -68,7 +68,30 @@ def render_etapa_conceito():
             st.rerun()
 
     # 📋 Copiar
-   
+    import streamlit.components.v1 as components
+
+
+with col2:
+    components.html(
+        f"""
+        <button
+            style="
+                width:100%;
+                height:38px;
+                border-radius:8px;
+                border:1px solid #444;
+                background:#111;
+                color:#FF9D28;
+                font-weight:600;
+                cursor:pointer;
+            "
+            onclick="navigator.clipboard.writeText(`{st.session_state.conceito_visual}`)">
+            📋 Copiar
+        </button>
+        """,
+        height=45
+    )
+
 
     # 🎨 Gerar imagens (ALINHADO + COR)
     with col3:
@@ -91,5 +114,6 @@ def render_etapa_conceito():
             "https://labs.google/fx/tools/image-fx",
             use_container_width=True
         )
+
 
 
