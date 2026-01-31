@@ -27,28 +27,10 @@ def render_etapa_post():
 
 
     # -------------------------------------------------
-    # DADOS NECESSÁRIOS
+    # BOTÃO
     # -------------------------------------------------
-    headline = st.session_state.get("headline_escolhida")
-
-    if not headline:
-        st.warning("Escolha uma headline primeiro.")
-        return
-
-
-    # -------------------------------------------------
-    # PREVIEW SIMPLES (placeholder por enquanto)
-    # -------------------------------------------------
-    st.text_area(
-        "Headline do post",
-        headline,
-        height=120
+    st.button(
+        "Criar descrição do post",
+        use_container_width=True,
+        key="btn_criar_descricao_post"
     )
-
-
-    # -------------------------------------------------
-    # BOTÃO VOLTAR (opcional reset)
-    # -------------------------------------------------
-    if st.button("🔁 Voltar", use_container_width=True):
-        st.session_state["criar_descricao_post"] = False
-        st.rerun()
