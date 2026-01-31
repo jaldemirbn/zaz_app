@@ -70,27 +70,32 @@ def render_etapa_conceito():
     # 📋 Copiar
    
 
-    # 🎨 Gerar imagens (ALINHADO + COR)
-    with col3:
+   # 🎨 Gerar imagens (LIBERA ETAPA 4 + ABRE SITE)
+with col3:
 
-        st.markdown("""
-            <style>
-            div[data-testid="stLinkButton"] a {
-                display:flex !important;
-                align-items:center !important;
-                justify-content:center !important;
-                height:38px !important;
-                color:#FF9D28 !important;
-                font-weight:600;
-            }
-            </style>
-        """, unsafe_allow_html=True)
+    st.markdown("""
+        <style>
+        div.stButton > button {
+            height:38px;
+            color:#FF9D28;
+            font-weight:600;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
-        st.link_button(
-            "🎨 Gerar imagens",
-            "https://labs.google/fx/tools/image-fx",
-            use_container_width=True
+    if st.button("🎨 Gerar imagens", use_container_width=True):
+        st.session_state["etapa_4_liberada"] = True
+
+        st.markdown(
+            """
+            <script>
+            window.open("https://labs.google/fx/tools/image-fx", "_blank");
+            </script>
+            """,
+            unsafe_allow_html=True
         )
+
+
 
 
 
