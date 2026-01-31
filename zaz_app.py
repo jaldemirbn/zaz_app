@@ -17,6 +17,7 @@ from modules.ui_ideias import render_etapa_ideias
 from modules.ui_conceito import render_etapa_conceito
 from modules.ui_imagens import render_etapa_imagens
 from modules.ui_headline import render_etapa_headline
+from modules.ui_post import render_etapa_post   # ✅ ADICIONADO
 
 
 # -------------------------------------------------
@@ -37,9 +38,11 @@ st.set_page_config(
 # 03 gerar imagem (site externo)
 # 04 colar imagem
 # 05 headline
+# 06 post
 # -------------------------------------------------
 
 render_etapa_ideias()
 render_etapa_conceito()
 render_etapa_imagens()
 render_etapa_headline()
+render_etapa_post()   # ✅ ADICIONADO
