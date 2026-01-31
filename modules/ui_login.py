@@ -52,25 +52,39 @@ if "logado" not in st.session_state:
 
 
 # =====================================================
-# LOGIN
+# LOGIN PROFISSIONAL (LOGIN | CADASTRO | TROCA SENHA)
 # =====================================================
+
+def criar_usuario(email, senha):
+    supabase = conectar()
+    supabase.table("usuarios").insert({
+        "email": email,
+        "senha": senha
+    }).execute()
+
+
+def atualizar_senha(email, senha):
+    supabase = conectar()
+    supabase.table("usuarios").update({
+        "senha": senha
+    }).eq("email", email).execute()
+
+
 if not st.session_state.logado:
 
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns([1, 2, 1])
+    tab_login, tab_cadastro, tab_senha = st.tabs(
+        ["🔐 Entrar", "🆕 Criar conta", "♻️ Trocar senha"]
+    )
 
-    with col2:
+    # =================================================
+    # LOGIN
+    # =================================================
+    with tab_login:
 
-        st.image("assets/logo.png", width=450)
-
-        st.markdown(
-            "<h2 style='text-align:center; color:#ff9d28;'>Entrar</h2>",
-            unsafe_allow_html=True
-        )
-
-        email = st.text_input("Email")
-        senha = st.text_input("Senha", type="password")
+        email = st.text_input("Email", key="login_email")
+        senha = st.text_input("Senha", type="password", key="login_senha")
 
         if st.button("Entrar", use_container_width=True):
 
@@ -80,7 +94,40 @@ if not st.session_state.logado:
             else:
                 st.error("Email ou senha inválidos")
 
+
+    # =================================================
+    # CADASTRO
+    # =================================================
+    with tab_cadastro:
+
+        email_novo = st.text_input("Email", key="cad_email")
+        senha_nova = st.text_input("Senha", type="password", key="cad_senha")
+
+        if st.button("Criar conta", use_container_width=True):
+
+            try:
+                criar_usuario(email_novo, senha_nova)
+                st.success("Conta criada com sucesso. Faça login.")
+            except:
+                st.error("Email já cadastrado.")
+
+
+    # =================================================
+    # TROCAR SENHA
+    # =================================================
+    with tab_senha:
+
+        email_alt = st.text_input("Email", key="alt_email")
+        senha_alt = st.text_input("Nova senha", type="password", key="alt_senha")
+
+        if st.button("Atualizar senha", use_container_width=True):
+
+            atualizar_senha(email_alt, senha_alt)
+            st.success("Senha atualizada com sucesso.")
+
+
     st.stop()
+
 
 
 # =====================================================
