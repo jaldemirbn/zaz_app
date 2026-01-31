@@ -2,10 +2,6 @@
 # zAz — MÓDULO 03
 # ETAPA 04 — COLAR IMAGEM (CTRL+V)
 # =====================================================
-# Regra nova:
-# - só aparece após clicar "Gerar imagens"
-# - controlado por session_state["etapa_4_liberada"]
-# =====================================================
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -13,14 +9,12 @@ import streamlit.components.v1 as components
 
 def render_etapa_imagens():
 
-    # -------------------------------------------------
-    # 🔒 GATE (CORREÇÃO PRINCIPAL)
-    # -------------------------------------------------
+    # 🔒 Gate: só aparece após clicar gerar imagens
     if not st.session_state.get("etapa_4_liberada"):
         return
 
     # -------------------------------------------------
-    # TÍTULO
+    # Título
     # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28; margin-top:24px;'>04. Colar imagem</h3>",
@@ -30,10 +24,9 @@ def render_etapa_imagens():
     st.caption("Copie a imagem no site e cole aqui (Ctrl+V).")
 
     # -------------------------------------------------
-    # ÁREA DE COLAGEM
+    # Área de colagem
     # -------------------------------------------------
-   components.html(
-    """
+    html_code = """
     <div id="paste-area"
          tabindex="0"
          style="
@@ -83,6 +76,6 @@ def render_etapa_imagens():
         }
     });
     </script>
-    """,
-    height=600
-)
+    """
+
+    components.html(html_code, height=600)
