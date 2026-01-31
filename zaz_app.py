@@ -9,6 +9,7 @@ import secrets
 from modules.ui_login import render_login
 from modules.ui_cadastro import render_cadastro
 from modules.ui_senha import render_trocar_senha
+from modules.email_service import enviar_email_confirmacao
 
 from modules.ui_ideias import render_etapa_ideias
 from modules.ui_headline import render_etapa_headline
@@ -16,8 +17,6 @@ from modules.ui_conceito import render_etapa_conceito
 from modules.ui_imagens import render_etapa_imagens
 from modules.ui_postagem import render_etapa_postagem
 from modules.ui_historico import render_etapa_historico
-
-from modules.email_service import enviar_email_confirmacao
 
 
 # =====================================================
@@ -38,7 +37,7 @@ def conectar():
 
 
 # =====================================================
-# FUNÇÕES
+# LOGIN
 # =====================================================
 def validar_usuario(email, senha):
     r = (
@@ -52,23 +51,30 @@ def validar_usuario(email, senha):
     return len(r.data) > 0
 
 
+# =====================================================
+# 🔥 CADASTRO (SEM ERRO ESCONDIDO)
+# =====================================================
 def criar_usuario(email, senha):
+
     supabase = conectar()
 
-    try:
-        token = secrets.token_urlsafe(32)
+    token = secrets.token_urlsafe(32)
 
-        supabase.table("usuarios").insert({
-            "email": email,
-            "senha": senha,
-            "email_confirmado": False,
-            "token_confirmacao": token
-        }).execute()
+    dados = {
+        "email": email,
+        "senha": senha,
+        "email_confirmado": False,
+        "token_confirmacao": token
+    }
 
-    except:
-        st.error("Email já cadastrado.")
+    resposta = supabase.table("usuarios").insert(dados).execute()
+
+    # 👉 se falhar, mostra erro real
+    if not resposta.data:
+        st.error(f"Erro Supabase: {resposta}")
         return
 
+    # só envia email se realmente inseriu
     base = st.get_option("browser.serverAddress") or ""
     link = f"{base}?confirm={token}"
 
@@ -77,6 +83,9 @@ def criar_usuario(email, senha):
     st.success("Conta criada. Verifique seu email para confirmar.")
 
 
+# =====================================================
+# SENHA
+# =====================================================
 def atualizar_senha(email, senha):
     conectar().table("usuarios").update({
         "senha": senha
@@ -91,7 +100,7 @@ if "logado" not in st.session_state:
 
 
 # =====================================================
-# AUTH
+# AUTH TABS
 # =====================================================
 if not st.session_state.logado:
 
