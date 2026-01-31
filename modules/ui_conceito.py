@@ -2,35 +2,20 @@ import streamlit as st
 from modules.ia_engine import gerar_texto
 
 
-# -------------------------------------------------
-# IA — GERAR CONCEITO
-# -------------------------------------------------
 def _gerar_conceito(ideias: list[str]):
 
     texto = "\n".join(ideias)
 
     prompt = f"""
-Crie UM conceito visual extremamente detalhado para geração de imagem por IA.
+Crie um conceito visual cinematográfico e detalhado.
 
-Ideias base:
+Ideias:
 {texto}
-
-- cena rica em detalhes
-- iluminação cinematográfica
-- composição profissional
-- ultra realista
-- 4K
-- proporção 1:1 (Instagram)
-
-Parágrafo único.
 """
 
     return gerar_texto(prompt).strip()
 
 
-# -------------------------------------------------
-# RENDER PRINCIPAL
-# -------------------------------------------------
 def render_etapa_conceito():
 
     if not st.session_state.get("modo_filtrado"):
@@ -40,10 +25,9 @@ def render_etapa_conceito():
         st.session_state.conceito_visual = None
 
     if not st.session_state.conceito_visual:
-        with st.spinner("Criando conceito..."):
-            st.session_state.conceito_visual = _gerar_conceito(
-                st.session_state.ideias
-            )
+        st.session_state.conceito_visual = _gerar_conceito(
+            st.session_state.ideias
+        )
 
     st.markdown(
         "<h3 style='color:#FF9D28;'>03. Conceito visual</h3>",
@@ -55,8 +39,6 @@ def render_etapa_conceito():
     # -------------------------------------------------
     # COLUNAS (ESCOPO CORRETO)
     # -------------------------------------------------
-    st.caption("Copie o texto e clique no botão Gerar imagens e cole no site.")
-    
     col1, col2, col3 = st.columns(3)
 
     # 🔁 Novo conceito
@@ -67,36 +49,20 @@ def render_etapa_conceito():
             )
             st.rerun()
 
-    # 📋 Copiar
-   
+    # vazio (copiar removido)
+    with col2:
+        st.empty()
 
-   # 🎨 Gerar imagens (LIBERA ETAPA 4 + ABRE SITE)
-with col3:
+    # 🎨 Gerar imagens (libera etapa 4 + abre site)
+    with col3:
+        if st.button("🎨 Gerar imagens", use_container_width=True):
+            st.session_state["etapa_4_liberada"] = True
 
-    st.markdown("""
-        <style>
-        div.stButton > button {
-            height:38px;
-            color:#FF9D28;
-            font-weight:600;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    if st.button("🎨 Gerar imagens", use_container_width=True):
-        st.session_state["etapa_4_liberada"] = True
-
-        st.markdown(
-            """
-            <script>
-            window.open("https://labs.google/fx/tools/image-fx", "_blank");
-            </script>
-            """,
-            unsafe_allow_html=True
-        )
-
-
-
-
-
-
+            st.markdown(
+                """
+                <script>
+                window.open("https://labs.google/fx/tools/image-fx", "_blank");
+                </script>
+                """,
+                unsafe_allow_html=True
+            )
