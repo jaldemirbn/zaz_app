@@ -1,10 +1,5 @@
 # =====================================================
-# zAz — APP PRINCIPAL (ORQUESTRADOR FINAL)
-# =====================================================
-# Mobile first
-# PWA ready
-# Fluxo linear
-# 1 responsabilidade por módulo
+# zAz — APP PRINCIPAL
 # =====================================================
 
 import streamlit as st
@@ -58,35 +53,36 @@ def validar_usuario(email, senha):
     return len(r.data) > 0
 
 
-# =====================================================
-# SESSION
-# =====================================================
-if "logado" not in st.session_state:
-    st.session_state.logado = False
-
-
-# =====================================================
-# LOGIN PROFISSIONAL
-# =====================================================
-
 def criar_usuario(email, senha):
-    supabase = conectar()
-    supabase.table("usuarios").insert({
+    conectar().table("usuarios").insert({
         "email": email,
         "senha": senha
     }).execute()
 
 
 def atualizar_senha(email, senha):
-    supabase = conectar()
-    supabase.table("usuarios").update({
+    conectar().table("usuarios").update({
         "senha": senha
     }).eq("email", email).execute()
 
 
-if not st.session_state.logado:
+# =====================================================
+# SESSION
+# =====================================================
+if "logado" not in st.session_state:
+    st.session_state.logado = False
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
+if "leu_termos" not in st.session_state:
+    st.session_state.leu_termos = False
+
+if "leu_privacidade" not in st.session_state:
+    st.session_state.leu_privacidade = False
+
+
+# =====================================================
+# LOGIN PROFISSIONAL
+# =====================================================
+if not st.session_state.logado:
 
     tab_login, tab_cadastro, tab_senha = st.tabs(
         ["🔐 Entrar", "🆕 Criar conta", "♻️ Trocar senha"]
@@ -98,13 +94,10 @@ if not st.session_state.logado:
     # =================================================
     with tab_login:
 
-        st.image("assets/logo.png", width=280)
-
-        email = st.text_input("Email", key="login_email")
-        senha = st.text_input("Senha", type="password", key="login_senha")
+        email = st.text_input("Email")
+        senha = st.text_input("Senha", type="password")
 
         if st.button("Entrar", use_container_width=True):
-
             if validar_usuario(email, senha):
                 st.session_state.logado = True
                 st.rerun()
@@ -113,7 +106,7 @@ if not st.session_state.logado:
 
 
     # =================================================
-    # CADASTRO (ACEITE + LINKS)
+    # CADASTRO COM LEITURA OBRIGATÓRIA
     # =================================================
     with tab_cadastro:
 
@@ -121,26 +114,39 @@ if not st.session_state.logado:
         senha_nova = st.text_input("Senha", type="password", key="cad_senha")
 
         st.markdown("---")
+        st.subheader("📜 Leitura obrigatória")
 
-        col1, col2 = st.columns([8, 2])
+        col1, col2 = st.columns(2)
 
         with col1:
-            aceite_termos = st.checkbox("Li e aceito os Termos de Uso")
+            if st.button("📄 Ler Termos de Uso", use_container_width=True):
+                st.session_state.leu_termos = True
+                st.switch_page("pages/termos.py")
 
         with col2:
-            st.page_link("pages/termos.py", label="Ler", icon="📄")
+            if st.button("🔒 Ler Política de Privacidade", use_container_width=True):
+                st.session_state.leu_privacidade = True
+                st.switch_page("pages/privacidade.py")
 
 
-        col3, col4 = st.columns([8, 2])
+        st.markdown("---")
 
-        with col3:
-            aceite_privacidade = st.checkbox("Li e aceito a Política de Privacidade")
+        aceite_termos = False
+        aceite_privacidade = False
 
-        with col4:
-            st.page_link("pages/privacidade.py", label="Ler", icon="🔒")
+        if st.session_state.leu_termos:
+            aceite_termos = st.checkbox("Aceito os Termos de Uso")
+
+        if st.session_state.leu_privacidade:
+            aceite_privacidade = st.checkbox("Aceito a Política de Privacidade")
 
 
-        pode_criar = aceite_termos and aceite_privacidade
+        pode_criar = (
+            st.session_state.leu_termos
+            and st.session_state.leu_privacidade
+            and aceite_termos
+            and aceite_privacidade
+        )
 
         st.markdown("---")
 
@@ -149,12 +155,8 @@ if not st.session_state.logado:
             use_container_width=True,
             disabled=not pode_criar
         ):
-
-            try:
-                criar_usuario(email_novo, senha_nova)
-                st.success("Conta criada com sucesso. Faça login.")
-            except:
-                st.error("Email já cadastrado.")
+            criar_usuario(email_novo, senha_nova)
+            st.success("Conta criada com sucesso. Faça login.")
 
 
     # =================================================
@@ -162,11 +164,10 @@ if not st.session_state.logado:
     # =================================================
     with tab_senha:
 
-        email_alt = st.text_input("Email", key="alt_email")
-        senha_alt = st.text_input("Nova senha", type="password", key="alt_senha")
+        email_alt = st.text_input("Email")
+        senha_alt = st.text_input("Nova senha", type="password")
 
         if st.button("Atualizar senha", use_container_width=True):
-
             atualizar_senha(email_alt, senha_alt)
             st.success("Senha atualizada com sucesso.")
 
@@ -177,7 +178,6 @@ if not st.session_state.logado:
 # =====================================================
 # FLUXO DO APP
 # =====================================================
-
 render_etapa_ideias()
 render_etapa_headline()
 render_etapa_conceito()
