@@ -1,152 +1,186 @@
-import streamlit as st
+# =====================================================
+# zAz — APP PRINCIPAL (ORQUESTRADOR FINAL)
+# =====================================================
+# Mobile first
+# PWA ready
+# Fluxo linear
+# 1 responsabilidade por módulo
+# =====================================================
 
+import streamlit as st
+from supabase import create_client
+
+from modules.ui_ideias import render_etapa_ideias
+from modules.ui_headline import render_etapa_headline
+from modules.ui_conceito import render_etapa_conceito
+from modules.ui_imagens import render_etapa_imagens
+from modules.ui_postagem import render_etapa_postagem
+from modules.ui_historico import render_etapa_historico
+
+
+# =====================================================
+# CONFIG
+# =====================================================
 st.set_page_config(
-    page_title="Termos de Uso",
-    layout="centered"
+    page_title="zAz",
+    layout="centered",
+    page_icon="🚀"
 )
 
-st.title("📄 Termos de Uso — zAz")
+st.markdown(
+    '<link rel="manifest" href="/manifest.json">',
+    unsafe_allow_html=True
+)
 
-st.markdown("""
-Última atualização: 31/01/2026
 
-Bem-vindo ao zAz.
+# =====================================================
+# SUPABASE
+# =====================================================
+@st.cache_resource
+def conectar():
+    return create_client(
+        st.secrets["SUPABASE_URL"],
+        st.secrets["SUPABASE_KEY"]
+    )
 
-Estes Termos de Uso regulam o acesso e a utilização da plataforma zAz.  
-Ao utilizar o sistema, você declara que leu, compreendeu e concorda integralmente com as condições descritas abaixo.
 
-Se você não concordar com estes termos, não utilize o serviço.
+def validar_usuario(email, senha):
+    supabase = conectar()
 
+    r = (
+        supabase.table("usuarios")
+        .select("*")
+        .eq("email", email)
+        .eq("senha", senha)
+        .execute()
+    )
 
-## 1. Sobre o serviço
+    return len(r.data) > 0
 
-O zAz é uma plataforma online que utiliza inteligência artificial para auxiliar na criação de conteúdo digital, incluindo:
 
-• geração de ideias  
-• headlines  
-• descrições visuais  
-• textos  
-• imagens conceituais  
-• legendas e postagens  
+# =====================================================
+# SESSION
+# =====================================================
+if "logado" not in st.session_state:
+    st.session_state.logado = False
 
-O serviço é fornecido “como está”, podendo sofrer melhorias, alterações ou atualizações a qualquer momento.
 
+# =====================================================
+# LOGIN PROFISSIONAL
+# =====================================================
 
-## 2. Aceitação dos termos
+def criar_usuario(email, senha):
+    supabase = conectar()
+    supabase.table("usuarios").insert({
+        "email": email,
+        "senha": senha
+    }).execute()
 
-Ao criar uma conta ou utilizar o sistema, o usuário concorda automaticamente com:
 
-• estes Termos de Uso  
-• a Política de Privacidade  
+def atualizar_senha(email, senha):
+    supabase = conectar()
+    supabase.table("usuarios").update({
+        "senha": senha
+    }).eq("email", email).execute()
 
-O uso contínuo da plataforma implica aceitação integral das regras aqui descritas.
 
+if not st.session_state.logado:
 
-## 3. Cadastro e conta
+    st.markdown("<br><br>", unsafe_allow_html=True)
 
-Para acessar o sistema, o usuário poderá:
+    tab_login, tab_cadastro, tab_senha = st.tabs(
+        ["🔐 Entrar", "🆕 Criar conta", "♻️ Trocar senha"]
+    )
 
-• criar conta com email e senha  
-• utilizar login via Google  
 
-O usuário é responsável por:
+    # =================================================
+    # LOGIN
+    # =================================================
+    with tab_login:
 
-• manter suas credenciais seguras  
-• não compartilhar sua conta  
-• todas as atividades realizadas em seu login  
+        st.image("assets/logo.png", width=280)
 
-O zAz não se responsabiliza por acessos indevidos causados por negligência do usuário.
+        email = st.text_input("Email", key="login_email")
+        senha = st.text_input("Senha", type="password", key="login_senha")
 
+        if st.button("Entrar", use_container_width=True):
 
-## 4. Uso permitido
+            if validar_usuario(email, senha):
+                st.session_state.logado = True
+                st.rerun()
+            else:
+                st.error("Email ou senha inválidos")
 
-Você concorda em utilizar o zAz apenas para fins legais e éticos.
 
-É proibido:
+    # =================================================
+    # CADASTRO (ACEITE + LINKS)
+    # =================================================
+    with tab_cadastro:
 
-• explorar falhas de segurança  
-• tentar acessar dados de outros usuários  
-• copiar, revender ou redistribuir o sistema  
-• utilizar a plataforma para atividades ilícitas  
-• sobrecarregar ou prejudicar o funcionamento do serviço  
+        email_novo = st.text_input("Email", key="cad_email")
+        senha_nova = st.text_input("Senha", type="password", key="cad_senha")
 
+        st.markdown("---")
 
-## 5. Conteúdo gerado
+        col1, col2 = st.columns([8, 2])
 
-Todo conteúdo criado dentro da plataforma pertence ao usuário.
+        with col1:
+            aceite_termos = st.checkbox("Li e aceito os Termos de Uso")
 
-O zAz não reivindica propriedade sobre textos, imagens ou postagens geradas.
+        with col2:
+            st.page_link("pages/termos.py", label="Ler", icon="📄")
 
-O usuário é integralmente responsável pelo uso do conteúdo produzido.
 
+        col3, col4 = st.columns([8, 2])
 
-## 6. Limitação de responsabilidade
+        with col3:
+            aceite_privacidade = st.checkbox("Li e aceito a Política de Privacidade")
 
-O zAz é uma ferramenta de apoio criativo.
+        with col4:
+            st.page_link("pages/privacidade.py", label="Ler", icon="🔒")
 
-Não garantimos:
 
-• resultados específicos  
-• desempenho comercial  
-• crescimento de seguidores  
-• conversões ou vendas  
+        pode_criar = aceite_termos and aceite_privacidade
 
-O zAz não se responsabiliza por:
+        st.markdown("---")
 
-• prejuízos financeiros  
-• decisões tomadas com base no conteúdo gerado  
-• perdas de dados  
-• indisponibilidades temporárias do sistema  
+        if st.button(
+            "Criar conta",
+            use_container_width=True,
+            disabled=not pode_criar
+        ):
 
+            try:
+                criar_usuario(email_novo, senha_nova)
+                st.success("Conta criada com sucesso. Faça login.")
+            except:
+                st.error("Email já cadastrado.")
 
-## 7. Disponibilidade do serviço
 
-O sistema pode sofrer:
+    # =================================================
+    # TROCAR SENHA
+    # =================================================
+    with tab_senha:
 
-• manutenções  
-• atualizações  
-• instabilidades  
-• interrupções técnicas  
+        email_alt = st.text_input("Email", key="alt_email")
+        senha_alt = st.text_input("Nova senha", type="password", key="alt_senha")
 
-Não garantimos funcionamento ininterrupto ou livre de falhas.
+        if st.button("Atualizar senha", use_container_width=True):
 
+            atualizar_senha(email_alt, senha_alt)
+            st.success("Senha atualizada com sucesso.")
 
-## 8. Propriedade intelectual
 
-Todo o código, design, marca e estrutura do zAz pertencem ao proprietário da plataforma.
+    st.stop()
 
-É proibida a reprodução ou redistribuição sem autorização.
 
+# =====================================================
+# FLUXO DO APP
+# =====================================================
 
-## 9. Privacidade
-
-O tratamento de dados pessoais é realizado conforme descrito na Política de Privacidade do zAz.
-
-
-## 10. Suspensão ou cancelamento
-
-O zAz poderá suspender ou encerrar contas que:
-
-• violem estes termos  
-• utilizem o sistema de forma abusiva  
-• pratiquem atividades ilegais  
-
-
-## 11. Alterações nos termos
-
-Estes termos podem ser atualizados a qualquer momento.
-
-O uso contínuo do sistema após alterações indica concordância com a nova versão.
-
-
-## 12. Contato
-
-Em caso de dúvidas ou suporte:
-
-📧 seuemail@dominio.com
-
-
----
-
-Ao utilizar o zAz, você declara estar de acordo com todos os termos acima.
-""")
+render_etapa_ideias()
+render_etapa_headline()
+render_etapa_conceito()
+render_etapa_imagens()
+render_etapa_postagem()
+render_etapa_historico()
