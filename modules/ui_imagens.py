@@ -2,12 +2,9 @@
 # zAz — MÓDULO 03
 # ETAPA 04 — COLAR IMAGEM (CTRL+V)
 # =====================================================
-# Função:
-# - usuário copia imagem no site externo
-# - cola direto no app (Ctrl+V)
-# - preview imediato
-# - sem upload
-# - independente de outros módulos
+# Regra nova:
+# - só aparece após clicar "Gerar imagens"
+# - controlado por session_state["etapa_4_liberada"]
 # =====================================================
 
 import streamlit as st
@@ -15,6 +12,12 @@ import streamlit.components.v1 as components
 
 
 def render_etapa_imagens():
+
+    # -------------------------------------------------
+    # 🔒 GATE (CORREÇÃO PRINCIPAL)
+    # -------------------------------------------------
+    if not st.session_state.get("etapa_4_liberada"):
+        return
 
     # -------------------------------------------------
     # TÍTULO
