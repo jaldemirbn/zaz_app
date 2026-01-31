@@ -5,12 +5,10 @@
 
 import streamlit as st
 import streamlit.components.v1 as components
-import base64
 
 
 def render_etapa_imagens():
 
-    # 🔒 Gate
     if not st.session_state.get("etapa_4_liberada"):
         return
 
@@ -21,26 +19,42 @@ def render_etapa_imagens():
 
     st.caption("Copie a imagem no site e cole aqui (Ctrl+V).")
 
-    # -------------------------------------------------
-    # HTML que envia imagem para o Python
-    # -------------------------------------------------
     html_code = """
-    <div id="paste-area"
-         tabindex="0"
-         style="
-            border:2px dashed #444;
-            padding:60px;
-            text-align:center;
-            border-radius:12px;
-            color:#aaa;
-            font-size:14px;
-            min-height:850px;
-         ">
-        Clique aqui e pressione CTRL+V para colar a imagem
+    <div style="display:flex; flex-direction:column; gap:14px;">
+
+        <div id="paste-area"
+            tabindex="0"
+            style="
+                border:2px dashed #444;
+                padding:60px;
+                text-align:center;
+                border-radius:12px;
+                color:#aaa;
+                min-height:850px;
+            ">
+            Clique aqui e pressione CTRL+V para colar a imagem
+        </div>
+
+        <button id="download-btn"
+            style="
+                padding:10px;
+                border-radius:8px;
+                border:1px solid #333;
+                background:#111;
+                color:#FF9D28;
+                font-weight:600;
+                cursor:pointer;
+            ">
+            ⬇️ Baixar imagem
+        </button>
+
     </div>
 
     <script>
     const area = document.getElementById("paste-area");
+    const downloadBtn = document.getElementById("download-btn");
+
+    let currentBlob = null;
 
     area.focus();
 
@@ -53,46 +67,44 @@ def render_etapa_imagens():
             if (item.type.indexOf("image") !== -1) {
 
                 const blob = item.getAsFile();
+                currentBlob = blob;
+
                 const reader = new FileReader();
 
                 reader.onload = function(event) {
 
-                    const base64 = event.target.result;
-
                     area.innerHTML = "";
 
                     const img = document.createElement("img");
-                    img.src = base64;
+                    img.src = event.target.result;
                     img.style.maxWidth = "100%";
                     img.style.borderRadius = "12px";
 
                     area.appendChild(img);
-
-                    // 🔥 envia para Streamlit
-                    Streamlit.setComponentValue(base64);
                 };
 
                 reader.readAsDataURL(blob);
             }
         }
     });
+
+    // 🔥 DOWNLOAD CONFIÁVEL (Blob → URL)
+    downloadBtn.onclick = function() {
+
+        if (!currentBlob) return;
+
+        const url = URL.createObjectURL(currentBlob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "post.png";
+        document.body.appendChild(a);
+        a.click();
+
+        URL.revokeObjectURL(url);
+        a.remove();
+    };
     </script>
     """
 
-    img_base64 = components.html(html_code, height=1000)
-
-    # -------------------------------------------------
-    # PYTHON RECEBE E LIBERA DOWNLOAD
-    # -------------------------------------------------
-    if img_base64:
-
-        header, encoded = img_base64.split(",", 1)
-        img_bytes = base64.b64decode(encoded)
-
-        st.download_button(
-            label="⬇️ Baixar imagem",
-            data=img_bytes,
-            file_name="post.png",
-            mime="image/png",
-            use_container_width=True
-        )
+    components.html(html_code, height=1000)
