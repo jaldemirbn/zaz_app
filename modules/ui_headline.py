@@ -65,17 +65,29 @@ def render_etapa_headline():
 
 
     # -------------------------------------------------
-    # LISTA NORMAL (todas visíveis)
+    # LISTA
     # -------------------------------------------------
     if "headlines" in st.session_state:
 
-        escolha = st.radio(
-            "Escolha a headline:",
-            st.session_state["headlines"],
-            key="radio_headline"
-        )
+        headlines = st.session_state["headlines"]
+        escolhida = st.session_state.get("headline_escolhida")
 
-        st.session_state["headline_escolhida"] = escolha
+
+        # 🔹 SE NÃO ESCOLHEU → TODAS DESMARCADAS (checkbox)
+        if not escolhida:
+
+            for i, h in enumerate(headlines):
+
+                if st.checkbox(h, key=f"chk_head_{i}"):
+
+                    st.session_state["headline_escolhida"] = h
+                    st.rerun()
+
+
+        # 🔹 SE ESCOLHEU → MOSTRA SÓ A ESCOLHIDA
+        else:
+
+            st.checkbox(escolhida, value=True, disabled=True)
 
 
         # -------------------------------------------------
@@ -87,8 +99,7 @@ def render_etapa_headline():
 
             with col1:
                 if st.button("🔁 Escolher outra headline", use_container_width=True):
-                    del st.session_state["headlines"]
-                    del st.session_state["headline_escolhida"]
+                    st.session_state["headline_escolhida"] = None
                     st.rerun()
 
             with col2:
