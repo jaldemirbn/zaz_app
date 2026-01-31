@@ -32,54 +32,57 @@ def render_etapa_imagens():
     # -------------------------------------------------
     # ÁREA DE COLAGEM
     # -------------------------------------------------
-    components.html(
-        """
-        <div id="paste-area"
-             tabindex="0"
-             style="
-                border:2px dashed #444;
-                padding:50px;
-                text-align:center;
-                border-radius:10px;
-                color:#aaa;
-                font-size:14px;
-             ">
-            Clique aqui e pressione CTRL+V para colar a imagem
-        </div>
+   components.html(
+    """
+    <div id="paste-area"
+         tabindex="0"
+         style="
+            border:2px dashed #444;
+            padding:50px;
+            text-align:center;
+            border-radius:10px;
+            color:#aaa;
+            font-size:14px;
+         ">
+        Clique aqui e pressione CTRL+V para colar a imagem
+    </div>
 
-        <script>
-        const area = document.getElementById("paste-area");
+    <script>
+    const area = document.getElementById("paste-area");
 
-        area.focus();
+    area.focus();
 
-        area.addEventListener("paste", (e) => {
+    area.addEventListener("paste", (e) => {
 
-            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
 
-            for (const item of items) {
+        for (const item of items) {
 
-                if (item.type.indexOf("image") !== -1) {
+            if (item.type.indexOf("image") !== -1) {
 
-                    const blob = item.getAsFile();
-                    const reader = new FileReader();
+                const blob = item.getAsFile();
+                const reader = new FileReader();
 
-                    reader.onload = function(event) {
+                reader.onload = function(event) {
 
-                        area.innerHTML = "";
+                    area.innerHTML = "";
 
-                        const img = document.createElement("img");
-                        img.src = event.target.result;
-                        img.style.width = "100%";
-                        img.style.borderRadius = "8px";
+                    const img = document.createElement("img");
+                    img.src = event.target.result;
 
-                        area.appendChild(img);
-                    };
+                    img.style.maxWidth = "100%";
+                    img.style.height = "auto";
+                    img.style.objectFit = "contain";
+                    img.style.borderRadius = "8px";
 
-                    reader.readAsDataURL(blob);
-                }
+                    area.appendChild(img);
+                };
+
+                reader.readAsDataURL(blob);
             }
-        });
-        </script>
-        """,
-        height=260
-    )
+        }
+    });
+    </script>
+    """,
+    height=600
+)
