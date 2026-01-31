@@ -5,7 +5,8 @@ from modules.ui_ideias import render_etapa_ideias
 from modules.ui_headline import render_etapa_headline
 from modules.ui_conceito import render_etapa_conceito
 from modules.ui_imagens import render_etapa_imagens
-from modules.ui_postagem import render_etapa_postagem   # 👈 ADICIONADO
+from modules.ui_postagem import render_etapa_postagem
+from modules.ui_historico import render_etapa_historico   # 👈 ADICIONADO
 
 
 # =====================================================
@@ -51,7 +52,7 @@ if "logado" not in st.session_state:
 
 
 # =====================================================
-# LOGIN (PORTÃO DO APP)
+# LOGIN
 # =====================================================
 if not st.session_state.logado:
 
@@ -83,11 +84,12 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# FLUXO DO APP
+# FLUXO FINAL
 # =====================================================
 
-render_etapa_ideias()      # 01
-render_etapa_headline()   # 02
-render_etapa_conceito()   # 03
-render_etapa_imagens()    # 04
-render_etapa_postagem()   # 05 👈 POSTAGEM
+render_etapa_ideias()        # 01
+render_etapa_headline()     # 02
+render_etapa_conceito()     # 03
+render_etapa_imagens()      # 04
+render_etapa_postagem()     # 05
+render_etapa_historico()    # 06 👈 HISTÓRICO
