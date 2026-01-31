@@ -3,7 +3,9 @@ from supabase import create_client
 
 from modules.ui_ideias import render_etapa_ideias
 from modules.ui_headline import render_etapa_headline
-from modules.ui_conceito import render_etapa_conceito   # 👈 ADICIONADO
+from modules.ui_conceito import render_etapa_conceito
+from modules.ui_imagens import render_etapa_imagens
+
 
 # =====================================================
 # CONFIG
@@ -48,7 +50,7 @@ if "logado" not in st.session_state:
 
 
 # =====================================================
-# LOGIN PAGE (BONITA)
+# LOGIN (PORTÃO DO APP)
 # =====================================================
 if not st.session_state.logado:
 
@@ -60,26 +62,30 @@ if not st.session_state.logado:
 
         st.image("assets/logo.png", width=450)
 
-        st.markdown("<br>", unsafe_allow_html=True)
-
         st.markdown(
             "<h2 style='text-align:center; color:#ff9d28;'>Entrar</h2>",
             unsafe_allow_html=True
         )
 
-        st.markdown("<br>", unsafe_allow_html=True)
-
         email = st.text_input("Email")
         senha = st.text_input("Senha", type="password")
 
         if st.button("Entrar", use_container_width=True):
+
             if validar_usuario(email, senha):
                 st.session_state.logado = True
                 st.rerun()
             else:
                 st.error("Email ou senha inválidos")
 
+    st.stop()   # 🔒 BLOQUEIA O RESTO DO APP
+
 
 # =====================================================
-# FLUXO APP (NOVA ORDEM)
-# ==============================
+# FLUXO DO APP (SÓ RODA SE LOGADO)
+# =====================================================
+
+render_etapa_ideias()      # 01
+render_etapa_headline()   # 02
+render_etapa_conceito()   # 03
+render_etapa_imagens()    # 04
