@@ -9,9 +9,16 @@ import streamlit.components.v1 as components
 
 def render_etapa_imagens():
 
-    # 🔒 Gate: só aparece após clicar gerar imagens
-    if not st.session_state.get("etapa_4_liberada"):
+    # -------------------------------------------------
+    # 🔒 Estado padrão (garantia de bloqueio)
+    # -------------------------------------------------
+    if "etapa_4_liberada" not in st.session_state:
+        st.session_state["etapa_4_liberada"] = False
+
+    # 🔒 Gate: só aparece após clicar "Colar imagem"
+    if not st.session_state["etapa_4_liberada"]:
         return
+
 
     # -------------------------------------------------
     # Título
@@ -22,6 +29,7 @@ def render_etapa_imagens():
     )
 
     st.caption("Copie a imagem no site e cole aqui (Ctrl+V).")
+
 
     # -------------------------------------------------
     # Área de colagem
