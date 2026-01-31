@@ -7,14 +7,14 @@ from modules.email_service import enviar_email_confirmacao
 
 
 # =====================================
-# utils
+# VALIDAÇÃO
 # =====================================
 def email_valido(email: str) -> bool:
     return bool(re.match(r"^[^@]+@[^@]+\.[^@]+$", email))
 
 
 # =====================================
-# render
+# RENDER
 # =====================================
 def render_trocar_senha(conectar):
 
@@ -35,29 +35,40 @@ def render_trocar_senha(conectar):
 
         supabase = conectar()
 
-        # verifica se existe usuário
-        r = supabase.table("usuarios").select("*").eq("email", email).execute()
+        # ---------------------------------
+        # verifica se usuário existe
+        # ---------------------------------
+        r = (
+            supabase
+            .table("usuarios")
+            .select("*")
+            .eq("email", email)
+            .execute()
+        )
 
         if len(r.data) == 0:
             st.success("Se o email existir, você receberá um link.")
             return
 
-        # gera token
+        # ---------------------------------
+        # gera token seguro
+        # ---------------------------------
         token = secrets.token_urlsafe(32)
 
         expira = datetime.utcnow() + timedelta(minutes=30)
 
-        # salva no banco
+        # ---------------------------------
+        # salva no banco (CORRIGIDO: timestamp puro)
+        # ---------------------------------
         supabase.table("usuarios").update({
             "token_reset": token,
-            "token_expira": expira.isoformat()
+            "token_expira": expira
         }).eq("email", email).execute()
 
-        # cria link
+        # ---------------------------------
+        # cria link mágico
+        # ---------------------------------
         base_url = st.get_option("browser.serverAddress") or ""
         link = f"{base_url}?reset={token}"
 
-        # envia email
-        enviar_email_confirmacao(email, link)
-
-        st.success("Email enviado. Verifique sua caixa de entrada.")
+        # ------------------------
