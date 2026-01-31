@@ -42,7 +42,11 @@ def render_etapa_headline():
     if not st.session_state.get("etapa_4_liberada"):
         return
 
-    st.markdown("### 05 • Headline")
+    # ✅ TÍTULO LARANJA
+    st.markdown(
+        "<h3 style='color:#FF9D28;'>05 • Headline</h3>",
+        unsafe_allow_html=True
+    )
 
     tema = st.session_state.get("tema")
     ideias = st.session_state.get("ideias")
@@ -76,20 +80,18 @@ def render_etapa_headline():
 
 
         # -------------------------------------------------
-        # BOTÕES (apenas após escolha)
+        # BOTÕES
         # -------------------------------------------------
         if st.session_state.get("headline_escolhida"):
 
             col1, col2 = st.columns(2)
 
-            # reset
             with col1:
                 if st.button("🔁 Escolher outra headline", use_container_width=True):
                     del st.session_state["headlines"]
                     del st.session_state["headline_escolhida"]
                     st.rerun()
 
-            # novo botão solicitado
             with col2:
                 if st.button(
                     "Criar descrição do post",
