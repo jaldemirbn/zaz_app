@@ -1,11 +1,6 @@
 # =====================================================
 # zAz — MÓDULO 04
-# ETAPA HEADLINE (RED LINE)
-# =====================================================
-# Função:
-# - gerar headlines curtas com IA
-# - usuário escolhe 1
-# - salvar no session_state
+# ETAPA HEADLINE
 # =====================================================
 
 import streamlit as st
@@ -49,25 +44,22 @@ apenas uma lista numerada com 5 headlines.
 # -------------------------------------------------
 def render_etapa_headline():
 
-    # só aparece após imagem escolhida
-    if not st.session_state.get("imagem_escolhida"):
+    # aparece após etapa 4
+    if not st.session_state.get("etapa_4_liberada"):
         return
 
+    # -------------------------------------------------
+    # TÍTULO
+    # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28; margin-top:24px;'>05. Headline</h3>",
         unsafe_allow_html=True
     )
 
-    if "headlines" not in st.session_state:
-        st.session_state.headlines = []
-
-    if "headline_escolhida" not in st.session_state:
-        st.session_state.headline_escolhida = None
-
     # -------------------------------------------------
-    # GERAR
+    # BOTÃO (AGORA LOGO ABAIXO DO TÍTULO)
     # -------------------------------------------------
-    if st.button("Gerar headlines", use_container_width=True):
+    if st.button("Gerar Headline", use_container_width=True):
 
         base = st.session_state.get("conceito_visual", "")
 
@@ -76,6 +68,15 @@ def render_etapa_headline():
 
         st.session_state.headline_escolhida = None
         st.rerun()
+
+    # -------------------------------------------------
+    # STATES
+    # -------------------------------------------------
+    if "headlines" not in st.session_state:
+        st.session_state.headlines = []
+
+    if "headline_escolhida" not in st.session_state:
+        st.session_state.headline_escolhida = None
 
     # -------------------------------------------------
     # LISTA
@@ -91,6 +92,8 @@ def render_etapa_headline():
         if escolha:
             st.session_state.headline_escolhida = escolha
 
-    # preview
+    # -------------------------------------------------
+    # PREVIEW
+    # -------------------------------------------------
     if st.session_state.headline_escolhida:
         st.success(f"Selecionada: {st.session_state.headline_escolhida}")
