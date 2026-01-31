@@ -1,5 +1,6 @@
 import streamlit as st
 from modules.ia_engine import gerar_texto
+from st_copy_to_clipboard import st_copy_to_clipboard
 
 
 # -------------------------------------------------
@@ -29,7 +30,7 @@ Parágrafo único.
 
 
 # -------------------------------------------------
-# RENDER PRINCIPAL
+# RENDER
 # -------------------------------------------------
 def render_etapa_conceito():
 
@@ -53,7 +54,7 @@ def render_etapa_conceito():
     st.info(st.session_state.conceito_visual)
 
     # -------------------------------------------------
-    # COLUNAS (ESCOPO CORRETO)
+    # BOTÕES (layout original preservado)
     # -------------------------------------------------
     col1, col2, col3 = st.columns(3)
 
@@ -65,35 +66,15 @@ def render_etapa_conceito():
             )
             st.rerun()
 
-    # 📋 Copiar
+    # ✅ 📋 Copiar (FUNCIONA DE VERDADE)
     with col2:
-        if st.button("📋 Copiar", use_container_width=True):
-            st.markdown(
-                f"""
-                <script>
-                navigator.clipboard.writeText(`{st.session_state.conceito_visual}`);
-                </script>
-                """,
-                unsafe_allow_html=True
-            )
-            st.toast("Copiado")
+        st_copy_to_clipboard(
+            st.session_state.conceito_visual,
+            "📋 Copiar"
+        )
 
-    # 🎨 Gerar imagens (ALINHADO + COR)
+    # 🎨 Link externo
     with col3:
-
-        st.markdown("""
-            <style>
-            div[data-testid="stLinkButton"] a {
-                display:flex !important;
-                align-items:center !important;
-                justify-content:center !important;
-                height:38px !important;
-                color:#FF9D28 !important;
-                font-weight:600;
-            }
-            </style>
-        """, unsafe_allow_html=True)
-
         st.link_button(
             "🎨 Gerar imagens",
             "https://labs.google/fx/tools/image-fx",
