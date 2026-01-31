@@ -29,7 +29,6 @@ Regras:
 - frase única
 - impacto forte
 - linguagem direta
-- sem explicações
 
 Retorne lista numerada com 3 headlines.
 """
@@ -54,9 +53,6 @@ def render_etapa_headline():
         unsafe_allow_html=True
     )
 
-    # -------------------------------------------------
-    # STATES
-    # -------------------------------------------------
     if "headlines" not in st.session_state:
         st.session_state.headlines = []
 
@@ -64,7 +60,7 @@ def render_etapa_headline():
         st.session_state.headline_escolhida = None
 
     # -------------------------------------------------
-    # BOTÃO GERAR
+    # GERAR
     # -------------------------------------------------
     if st.button("Gerar Headline", use_container_width=True):
 
@@ -83,7 +79,7 @@ def render_etapa_headline():
         st.rerun()
 
     # -------------------------------------------------
-    # FILTRAGEM AUTOMÁTICA (AQUI ESTÁ O SEGREDO)
+    # FILTRAGEM
     # -------------------------------------------------
     opcoes = st.session_state.headlines
 
@@ -91,7 +87,7 @@ def render_etapa_headline():
         opcoes = [st.session_state.headline_escolhida]
 
     # -------------------------------------------------
-    # RADIO (layout nunca muda)
+    # RADIO
     # -------------------------------------------------
     if opcoes:
 
@@ -101,5 +97,7 @@ def render_etapa_headline():
             index=0 if st.session_state.headline_escolhida else None
         )
 
-        if escolha:
+        # 🔥 AQUI É O SEGREDO (rerun imediato)
+        if escolha and escolha != st.session_state.headline_escolhida:
             st.session_state.headline_escolhida = escolha
+            st.rerun()
