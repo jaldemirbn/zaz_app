@@ -76,7 +76,7 @@ def render_etapa_post():
 
 
         # -------------------------------------------------
-        # NOVOS BOTÕES (lado a lado)
+        # BOTÕES LADO A LADO
         # -------------------------------------------------
 
         col1, col2 = st.columns(2)
@@ -86,5 +86,5 @@ def render_etapa_post():
                 del st.session_state["headline_post"]
 
         with col2:
-            if st.button("📝 Criar descrição do post", use_container_width=True):
+            if st.button("Criar descrição do post", use_container_width=True):
                 st.session_state["criar_descricao_post"] = True
