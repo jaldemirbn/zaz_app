@@ -20,13 +20,11 @@ Tema:
 Ideias:
 {ideias}
 
-Crie 5 headlines curtas, fortes e chamativas em português.
-
+Crie 5 headlines curtas e fortes em português.
 Retorne uma por linha.
 """
 
     resposta = gerar_texto(prompt)
-
     return [h.strip() for h in resposta.split("\n") if h.strip()]
 
 
@@ -35,7 +33,6 @@ Retorne uma por linha.
 # -------------------------------------------------
 def render_etapa_headline():
 
-    # 🔒 GATE CORRIGIDO (ANTES era etapa_4_liberada)
     if not st.session_state.get("modo_filtrado"):
         return
 
@@ -59,16 +56,31 @@ def render_etapa_headline():
 
 
     # -------------------------------------------------
-    # LISTA NORMAL
+    # LISTA (SOMENTE AJUSTE PEDIDO)
     # -------------------------------------------------
     if "headlines" in st.session_state:
 
+        headlines = st.session_state["headlines"]
+        escolhida = st.session_state.get("headline_escolhida")
+
+        # 🔹 se já escolheu → mostra só ela
+        opcoes = [escolhida] if escolhida else headlines
+
         escolha = st.radio(
             "Escolha a headline:",
-            st.session_state["headlines"],
-            index=None,
+            opcoes,
+            index=0 if escolhida else None,
             key="radio_headline"
         )
 
         if escolha:
             st.session_state["headline_escolhida"] = escolha
+
+
+        # -------------------------------------------------
+        # BOTÃO RESET
+        # -------------------------------------------------
+        if escolhida:
+            if st.button("🔁 Escolher outra headline", use_container_width=True):
+                st.session_state["headline_escolhida"] = None
+                st.rerun()
