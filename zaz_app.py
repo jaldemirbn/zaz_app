@@ -82,8 +82,7 @@ if not st.session_state.logado:
         render_cadastro(criar_usuario)
 
     with tab_senha:
-        # 🔥 CORREÇÃO AQUI (SEM ARGUMENTOS)
-       render_trocar_senha(conectar)
+        render_trocar_senha(conectar)
 
     st.stop()
 
