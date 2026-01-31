@@ -36,7 +36,7 @@ def render_etapa_headline():
         return
 
     st.markdown(
-        "<h3 style='color:#FF9D28;'>05 • Headline</h3>",
+        "<h3 style='color:#FF9D28;'>05. Headline</h3>",
         unsafe_allow_html=True
     )
 
