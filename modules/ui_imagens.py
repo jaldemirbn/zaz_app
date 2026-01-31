@@ -24,33 +24,60 @@ def render_etapa_imagens():
     st.caption("Copie a imagem no site e cole aqui (Ctrl+V).")
 
     # -------------------------------------------------
-    # HTML + JS
+    # Área de colagem (AUMENTADA)
     # -------------------------------------------------
     html_code = """
-    <div style="display:flex; flex-direction:column; gap:12px;">
+    <div id="paste-area"
+         tabindex="0"
+         style="
+            border:2px dashed #444;
+            padding:60px;
+            text-align:center;
+            border-radius:12px;
+            color:#aaa;
+            font-size:14px;
+            min-height:850px;
+         ">
+        Clique aqui e pressione CTRL+V para colar a imagem
+    </div>
 
-        <div id="paste-area"
-            tabindex="0"
-            style="
-                border:2px dashed #444;
-                padding:60px;
-                text-align:center;
-                border-radius:12px;
-                color:#aaa;
-                font-size:14px;
-                min-height:850px;
-            ">
-            Clique aqui e pressione CTRL+V para colar a imagem
-        </div>
+    <script>
+    const area = document.getElementById("paste-area");
 
-        <button id="download-btn"
-            style="
-                padding:10px;
-                border-radius:8px;
-                border:1px solid #333;
-                background:#111;
-                color:#FF9D28;
-                font-weight:600;
-                cursor:pointer;
-            ">
-            ⬇️ Baixar imagem
+    area.focus();
+
+    area.addEventListener("paste", (e) => {
+
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+
+        for (const item of items) {
+
+            if (item.type.indexOf("image") !== -1) {
+
+                const blob = item.getAsFile();
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+
+                    area.innerHTML = "";
+
+                    const img = document.createElement("img");
+                    img.src = event.target.result;
+
+                    img.style.maxWidth = "100%";
+                    img.style.height = "auto";
+                    img.style.objectFit = "contain";
+                    img.style.borderRadius = "12px";
+
+                    area.appendChild(img);
+                };
+
+                reader.readAsDataURL(blob);
+            }
+        }
+    });
+    </script>
+    """
+
+    # 🔥 altura maior aqui
+    components.html(html_code, height=1000)
