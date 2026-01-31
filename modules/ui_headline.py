@@ -15,9 +15,9 @@ def _gerar_headlines(tema: str, ideias: list[str], conceito: str):
     ideias_txt = "\n".join(ideias)
 
     prompt = f"""
-Você é um copywriter sênior de marketing.
+Você é um copywriter sênior.
 
-Crie 3 headlines altamente persuasivas para Instagram.
+Crie 3 headlines persuasivas para Instagram.
 
 Contexto:
 Tema: {tema}
@@ -79,25 +79,29 @@ def render_etapa_headline():
         st.rerun()
 
     # -------------------------------------------------
-    # FILTRAGEM
+    # ANTES DE ESCOLHER → LISTA NORMAL
     # -------------------------------------------------
-    opcoes = st.session_state.headlines
-
-    if st.session_state.headline_escolhida:
-        opcoes = [st.session_state.headline_escolhida]
-
-    # -------------------------------------------------
-    # RADIO
-    # -------------------------------------------------
-    if opcoes:
+    if st.session_state.headline_escolhida is None:
 
         escolha = st.radio(
             "",
-            opcoes,
-            index=0 if st.session_state.headline_escolhida else None
+            st.session_state.headlines,
+            index=None,
+            key="headline_radio"   # ← key 1
         )
 
-        # 🔥 AQUI É O SEGREDO (rerun imediato)
-        if escolha and escolha != st.session_state.headline_escolhida:
+        if escolha:
             st.session_state.headline_escolhida = escolha
             st.rerun()
+
+    # -------------------------------------------------
+    # DEPOIS DE ESCOLHER → SOMENTE 1 VISÍVEL
+    # -------------------------------------------------
+    else:
+
+        st.radio(
+            "",
+            [st.session_state.headline_escolhida],
+            index=0,
+            key="headline_radio_locked"  # ← key 2 (novo componente)
+        )
