@@ -83,7 +83,7 @@ if not st.session_state.logado:
 
     with tab_senha:
         # 🔥 CORREÇÃO AQUI (SEM ARGUMENTOS)
-        render_trocar_senha()
+       render_trocar_senha(conectar)
 
     st.stop()
 
@@ -97,5 +97,5 @@ render_etapa_conceito()
 render_etapa_imagens()
 render_etapa_postagem()
 render_etapa_historico()
-render_trocar_senha(conectar)
+
 
