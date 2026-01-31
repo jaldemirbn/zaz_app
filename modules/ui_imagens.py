@@ -1,5 +1,5 @@
 # =====================================================
-# zAz — MÓDULO 03
+# zAz — MÓDULO IMAGEM
 # ETAPA 04 — COLAR IMAGEM (CTRL+V)
 # =====================================================
 
@@ -9,37 +9,34 @@ import streamlit.components.v1 as components
 
 def render_etapa_imagens():
 
-    # 🔒 BLOQUEIO FORÇADO (sempre começa escondido)
-    liberada = st.session_state.get("etapa_4_liberada", False)
-
-    if liberada is not True:
+    # 🔒 Gate
+    if not st.session_state.get("etapa_4_liberada"):
         return
-
 
     # -------------------------------------------------
     # Título
     # -------------------------------------------------
     st.markdown(
-        "<h3 style='color:#FF9D28; margin-top:24px;'>04. Colar imagem</h3>",
+        "<h3 style='color:#FF9D28; margin-top:0;'>04. Colar imagem</h3>",
         unsafe_allow_html=True
     )
 
     st.caption("Copie a imagem no site e cole aqui (Ctrl+V).")
 
-
     # -------------------------------------------------
-    # Área de colagem
+    # Área de colagem (AUMENTADA)
     # -------------------------------------------------
     html_code = """
     <div id="paste-area"
          tabindex="0"
          style="
             border:2px dashed #444;
-            padding:50px;
+            padding:60px;
             text-align:center;
-            border-radius:10px;
+            border-radius:12px;
             color:#aaa;
             font-size:14px;
+            min-height:850px;
          ">
         Clique aqui e pressione CTRL+V para colar a imagem
     </div>
@@ -70,7 +67,7 @@ def render_etapa_imagens():
                     img.style.maxWidth = "100%";
                     img.style.height = "auto";
                     img.style.objectFit = "contain";
-                    img.style.borderRadius = "8px";
+                    img.style.borderRadius = "12px";
 
                     area.appendChild(img);
                 };
@@ -82,4 +79,5 @@ def render_etapa_imagens():
     </script>
     """
 
-    components.html(html_code, height=600)
+    # 🔥 altura maior aqui
+    components.html(html_code, height=1000)
