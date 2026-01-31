@@ -97,3 +97,5 @@ render_etapa_conceito()
 render_etapa_imagens()
 render_etapa_postagem()
 render_etapa_historico()
+render_trocar_senha(conectar)
+
