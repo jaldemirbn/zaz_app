@@ -1,35 +1,23 @@
-# =====================================================
-# zAz — MÓDULO 03
-# ETAPA IMAGENS (APENAS EXIBIÇÃO)
-# =====================================================
-# Regra:
-# - NÃO gera imagens aqui
-# - Apenas exibe imagens criadas no módulo 02
-# - Só aparece após clicar "Gerar imagens"
-# =====================================================
-
 import streamlit as st
 from PIL import Image
 
-
-# =====================================================
-# RENDER
-# =====================================================
 
 def render_etapa_imagens():
 
     imagens = st.session_state.get("imagens_geradas")
 
-    # 🔒 GATE PRINCIPAL
-    # se não existem imagens → não renderiza nada
+    # 🔒 gate
     if not imagens:
         return
 
-
-    # segurança extra
     if not isinstance(imagens[0], Image.Image):
         return
 
+    # -------------------------------------------------
+    # AUTO-SELEÇÃO NA PRIMEIRA EXECUÇÃO (NOVO)
+    # -------------------------------------------------
+    if "imagem_escolhida" not in st.session_state or st.session_state.imagem_escolhida is None:
+        st.session_state.imagem_escolhida = imagens[0]
 
     # -------------------------------------------------
     # TÍTULO
@@ -43,9 +31,8 @@ def render_etapa_imagens():
         unsafe_allow_html=True
     )
 
-
     # -------------------------------------------------
-    # GRID 3 COLUNAS
+    # GRID
     # -------------------------------------------------
     cols = st.columns(3)
 
@@ -53,17 +40,15 @@ def render_etapa_imagens():
         with cols[i]:
             st.image(img, use_column_width=True)
 
-
     # -------------------------------------------------
-    # SELEÇÃO (SEM PRÉ-SELEÇÃO)
+    # SELEÇÃO
     # -------------------------------------------------
     escolha = st.radio(
         "Escolha:",
         list(range(len(imagens))),
         horizontal=True,
-        index=None,
+        index=0,  # ← primeira já marcada
         format_func=lambda x: f"Imagem {x+1}"
     )
 
-    if escolha is not None:
-        st.session_state.imagem_escolhida = imagens[escolha]
+    st.session_state.imagem_escolhida = imagens[escolha]
