@@ -143,4 +143,4 @@ if not st.session_state.logado:
         ok = render_cadastro(criar_usuario)
 
         if ok:
-            st.success("Conta criada. Verifique seu emai
+            st.success("Conta criada. Verifique seu emai")
