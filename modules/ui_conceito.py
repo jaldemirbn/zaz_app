@@ -3,7 +3,7 @@ from modules.ia_engine import gerar_texto
 
 
 # -------------------------------------------------
-# IA — GERAR CONCEITO (PROMPT DETALHADO + 1:1)
+# IA — GERAR CONCEITO (DETALHADO + FOTO + 1:1)
 # -------------------------------------------------
 def _gerar_conceito(ideias: list[str]):
 
@@ -15,27 +15,32 @@ Crie a descrição de UMA IMAGEM FOTOGRÁFICA estática, extremamente detalhada 
 Ideias base:
 {texto}
 
-Diretrizes:
-- foto realista profissional
+Diretrizes obrigatórias:
+- foto profissional (não é filme, não é pôster, não é capa)
+- aparência natural e realista
 - alta nitidez
-- texturas e detalhes ricos
-- luz, sombras, profundidade, cores naturais
-- composição fotográfica forte
-- NÃO é filme, NÃO é pôster, NÃO é capa
+- iluminação bem definida
+- texturas visíveis
+- profundidade de campo realista
+- descrição rica de ambiente, luz, sombras, cores, materiais e superfícies
+- composição fotográfica equilibrada
+- objeto principal centralizado
 
 Formato obrigatório:
 - proporção 1:1
 - imagem quadrada
-- feed Instagram
+- otimizada para feed do Instagram
 
 Proibido:
 - texto
 - letras
-- logos
+- tipografia
+- logotipos
 - marcas d’água
-- narrativa
+- narrativa cinematográfica
 
-Saída: apenas a descrição visual detalhada em um único parágrafo.
+Saída:
+Apenas a descrição visual detalhada da imagem em um único parágrafo.
 """
 
     return gerar_texto(prompt).strip()
@@ -58,6 +63,9 @@ def render_etapa_conceito():
                 st.session_state.ideias
             )
 
+    # -------------------------------------------------
+    # TÍTULO
+    # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28;'>03. Conceito visual</h3>",
         unsafe_allow_html=True
@@ -65,11 +73,13 @@ def render_etapa_conceito():
 
     st.info(st.session_state.conceito_visual)
 
-    st.caption("Copie o texto manualmente (Ctrl+C) e gere a imagem no site.")
+    st.caption("Copie o texto (Ctrl+C) e gere a imagem no site.")
 
     col1, col2, col3 = st.columns(3)
 
+    # -------------------------------------------------
     # 🔁 Novo conceito
+    # -------------------------------------------------
     with col1:
         if st.button("🔁 Novo conceito", use_container_width=True):
             st.session_state.conceito_visual = _gerar_conceito(
@@ -82,24 +92,23 @@ def render_etapa_conceito():
         st.empty()
 
     # -------------------------------------------------
-    # 🎨 GERAR IMAGENS (PADRÃO STREAMLIT + COR)
+    # 🎨 GERAR IMAGENS (PADRÃO STREAMLIT + TEXTO LARANJA)
     # -------------------------------------------------
     with col3:
 
         st.markdown("""
         <style>
-        div[data-testid="stLinkButton"] a {
-            background-color:#ff9d28 !important;
-            color:black !important;
-            font-weight:600 !important;
-            text-align:center !important;
+        div.stButton > button {
+            color:#FF9D28 !important;
+            font-weight:600;
         }
         </style>
         """, unsafe_allow_html=True)
 
-        if st.link_button(
-            "🎨 Gerar imagens",
-            "https://labs.google/fx/tools/image-fx",
-            use_container_width=True
-        ):
+        if st.button("🎨 Gerar imagens", use_container_width=True):
             st.session_state["etapa_4_liberada"] = True
+
+            st.markdown(
+                '<meta http-equiv="refresh" content="0; url=https://labs.google/fx/tools/image-fx">',
+                unsafe_allow_html=True
+            )
