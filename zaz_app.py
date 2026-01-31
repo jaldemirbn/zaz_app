@@ -1,9 +1,10 @@
 # =====================================================
-# zAz — ORQUESTRADOR (VERSÃO FINAL ESTÁVEL)
+# zAz — ORQUESTRADOR (VERSÃO FINAL ESTÁVEL + EMAIL)
 # =====================================================
 
 import streamlit as st
 import uuid
+import requests
 from supabase import create_client
 
 from modules.ui_login import render_login
@@ -40,6 +41,29 @@ def conectar():
 
 
 # =====================================================
+# EMAIL (RESEND)
+# =====================================================
+def enviar_email_confirmacao(email, link):
+
+    requests.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {st.secrets['RESEND_API_KEY']}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "from": "zAz <no-reply@seudominio.com>",
+            "to": [email],
+            "subject": "Confirme sua conta",
+            "html": f"""
+            Clique para confirmar sua conta:<br><br>
+            <a href="{link}">{link}</a>
+            """
+        }
+    )
+
+
+# =====================================================
 # AUTH HELPERS
 # =====================================================
 def validar_usuario(email, senha):
@@ -58,7 +82,7 @@ def validar_usuario(email, senha):
 
 
 # =====================================================
-# 🔥 CRIAR USUÁRIO (DEBUG REAL - SEM TRY/EXCEPT)
+# 🔥 CRIAR USUÁRIO + ENVIO EMAIL
 # =====================================================
 def criar_usuario(email, senha):
 
@@ -73,12 +97,14 @@ def criar_usuario(email, senha):
         "token_confirmacao": token
     }
 
-    print("CRIAR USUARIO INICIO")
-    print("DADOS:", dados)
+    # INSERT
+    supabase.table("usuarios").insert(dados).execute()
 
-    response = supabase.table("usuarios").insert(dados).execute()
+    # LINK DE CONFIRMAÇÃO
+    link = f"https://SEU_APP.streamlit.app/?token={token}"
 
-    print("RESULTADO:", response)
+    # ENVIA EMAIL
+    enviar_email_confirmacao(email, link)
 
     return True
 
@@ -117,20 +143,4 @@ if not st.session_state.logado:
         ok = render_cadastro(criar_usuario)
 
         if ok:
-            st.success("Conta criada. Verifique seu email para confirmar.")
-
-    with tab_senha:
-        render_trocar_senha(atualizar_senha)
-
-    st.stop()
-
-
-# =====================================================
-# APP FLOW
-# =====================================================
-render_etapa_ideias()
-render_etapa_headline()
-render_etapa_conceito()
-render_etapa_imagens()
-render_etapa_postagem()
-render_etapa_historico()
+            st.success("Conta criada. Verifique seu emai
