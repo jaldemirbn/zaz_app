@@ -22,11 +22,6 @@ st.set_page_config(
     page_icon="🚀"
 )
 
-st.markdown(
-    '<link rel="manifest" href="/manifest.json">',
-    unsafe_allow_html=True
-)
-
 
 # =====================================================
 # SUPABASE
@@ -40,16 +35,14 @@ def conectar():
 
 
 def validar_usuario(email, senha):
-    supabase = conectar()
-
     r = (
-        supabase.table("usuarios")
+        conectar()
+        .table("usuarios")
         .select("*")
         .eq("email", email)
         .eq("senha", senha)
         .execute()
     )
-
     return len(r.data) > 0
 
 
@@ -72,15 +65,9 @@ def atualizar_senha(email, senha):
 if "logado" not in st.session_state:
     st.session_state.logado = False
 
-if "leu_termos" not in st.session_state:
-    st.session_state.leu_termos = False
-
-if "leu_privacidade" not in st.session_state:
-    st.session_state.leu_privacidade = False
-
 
 # =====================================================
-# LOGIN PROFISSIONAL
+# LOGIN / CADASTRO
 # =====================================================
 if not st.session_state.logado:
 
@@ -106,7 +93,7 @@ if not st.session_state.logado:
 
 
     # =================================================
-    # CADASTRO
+    # CADASTRO (SEM BOTÕES)
     # =================================================
     with tab_cadastro:
 
@@ -116,22 +103,14 @@ if not st.session_state.logado:
         st.markdown("---")
         st.subheader("📜 Leitura obrigatória")
 
-        col1, col2 = st.columns(2)
-
-        with col1:
-            if st.button("📄 Ler Termos de Uso", use_container_width=True, key="btn_termos"):
-                st.switch_page("pages/termos.py")
-
-        with col2:
-            if st.button("🔒 Ler Política de Privacidade", use_container_width=True, key="btn_priv"):
-                st.switch_page("pages/privacidade.py")
-
-        st.markdown("---")
-
         aceite_termos = st.checkbox("Aceito os Termos de Uso", key="chk_termos")
         aceite_privacidade = st.checkbox("Aceito a Política de Privacidade", key="chk_priv")
 
+        st.caption("Os termos completos podem ser consultados no menu lateral.")
+
         pode_criar = aceite_termos and aceite_privacidade
+
+        st.markdown("---")
 
         if st.button(
             "Criar conta",
