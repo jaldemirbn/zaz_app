@@ -1,11 +1,6 @@
 # =====================================================
 # zAz — APP PRINCIPAL (ORQUESTRADOR FINAL)
 # =====================================================
-# Mobile first
-# PWA ready
-# Fluxo linear
-# 1 responsabilidade por módulo
-# =====================================================
 
 import streamlit as st
 from supabase import create_client
@@ -27,7 +22,6 @@ st.set_page_config(
     page_icon="🚀"
 )
 
-# PWA
 st.markdown(
     '<link rel="manifest" href="/manifest.json">',
     unsafe_allow_html=True
@@ -94,8 +88,6 @@ if not st.session_state.logado:
     # =================================================
     with tab_login:
 
-        st.image("assets/logo.png", width=280)
-
         email = st.text_input("Email", key="login_email")
         senha = st.text_input("Senha", type="password", key="login_senha")
 
@@ -109,7 +101,7 @@ if not st.session_state.logado:
 
 
     # =================================================
-    # CADASTRO
+    # CADASTRO (ACEITE SIMPLES + LINKS)
     # =================================================
     with tab_cadastro:
 
@@ -165,14 +157,6 @@ if not st.session_state.logado:
 # =====================================================
 # FLUXO DO APP
 # =====================================================
-# 01 Ideias
-# 02 Headline
-# 03 Conceito
-# 04 Imagem
-# 05 Postagem
-# 06 Histórico
-# =====================================================
-
 render_etapa_ideias()
 render_etapa_headline()
 render_etapa_conceito()
