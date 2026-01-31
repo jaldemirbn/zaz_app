@@ -33,7 +33,6 @@ Retorne uma por linha.
 # -------------------------------------------------
 def render_etapa_headline():
 
-    # 🔒 aparece só depois das ideias
     if not st.session_state.get("modo_filtrado"):
         return
 
@@ -54,27 +53,26 @@ def render_etapa_headline():
         with st.spinner("Gerando headlines..."):
             st.session_state["headlines"] = _gerar_headlines(tema, ideias)
             st.session_state["headline_escolhida"] = None
-            st.session_state.pop("radio_headline", None)
 
 
     # -------------------------------------------------
-    # LISTA
+    # RADIO (layout original + correção técnica)
     # -------------------------------------------------
     if "headlines" in st.session_state:
 
+        headlines = st.session_state["headlines"]
         escolhida = st.session_state.get("headline_escolhida")
 
-        # 🔹 se já escolheu → renderiza só ela
-        if escolhida:
-            lista_render = [escolhida]
-        else:
-            lista_render = st.session_state["headlines"]
+        # 🔥 chave dinâmica força recriação limpa do radio
+        radio_key = "radio_single" if escolhida else "radio_full"
+
+        opcoes = [escolhida] if escolhida else headlines
 
         escolha = st.radio(
             "Escolha a headline:",
-            lista_render,
+            opcoes,
             index=0 if escolhida else None,
-            key="radio_headline"
+            key=radio_key
         )
 
         if escolha:
@@ -87,5 +85,4 @@ def render_etapa_headline():
         if escolhida:
             if st.button("🔁 Escolher outra headline", use_container_width=True):
                 st.session_state["headline_escolhida"] = None
-                st.session_state.pop("radio_headline", None)  # 🔥 limpa estado do radio
                 st.rerun()
