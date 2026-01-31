@@ -17,6 +17,30 @@ def render_etapa_historico():
         return
 
 
+    # =================================================
+    # ESTADO VISIBILIDADE
+    # =================================================
+    if "mostrar_historico" not in st.session_state:
+        st.session_state["mostrar_historico"] = False
+
+
+    # =================================================
+    # BOTÃO HISTÓRICO
+    # =================================================
+    if st.button("📚 Histórico", use_container_width=True):
+        st.session_state["mostrar_historico"] = not st.session_state["mostrar_historico"]
+
+
+    # =================================================
+    # SE NÃO ABRIR → PARA AQUI
+    # =================================================
+    if not st.session_state["mostrar_historico"]:
+        return
+
+
+    # =================================================
+    # TÍTULO
+    # =================================================
     st.markdown(
         "<h3 style='color:#FF9D28;'>06 • Histórico</h3>",
         unsafe_allow_html=True
@@ -24,10 +48,11 @@ def render_etapa_historico():
 
 
     # =================================================
-    # BOTÃO LIMPAR
+    # LIMPAR
     # =================================================
     if st.button("🗑 Limpar histórico", use_container_width=True):
         st.session_state["historico_posts"] = []
+        st.session_state["mostrar_historico"] = False
         st.rerun()
 
 
@@ -49,16 +74,10 @@ def render_etapa_historico():
 
             col1, col2 = st.columns(2)
 
-            # -------------------------------------------------
-            # USAR NOVAMENTE
-            # -------------------------------------------------
             with col1:
                 if st.button("↩ Usar novamente", key=f"reuse_{i}"):
                     st.session_state["postagem_final"] = texto
                     st.rerun()
 
-            # -------------------------------------------------
-            # COPIAR VISUAL
-            # -------------------------------------------------
             with col2:
                 st.code(texto, language="text")
