@@ -60,7 +60,7 @@ def atualizar_senha(email, senha):
 
 
 # =====================================================
-# SESSION
+# SESSION STATES
 # =====================================================
 if "logado" not in st.session_state:
     st.session_state.logado = False
@@ -71,9 +71,15 @@ if "aceite_termos" not in st.session_state:
 if "aceite_privacidade" not in st.session_state:
     st.session_state.aceite_privacidade = False
 
+if "abrir_termos" not in st.session_state:
+    st.session_state.abrir_termos = False
+
+if "abrir_privacidade" not in st.session_state:
+    st.session_state.abrir_privacidade = False
+
 
 # =====================================================
-# DIALOGS (NOVO)
+# DIALOGS
 # =====================================================
 
 @st.dialog("Termos de Uso", width="large")
@@ -84,7 +90,7 @@ def dialog_termos():
 
     👉 Cole aqui o texto completo dos termos.
 
-    Texto longo, rolagem normal…
+    Texto longo, rolagem normal...
     """)
 
     st.divider()
@@ -94,6 +100,7 @@ def dialog_termos():
     if st.button("Confirmar"):
         if aceite:
             st.session_state.aceite_termos = True
+            st.session_state.abrir_termos = False
             st.rerun()
 
 
@@ -105,7 +112,7 @@ def dialog_privacidade():
 
     👉 Cole aqui o texto completo da política.
 
-    Texto longo…
+    Texto longo...
     """)
 
     st.divider()
@@ -115,6 +122,7 @@ def dialog_privacidade():
     if st.button("Confirmar"):
         if aceite:
             st.session_state.aceite_privacidade = True
+            st.session_state.abrir_privacidade = False
             st.rerun()
 
 
@@ -145,7 +153,7 @@ if not st.session_state.logado:
 
 
     # =================================================
-    # CADASTRO (UX NOVO — MODAL)
+    # CADASTRO — UX MODAL LIMPO
     # =================================================
     with tab_cadastro:
 
@@ -154,10 +162,6 @@ if not st.session_state.logado:
 
         st.markdown("---")
 
-
-        # -----------------------------
-        # LINKS CLICÁVEIS
-        # -----------------------------
         col1, col2 = st.columns(2)
 
         with col1:
@@ -165,14 +169,24 @@ if not st.session_state.logado:
                 st.success("✅ Termos aceitos")
             else:
                 if st.button("Aceitar os Termos de Uso"):
-                    dialog_termos()
+                    st.session_state.abrir_termos = True
 
         with col2:
             if st.session_state.aceite_privacidade:
                 st.success("✅ Política aceita")
             else:
                 if st.button("Aceitar a Política de Privacidade"):
-                    dialog_privacidade()
+                    st.session_state.abrir_privacidade = True
+
+
+        # =========================
+        # ABERTURA DOS DIALOGS (FORMA CORRETA)
+        # =========================
+        if st.session_state.abrir_termos:
+            dialog_termos()
+
+        if st.session_state.abrir_privacidade:
+            dialog_privacidade()
 
 
         st.markdown("---")
@@ -182,7 +196,6 @@ if not st.session_state.logado:
             and
             st.session_state.aceite_privacidade
         )
-
 
         if st.button(
             "Criar conta",
@@ -210,7 +223,7 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# FLUXO DO APP
+# FLUXO PRINCIPAL
 # =====================================================
 render_etapa_ideias()
 render_etapa_headline()
