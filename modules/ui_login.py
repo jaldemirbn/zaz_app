@@ -2,6 +2,7 @@ import streamlit as st
 from supabase import create_client
 
 from modules.ui_ideias import render_etapa_ideias
+from modules.ui_headline import render_etapa_headline   # 👈 adicionado
 from modules.ui_conceito import render_etapa_conceito
 from modules.ui_imagens import render_etapa_imagens
 
@@ -58,12 +59,10 @@ if not st.session_state.logado:
 
     with col2:
 
-        # LOGO
         st.image("assets/logo.png", width=450)
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # TÍTULO LARANJA
         st.markdown(
             "<h2 style='text-align:center; color:#ff9d28;'>Entrar</h2>",
             unsafe_allow_html=True
@@ -71,11 +70,9 @@ if not st.session_state.logado:
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # CAMPOS
         email = st.text_input("Email")
         senha = st.text_input("Senha", type="password")
 
-        # BOTÃO
         if st.button("Entrar", use_container_width=True):
             if validar_usuario(email, senha):
                 st.session_state.logado = True
@@ -85,9 +82,10 @@ if not st.session_state.logado:
 
 
 # =====================================================
-#     FLUXO APP
+# FLUXO APP (NOVA ORDEM)
 # =====================================================
 else:
-   render_etapa_ideias()
-   render_etapa_conceito()  
-    render_etapa_imagens()
+    render_etapa_ideias()      # 01
+    render_etapa_headline()   # 02
+    render_etapa_conceito()   # 03
+    render_etapa_imagens()    # 04
