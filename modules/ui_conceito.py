@@ -63,9 +63,6 @@ def render_etapa_conceito():
                 st.session_state.ideias
             )
 
-    # -------------------------------------------------
-    # TÍTULO
-    # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28;'>03. Conceito visual</h3>",
         unsafe_allow_html=True
@@ -75,12 +72,9 @@ def render_etapa_conceito():
 
     st.caption("Copie o texto (Ctrl+C) e gere a imagem no site.")
 
-    # -------------------------------------------------
-    # BOTÕES
-    # -------------------------------------------------
     col1, col2, col3 = st.columns(3)
 
-    # 1️⃣ Novo conceito
+    # Novo conceito
     with col1:
         if st.button("🔁 Novo conceito", use_container_width=True):
             st.session_state.conceito_visual = _gerar_conceito(
@@ -88,7 +82,7 @@ def render_etapa_conceito():
             )
             st.rerun()
 
-    # 2️⃣ Criar imagem (abre ImageFX)
+    # Criar imagem (abre ImageFX)
     with col2:
         st.markdown(
             """
@@ -109,7 +103,7 @@ def render_etapa_conceito():
             unsafe_allow_html=True
         )
 
-    # 3️⃣ Colar imagem (libera etapa 04)
+    # Colar imagem (libera etapa 04) ✅ CORREÇÃO AQUI
     with col3:
         if st.button(
             "Colar imagem",
@@ -117,3 +111,4 @@ def render_etapa_conceito():
             key="btn_liberar_img"
         ):
             st.session_state["etapa_4_liberada"] = True
+            st.rerun()
