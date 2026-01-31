@@ -5,20 +5,48 @@ from modules.ia_engine import gerar_texto
 # -------------------------------------------------
 # IA — GERAR CONCEITO
 # -------------------------------------------------
-def _gerar_conceito(ideias: list[str]):
+def _gerar_conceito(ideias: list[str], headline: str):
 
     texto = "\n".join(ideias)
 
     prompt = f"""
-Crie a descrição de UMA IMAGEM FOTOGRÁFICA estática, extremamente detalhada e realista.
+Você é um especialista em:
+- copywriting
+- design gráfico
+- direção de arte
+- persuasão visual
 
-Ideias base:
+Crie o conceito visual de um POST profissional para Instagram.
+
+Base criativa:
+Ideias estratégicas:
 {texto}
 
-- foto realista
+Headline principal do post:
+{headline}
+
+Diretrizes obrigatórias:
+- imagem fotográfica hiper-realista
+- qualidade cinematográfica
+- iluminação dramática e profissional
+- composição forte e impactante
+- foco em persuasão visual
+- estética premium
+- aparência publicitária
+
+Formato:
 - proporção 1:1
-- sem textos
-- otimizada para Instagram
+- feed do Instagram
+- layout já pensado para encaixar a headline
+
+IMPORTANTE:
+- se houver qualquer texto visível na imagem, deve estar OBRIGATORIAMENTE em português
+- não usar inglês
+- não usar marcas d’água
+
+Tarefa:
+Descrever detalhadamente a cena visual do post final,
+já considerando espaço e harmonia para aplicação da headline.
 
 Retorne apenas a descrição visual em português.
 """
@@ -35,16 +63,15 @@ def render_etapa_conceito():
     if not st.session_state.get("headline_escolhida"):
         return
 
-
     if "conceito_visual" not in st.session_state:
         st.session_state.conceito_visual = None
 
     if not st.session_state.conceito_visual:
         with st.spinner("Criando conceito..."):
             st.session_state.conceito_visual = _gerar_conceito(
-                st.session_state.get("ideias", [])
+                st.session_state.get("ideias", []),
+                st.session_state.get("headline_escolhida")
             )
-
 
     st.markdown(
         "<h3 style='color:#FF9D28;'>03 • Conceito visual</h3>",
@@ -61,7 +88,8 @@ def render_etapa_conceito():
     with col1:
         if st.button("🔁 Novo conceito", use_container_width=True):
             st.session_state.conceito_visual = _gerar_conceito(
-                st.session_state.get("ideias", [])
+                st.session_state.get("ideias", []),
+                st.session_state.get("headline_escolhida")
             )
             st.rerun()
 
