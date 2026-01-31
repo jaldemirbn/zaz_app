@@ -75,11 +75,12 @@ def render_etapa_conceito():
 
     st.caption("Copie o texto (Ctrl+C) e gere a imagem no site.")
 
+    # -------------------------------------------------
+    # BOTÕES ORGANIZADOS (nova ordem)
+    # -------------------------------------------------
     col1, col2, col3 = st.columns(3)
 
-    # -------------------------------------------------
-    # 🔁 Novo conceito
-    # -------------------------------------------------
+    # 1️⃣ Novo conceito
     with col1:
         if st.button("🔁 Novo conceito", use_container_width=True):
             st.session_state.conceito_visual = _gerar_conceito(
@@ -87,31 +88,19 @@ def render_etapa_conceito():
             )
             st.rerun()
 
-    # vazio
+    # 2️⃣ Abrir ImageFX
     with col2:
-        st.empty()
-
-    # -------------------------------------------------
-    # 🎨 GERAR IMAGENS (CORRIGIDO)
-    # -------------------------------------------------
-    with col3:
-
-        st.markdown("""
-        <style>
-        div.stButton > button {
-            color:#FF9D28 !important;
-            font-weight:600;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
-        # libera etapa
-        if st.button("🎨 Liberar etapa de imagens", use_container_width=True, key="btn_liberar_img"):
-            st.session_state["etapa_4_liberada"] = True
-
-        # botão estável para abrir o site externo
         st.link_button(
-            "Abrir ImageFX",
+            "🎨 Abrir ImageFX",
             "https://labs.google/fx/tools/image-fx",
             use_container_width=True
         )
+
+    # 3️⃣ Liberar etapa imagem
+    with col3:
+        if st.button(
+            "Liberar etapa de imagem",
+            use_container_width=True,
+            key="btn_liberar_img"
+        ):
+            st.session_state["etapa_4_liberada"] = True
