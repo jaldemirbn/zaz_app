@@ -67,11 +67,8 @@ def render_etapa_conceito():
             st.rerun()
 
     # ✅ 📋 Copiar (FUNCIONA DE VERDADE)
-    with col2:
-        st_copy_to_clipboard(
-            st.session_state.conceito_visual,
-            "📋 Copiar"
-        )
+   with col2:
+    st.code(st.session_state.conceito_visual, language=None)
 
     # 🎨 Link externo
     with col3:
@@ -80,3 +77,4 @@ def render_etapa_conceito():
             "https://labs.google/fx/tools/image-fx",
             use_container_width=True
         )
+
