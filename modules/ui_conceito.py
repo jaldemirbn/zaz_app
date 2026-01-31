@@ -4,30 +4,26 @@ from modules.ia_engine import gerar_texto
 
 
 # -------------------------------------------------
-# IA — GERAR CONCEITO (PROMPT CORRIGIDO)
+# IA — GERAR CONCEITO (PROMPT AJUSTADO)
 # -------------------------------------------------
 def _gerar_conceito(ideias: list[str]):
 
     texto = "\n".join(ideias)
 
     prompt = f"""
-Crie a descrição de UMA IMAGEM estática, fotográfica, de alta qualidade.
+Crie a descrição de UMA IMAGEM FOTOGRÁFICA estática e realista.
 
-Ideias base:
+Ideias:
 {texto}
 
-Regras obrigatórias:
-- NÃO é filme
-- NÃO é pôster
-- NÃO é capa
-- é apenas uma foto realista
-
-- descrever somente elementos visuais
-- ambiente, luz, cores, objetos, textura, profundidade
-- linguagem objetiva
-- estilo fotográfico profissional
-- alta nitidez
-- proporção 1:1 (Instagram)
+Regras:
+- é uma FOTO (não é filme, não é pôster, não é capa)
+- aparência profissional e natural
+- estilo fotográfico moderno
+- alta nitidez e qualidade
+- descreva apenas elementos visuais (ambiente, luz, cores, objetos, texturas, enquadramento)
+- composição forte e limpa
+- proporção 1:1 para Instagram
 
 Proibido:
 - texto
@@ -35,8 +31,9 @@ Proibido:
 - tipografia
 - logotipos
 - marcas d’água
+- narrativa cinematográfica
 
-Saída: apenas a descrição visual em um único parágrafo.
+Saída: apenas a descrição visual da imagem em um único parágrafo.
 """
 
     return gerar_texto(prompt).strip()
@@ -64,19 +61,9 @@ def render_etapa_conceito():
         unsafe_allow_html=True
     )
 
-    # textarea com seleção automática
-    components.html(f"""
-    <textarea id="conceito"
-        style="width:100%;height:140px;border-radius:8px;padding:10px;">
-{st.session_state.conceito_visual}
-    </textarea>
+    st.info(st.session_state.conceito_visual)
 
-    <script>
-    const t = document.getElementById("conceito");
-    t.focus();
-    t.select();
-    </script>
-    """, height=170)
+    st.caption("Copie o texto manualmente (Ctrl+C) e gere a imagem no site.")
 
     col1, col2, col3 = st.columns(3)
 
