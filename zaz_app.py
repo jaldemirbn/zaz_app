@@ -4,7 +4,8 @@ from supabase import create_client
 from modules.ui_ideias import render_etapa_ideias
 from modules.ui_headline import render_etapa_headline
 from modules.ui_conceito import render_etapa_conceito
-from modules.ui_imagens import render_etapa_imagens   # 👈 ADICIONADO
+from modules.ui_imagens import render_etapa_imagens
+from modules.ui_postagem import render_etapa_postagem   # 👈 ADICIONADO
 
 
 # =====================================================
@@ -71,20 +72,22 @@ if not st.session_state.logado:
         senha = st.text_input("Senha", type="password")
 
         if st.button("Entrar", use_container_width=True):
+
             if validar_usuario(email, senha):
                 st.session_state.logado = True
                 st.rerun()
             else:
                 st.error("Email ou senha inválidos")
 
-    st.stop()  # 🔒 bloqueia o app até logar
+    st.stop()
 
 
 # =====================================================
-# FLUXO DO APP (ORDEM ATUAL)
+# FLUXO FINAL
 # =====================================================
 
-render_etapa_ideias()      # 01
-render_etapa_headline()   # 02
-render_etapa_conceito()   # 03
-render_etapa_imagens()    # 04 ✅ próximo exibido
+render_etapa_ideias()        # 01
+render_etapa_headline()     # 02
+render_etapa_conceito()     # 03
+render_etapa_imagens()      # 04
+render_etapa_postagem()     # 05 👈 POSTAGEM
