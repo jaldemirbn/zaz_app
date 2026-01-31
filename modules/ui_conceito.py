@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from modules.ia_engine import gerar_texto
 
 
@@ -16,41 +15,27 @@ Crie a descrição de UMA IMAGEM FOTOGRÁFICA estática, extremamente detalhada 
 Ideias base:
 {texto}
 
-Objetivo:
-Descrever somente a IMAGEM como se fosse uma fotografia profissional de alta qualidade.
-
-Diretrizes visuais obrigatórias:
-- foto realista (NÃO é filme, NÃO é pôster, NÃO é capa, NÃO é cena cinematográfica)
-- estilo fotográfico profissional moderno
-- iluminação natural ou de estúdio bem definida
-- cores equilibradas e harmônicas
-- nitidez alta (sharp focus)
-- texturas visíveis
-- profundidade de campo realista
-- detalhes minuciosos do ambiente
-- descrição rica de materiais, superfícies, sombras, reflexos, clima, atmosfera
-- enquadramento fotográfico claro (plano, ângulo, composição)
-- composição forte e limpa
-- sensação premium / estética profissional
+Diretrizes:
+- foto realista profissional
+- alta nitidez
+- texturas e detalhes ricos
+- luz, sombras, profundidade, cores naturais
+- composição fotográfica forte
+- NÃO é filme, NÃO é pôster, NÃO é capa
 
 Formato obrigatório:
 - proporção 1:1
 - imagem quadrada
-- pensada para feed do Instagram
-- objeto principal centralizado
+- feed Instagram
 
 Proibido:
 - texto
 - letras
-- tipografia
-- logotipos
+- logos
 - marcas d’água
-- elementos gráficos
-- narrativa ou storytelling
+- narrativa
 
-Saída:
-Apenas UM parágrafo descrevendo detalhadamente a imagem visual.
-Somente descrição visual. Nada de explicações extras.
+Saída: apenas a descrição visual detalhada em um único parágrafo.
 """
 
     return gerar_texto(prompt).strip()
@@ -96,16 +81,25 @@ def render_etapa_conceito():
     with col2:
         st.empty()
 
-    # 🎨 Gerar imagens
+    # -------------------------------------------------
+    # 🎨 GERAR IMAGENS (PADRÃO STREAMLIT + COR)
+    # -------------------------------------------------
     with col3:
-        components.html(
-            """
-            <button style="width:100%;height:38px;color:#FF9D28;font-weight:600;"
-            onclick="window.open('https://labs.google/fx/tools/image-fx','_blank')">
-            🎨 Gerar imagens
-            </button>
-            """,
-            height=45
-        )
 
-        st.session_state["etapa_4_liberada"] = True
+        st.markdown("""
+        <style>
+        div[data-testid="stLinkButton"] a {
+            background-color:#ff9d28 !important;
+            color:black !important;
+            font-weight:600 !important;
+            text-align:center !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        if st.link_button(
+            "🎨 Gerar imagens",
+            "https://labs.google/fx/tools/image-fx",
+            use_container_width=True
+        ):
+            st.session_state["etapa_4_liberada"] = True
