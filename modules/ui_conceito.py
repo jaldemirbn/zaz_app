@@ -92,7 +92,7 @@ def render_etapa_conceito():
         st.empty()
 
     # -------------------------------------------------
-    # 🎨 GERAR IMAGENS (PADRÃO STREAMLIT + TEXTO LARANJA)
+    # 🎨 GERAR IMAGENS (CORRIGIDO)
     # -------------------------------------------------
     with col3:
 
@@ -105,10 +105,13 @@ def render_etapa_conceito():
         </style>
         """, unsafe_allow_html=True)
 
-        if st.button("🎨 Gerar imagens", use_container_width=True):
+        # libera etapa
+        if st.button("🎨 Liberar etapa de imagens", use_container_width=True, key="btn_liberar_img"):
             st.session_state["etapa_4_liberada"] = True
 
-            st.markdown(
-                '<meta http-equiv="refresh" content="0; url=https://labs.google/fx/tools/image-fx">',
-                unsafe_allow_html=True
-            )
+        # botão estável para abrir o site externo
+        st.link_button(
+            "Abrir ImageFX",
+            "https://labs.google/fx/tools/image-fx",
+            use_container_width=True
+        )
