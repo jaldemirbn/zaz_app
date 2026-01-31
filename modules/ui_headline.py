@@ -54,6 +54,9 @@ def render_etapa_headline():
         unsafe_allow_html=True
     )
 
+    # -------------------------------------------------
+    # STATES
+    # -------------------------------------------------
     if "headlines" not in st.session_state:
         st.session_state.headlines = []
 
@@ -61,7 +64,7 @@ def render_etapa_headline():
         st.session_state.headline_escolhida = None
 
     # -------------------------------------------------
-    # GERAR
+    # BOTÃO GERAR
     # -------------------------------------------------
     if st.button("Gerar Headline", use_container_width=True):
 
@@ -80,7 +83,7 @@ def render_etapa_headline():
         st.rerun()
 
     # -------------------------------------------------
-    # FILTRAR LISTA (APÓS ESCOLHA)
+    # FILTRAGEM AUTOMÁTICA (AQUI ESTÁ O SEGREDO)
     # -------------------------------------------------
     opcoes = st.session_state.headlines
 
@@ -88,7 +91,7 @@ def render_etapa_headline():
         opcoes = [st.session_state.headline_escolhida]
 
     # -------------------------------------------------
-    # RADIO NORMAL (LAYOUT NÃO MUDA)
+    # RADIO (layout nunca muda)
     # -------------------------------------------------
     if opcoes:
 
