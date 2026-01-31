@@ -53,8 +53,7 @@ def render_etapa_post():
 
 
     # -------------------------------------------------
-    # BOTÃO GERAR HEADLINE
-    # 🔥 CORREÇÃO APLICADA AQUI (spinner anti-spam)
+    # GERAR HEADLINE
     # -------------------------------------------------
 
     if st.button("✨ Gerar headline", use_container_width=True):
@@ -75,3 +74,17 @@ def render_etapa_post():
             height=100
         )
 
+
+        # -------------------------------------------------
+        # NOVOS BOTÕES (lado a lado)
+        # -------------------------------------------------
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button("🔁 Escolher outra headline", use_container_width=True):
+                del st.session_state["headline_post"]
+
+        with col2:
+            if st.button("📝 Criar descrição do post", use_container_width=True):
+                st.session_state["criar_descricao_post"] = True
