@@ -10,7 +10,7 @@ def _gerar_conceito(ideias: list[str], headline: str):
     texto = "\n".join(ideias)
 
     prompt = f"""
-Você é um especialista em:
+Você é especialista em:
 - copywriting
 - design gráfico
 - direção de arte
@@ -22,31 +22,31 @@ Base criativa:
 Ideias estratégicas:
 {texto}
 
-Headline principal do post:
+Headline principal:
 {headline}
 
 Diretrizes obrigatórias:
 - imagem fotográfica hiper-realista
 - qualidade cinematográfica
-- iluminação dramática e profissional
-- composição forte e impactante
-- foco em persuasão visual
-- estética premium
-- aparência publicitária
+- iluminação profissional
+- composição publicitária premium
+- forte impacto emocional
 
-Formato:
-- proporção 1:1
-- feed do Instagram
-- layout já pensado para encaixar a headline
+FORMATO OBRIGATÓRIO:
+- proporção 1:1 (quadrado perfeito)
+- resolução exata 1080x1080 pixels
+- composição centralizada
+- elementos equilibrados dentro do quadro
+- otimizado especificamente para feed do Instagram
+- nada panorâmico
+- nada vertical
 
-IMPORTANTE:
-- se houver qualquer texto visível na imagem, deve estar OBRIGATORIAMENTE em português
-- não usar inglês
-- não usar marcas d’água
+TEXTO NA IMAGEM:
+- obrigatoriamente em português
 
 Tarefa:
 Descrever detalhadamente a cena visual do post final,
-já considerando espaço e harmonia para aplicação da headline.
+já prevendo espaço harmônico para aplicação da headline.
 
 Retorne apenas a descrição visual em português.
 """
@@ -59,7 +59,7 @@ Retorne apenas a descrição visual em português.
 # -------------------------------------------------
 def render_etapa_conceito():
 
-    # 🔒 GATE → só depois da headline
+    # 🔒 só aparece após escolher headline
     if not st.session_state.get("headline_escolhida"):
         return
 
@@ -78,37 +78,4 @@ def render_etapa_conceito():
         unsafe_allow_html=True
     )
 
-    st.info(st.session_state.conceito_visual)
-
-    st.caption("Copie o texto (Ctrl+C) e gere a imagem no site.")
-
-    col1, col2, col3 = st.columns(3)
-
-    # Novo conceito
-    with col1:
-        if st.button("🔁 Novo conceito", use_container_width=True):
-            st.session_state.conceito_visual = _gerar_conceito(
-                st.session_state.get("ideias", []),
-                st.session_state.get("headline_escolhida")
-            )
-            st.rerun()
-
-    # Criar imagem
-    with col2:
-        st.markdown(
-            """
-            <a href="https://labs.google/fx/tools/image-fx" target="_blank"
-               style="display:block;text-align:center;padding:10px 0;
-               border:1px solid #333;border-radius:8px;
-               text-decoration:none;font-weight:600;color:#FF9D28;">
-               🎨 Criar imagem
-            </a>
-            """,
-            unsafe_allow_html=True
-        )
-
-    # Colar imagem
-    with col3:
-        if st.button("Colar imagem", use_container_width=True, key="btn_liberar_img"):
-            st.session_state["etapa_4_liberada"] = True
-            st.rerun()
+    st.info(st.session_state_
