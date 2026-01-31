@@ -21,7 +21,7 @@ def render_etapa_post():
     # TÍTULO
     # -------------------------------------------------
     st.markdown(
-        "<h3 style='color:#FF9D28;'>06 • Post visual</h3>",
+        "<h3 style='color:#FF9D28;'>06. Post visual</h3>",
         unsafe_allow_html=True
     )
 
@@ -34,3 +34,4 @@ def render_etapa_post():
         use_container_width=True,
         key="btn_criar_descricao_post"
     )
+
