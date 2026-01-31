@@ -8,35 +8,49 @@ from modules.ia_engine import gerar_texto
 
 
 # -------------------------------------------------
-# IA — GERAR HEADLINES
+# IA — GERAR HEADLINES (COPY SENIOR)
 # -------------------------------------------------
-def _gerar_headlines(base_texto: str):
+def _gerar_headlines(tema: str, ideias: list[str], conceito: str):
+
+    ideias_txt = "\n".join(ideias)
 
     prompt = f"""
-Com base no contexto abaixo, gere headlines curtas para Instagram.
+Você é um COPYWRITER SÊNIOR especialista em marketing digital.
 
-Contexto:
-{base_texto}
+Sua tarefa é criar headlines altamente persuasivas para Instagram.
+
+Contexto completo:
+
+TEMA INICIAL:
+{tema}
+
+IDEIAS ESCOLHIDAS:
+{ideias_txt}
+
+DESCRIÇÃO DA IMAGEM:
+{conceito}
 
 Regras obrigatórias:
-- máximo 7 palavras
+- gerar apenas 3 headlines
+- no máximo 7 palavras
 - frase única
-- impacto forte
-- linguagem direta
-- estilo marketing
+- forte impacto emocional
+- linguagem direta e persuasiva
+- estilo marketing profissional
+- parar o scroll
 - sem explicações
 - sem emojis
 - sem pontuação longa
 
-Retorne:
-apenas uma lista numerada com 5 headlines.
+Retorne somente:
+lista numerada com 3 headlines.
 """
 
     resposta = gerar_texto(prompt)
 
     linhas = [l.strip("-• ").strip() for l in resposta.split("\n") if l.strip()]
 
-    return linhas[:5]
+    return linhas[:3]
 
 
 # -------------------------------------------------
@@ -57,19 +71,6 @@ def render_etapa_headline():
     )
 
     # -------------------------------------------------
-    # BOTÃO (AGORA LOGO ABAIXO DO TÍTULO)
-    # -------------------------------------------------
-    if st.button("Gerar Headline", use_container_width=True):
-
-        base = st.session_state.get("conceito_visual", "")
-
-        with st.spinner("Criando headlines..."):
-            st.session_state.headlines = _gerar_headlines(base)
-
-        st.session_state.headline_escolhida = None
-        st.rerun()
-
-    # -------------------------------------------------
     # STATES
     # -------------------------------------------------
     if "headlines" not in st.session_state:
@@ -77,6 +78,25 @@ def render_etapa_headline():
 
     if "headline_escolhida" not in st.session_state:
         st.session_state.headline_escolhida = None
+
+    # -------------------------------------------------
+    # BOTÃO (logo abaixo do título)
+    # -------------------------------------------------
+    if st.button("Gerar Headline", use_container_width=True):
+
+        tema = st.session_state.get("tema", "")
+        ideias = st.session_state.get("ideias", [])
+        conceito = st.session_state.get("conceito_visual", "")
+
+        with st.spinner("Copywriting estratégico..."):
+            st.session_state.headlines = _gerar_headlines(
+                tema,
+                ideias,
+                conceito
+            )
+
+        st.session_state.headline_escolhida = None
+        st.rerun()
 
     # -------------------------------------------------
     # LISTA
