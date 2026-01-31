@@ -1,17 +1,17 @@
 # =====================================================
 # zAz — MÓDULO 03
-# ETAPA 04 — UPLOAD DE IMAGEM
+# ETAPA 04 — COLAR IMAGEM (CTRL+V)
 # =====================================================
 # Função:
-# - aparece após etapa 3
-# - usuário envia imagem criada externamente
-# - salva no session_state
-# - não gera nada
-# - independente de conceito
+# - usuário copia imagem no site externo
+# - cola direto no app (Ctrl+V)
+# - preview imediato
+# - sem upload
+# - independente de outros módulos
 # =====================================================
 
 import streamlit as st
-from PIL import Image
+import streamlit.components.v1 as components
 
 
 def render_etapa_imagens():
@@ -20,30 +20,63 @@ def render_etapa_imagens():
     # TÍTULO
     # -------------------------------------------------
     st.markdown(
-        "<h3 style='color:#FF9D28; margin-top:24px;'>04. Enviar imagem</h3>",
+        "<h3 style='color:#FF9D28; margin-top:24px;'>04. Colar imagem</h3>",
         unsafe_allow_html=True
     )
 
-    st.caption("Faça upload da imagem criada no site.")
+    st.caption("Copie a imagem no site e cole aqui (Ctrl+V).")
 
     # -------------------------------------------------
-    # UPLOAD
+    # ÁREA DE COLAGEM
     # -------------------------------------------------
-    arquivo = st.file_uploader(
-        "Selecionar imagem",
-        type=["png", "jpg", "jpeg", "webp"],
-        label_visibility="collapsed"
+    components.html(
+        """
+        <div id="paste-area"
+             tabindex="0"
+             style="
+                border:2px dashed #444;
+                padding:50px;
+                text-align:center;
+                border-radius:10px;
+                color:#aaa;
+                font-size:14px;
+             ">
+            Clique aqui e pressione CTRL+V para colar a imagem
+        </div>
+
+        <script>
+        const area = document.getElementById("paste-area");
+
+        area.focus();
+
+        area.addEventListener("paste", (e) => {
+
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+
+            for (const item of items) {
+
+                if (item.type.indexOf("image") !== -1) {
+
+                    const blob = item.getAsFile();
+                    const reader = new FileReader();
+
+                    reader.onload = function(event) {
+
+                        area.innerHTML = "";
+
+                        const img = document.createElement("img");
+                        img.src = event.target.result;
+                        img.style.width = "100%";
+                        img.style.borderRadius = "8px";
+
+                        area.appendChild(img);
+                    };
+
+                    reader.readAsDataURL(blob);
+                }
+            }
+        });
+        </script>
+        """,
+        height=260
     )
-
-    if not arquivo:
-        return
-
-    # -------------------------------------------------
-    # CARREGAR IMAGEM
-    # -------------------------------------------------
-    img = Image.open(arquivo)
-
-    st.image(img, use_column_width=True)
-
-    # salvar estado
-    st.session_state["imagem_escolhida"] = img
