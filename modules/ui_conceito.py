@@ -47,13 +47,9 @@ Apenas a descrição visual detalhada da imagem em um único parágrafo.
 
 
 # -------------------------------------------------
-# RENDER
+# RENDER (SEM MOMENTO DE ENTRADA)
 # -------------------------------------------------
 def render_etapa_conceito():
-
-    # 🔒 GATE CORRIGIDO (ANTES: modo_filtrado)
-    if not st.session_state.get("headline_escolhida"):
-        return
 
     if "conceito_visual" not in st.session_state:
         st.session_state.conceito_visual = None
@@ -61,7 +57,7 @@ def render_etapa_conceito():
     if not st.session_state.conceito_visual:
         with st.spinner("Criando conceito..."):
             st.session_state.conceito_visual = _gerar_conceito(
-                st.session_state.ideias
+                st.session_state.get("ideias", [])
             )
 
     st.markdown(
@@ -79,7 +75,7 @@ def render_etapa_conceito():
     with col1:
         if st.button("🔁 Novo conceito", use_container_width=True):
             st.session_state.conceito_visual = _gerar_conceito(
-                st.session_state.ideias
+                st.session_state.get("ideias", [])
             )
             st.rerun()
 
