@@ -1,18 +1,31 @@
 # =====================================================
-# zAz — ORQUESTRADOR
+# zAz — ORQUESTRADOR (VERSÃO FINAL ESTÁVEL)
 # =====================================================
 
 import streamlit as st
-from supabase import create_client
 import uuid
-import requests
-import os
+from supabase import create_client
+
+from modules.ui_login import render_login
+from modules.ui_cadastro import render_cadastro
+from modules.ui_senha import render_trocar_senha
+
+from modules.ui_ideias import render_etapa_ideias
+from modules.ui_headline import render_etapa_headline
+from modules.ui_conceito import render_etapa_conceito
+from modules.ui_imagens import render_etapa_imagens
+from modules.ui_postagem import render_etapa_postagem
+from modules.ui_historico import render_etapa_historico
 
 
 # =====================================================
 # CONFIG
 # =====================================================
-st.set_page_config(page_title="zAz", layout="centered", page_icon="🚀")
+st.set_page_config(
+    page_title="zAz",
+    layout="centered",
+    page_icon="🚀"
+)
 
 
 # =====================================================
@@ -27,36 +40,7 @@ def conectar():
 
 
 # =====================================================
-# EMAIL (RESEND)
-# =====================================================
-def enviar_confirmacao(email, token):
-
-    link = f"https://SEUAPP.streamlit.app/?token={token}"  # ⚠️ TROQUE PELO SEU LINK
-
-    requests.post(
-        "https://api.resend.com/emails",
-        headers={
-            "Authorization": f"Bearer {st.secrets['RESEND_API_KEY']}",
-            "Content-Type": "application/json",
-        },
-        json={
-            "from": "zAz <no-reply@appzaz.com.br>",
-            "to": [email],
-            "subject": "Confirme sua conta no zAz",
-            "html": f"""
-                <h2>Confirme sua conta</h2>
-                <p>Clique abaixo:</p>
-                <a href="{link}"
-                style="background:#FFC107;padding:12px 20px;border-radius:8px;text-decoration:none;color:#000;font-weight:bold;">
-                Confirmar conta
-                </a>
-            """
-        },
-    )
-
-
-# =====================================================
-# FUNÇÕES DB
+# AUTH HELPERS
 # =====================================================
 def validar_usuario(email, senha):
 
@@ -73,44 +57,39 @@ def validar_usuario(email, senha):
     return len(r.data) > 0
 
 
+# =====================================================
+# 🔥 CRIAR USUÁRIO (BLINDADO)
+# =====================================================
 def criar_usuario(email, senha):
+
+    supabase = conectar()
 
     token = str(uuid.uuid4())
 
     dados = {
-        "email": email,
-        "senha": senha,
-        "token_confirmacao": token,
-        "email_confirmado": False
+        "email": str(email),
+        "senha": str(senha),
+        "email_confirmado": False,
+        "token_confirmacao": token
     }
 
-    conectar().table("usuarios").insert(dados).execute()
+    try:
+        supabase.table("usuarios").insert(dados).execute()
+        return True
 
-    enviar_confirmacao(email, token)
+    except Exception:
+        # 👉 geralmente email duplicado
+        return False
 
 
+# =====================================================
+# TROCAR SENHA
+# =====================================================
 def atualizar_senha(email, senha):
+
     conectar().table("usuarios").update({
-        "senha": senha
+        "senha": str(senha)
     }).eq("email", email).execute()
-
-
-# =====================================================
-# CONFIRMAÇÃO VIA TOKEN
-# =====================================================
-params = st.query_params
-
-if "token" in params:
-
-    token = params["token"]
-
-    conectar().table("usuarios").update({
-        "email_confirmado": True,
-        "token_confirmacao": None
-    }).eq("token_confirmacao", token).execute()
-
-    st.success("Conta confirmada. Agora você pode entrar.")
-    st.stop()
 
 
 # =====================================================
@@ -121,22 +100,7 @@ if "logado" not in st.session_state:
 
 
 # =====================================================
-# IMPORT UI
-# =====================================================
-from modules.ui_login import render_login
-from modules.ui_cadastro import render_cadastro
-from modules.ui_senha import render_trocar_senha
-
-from modules.ui_ideias import render_etapa_ideias
-from modules.ui_headline import render_etapa_headline
-from modules.ui_conceito import render_etapa_conceito
-from modules.ui_imagens import render_etapa_imagens
-from modules.ui_postagem import render_etapa_postagem
-from modules.ui_historico import render_etapa_historico
-
-
-# =====================================================
-# AUTH
+# AUTH FLOW
 # =====================================================
 if not st.session_state.logado:
 
@@ -148,7 +112,11 @@ if not st.session_state.logado:
         render_login(validar_usuario)
 
     with tab_cadastro:
-        render_cadastro(criar_usuario)
+
+        ok = render_cadastro(criar_usuario)
+
+        if ok:
+            st.success("Conta criada. Verifique seu email para confirmar.")
 
     with tab_senha:
         render_trocar_senha(atualizar_senha)
