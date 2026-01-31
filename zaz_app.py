@@ -94,10 +94,10 @@ if not st.session_state.logado:
     # =================================================
     with tab_login:
 
-        email = st.text_input("Email")
-        senha = st.text_input("Senha", type="password")
+        email = st.text_input("Email", key="login_email")
+        senha = st.text_input("Senha", type="password", key="login_senha")
 
-        if st.button("Entrar", use_container_width=True):
+        if st.button("Entrar", use_container_width=True, key="btn_login"):
             if validar_usuario(email, senha):
                 st.session_state.logado = True
                 st.rerun()
@@ -106,7 +106,7 @@ if not st.session_state.logado:
 
 
     # =================================================
-    # CADASTRO COM LEITURA OBRIGATÓRIA
+    # CADASTRO
     # =================================================
     with tab_cadastro:
 
@@ -119,41 +119,25 @@ if not st.session_state.logado:
         col1, col2 = st.columns(2)
 
         with col1:
-            if st.button("📄 Ler Termos de Uso", use_container_width=True):
-                st.session_state.leu_termos = True
+            if st.button("📄 Ler Termos de Uso", use_container_width=True, key="btn_termos"):
                 st.switch_page("pages/termos.py")
 
         with col2:
-            if st.button("🔒 Ler Política de Privacidade", use_container_width=True):
-                st.session_state.leu_privacidade = True
+            if st.button("🔒 Ler Política de Privacidade", use_container_width=True, key="btn_priv"):
                 st.switch_page("pages/privacidade.py")
 
-
         st.markdown("---")
 
-        aceite_termos = False
-        aceite_privacidade = False
+        aceite_termos = st.checkbox("Aceito os Termos de Uso", key="chk_termos")
+        aceite_privacidade = st.checkbox("Aceito a Política de Privacidade", key="chk_priv")
 
-        if st.session_state.leu_termos:
-            aceite_termos = st.checkbox("Aceito os Termos de Uso")
-
-        if st.session_state.leu_privacidade:
-            aceite_privacidade = st.checkbox("Aceito a Política de Privacidade")
-
-
-        pode_criar = (
-            st.session_state.leu_termos
-            and st.session_state.leu_privacidade
-            and aceite_termos
-            and aceite_privacidade
-        )
-
-        st.markdown("---")
+        pode_criar = aceite_termos and aceite_privacidade
 
         if st.button(
             "Criar conta",
             use_container_width=True,
-            disabled=not pode_criar
+            disabled=not pode_criar,
+            key="btn_cadastro"
         ):
             criar_usuario(email_novo, senha_nova)
             st.success("Conta criada com sucesso. Faça login.")
@@ -164,13 +148,12 @@ if not st.session_state.logado:
     # =================================================
     with tab_senha:
 
-        email_alt = st.text_input("Email")
-        senha_alt = st.text_input("Nova senha", type="password")
+        email_alt = st.text_input("Email", key="alt_email")
+        senha_alt = st.text_input("Nova senha", type="password", key="alt_senha")
 
-        if st.button("Atualizar senha", use_container_width=True):
+        if st.button("Atualizar senha", use_container_width=True, key="btn_senha"):
             atualizar_senha(email_alt, senha_alt)
             st.success("Senha atualizada com sucesso.")
-
 
     st.stop()
 
