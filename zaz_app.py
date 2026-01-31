@@ -65,6 +65,58 @@ def atualizar_senha(email, senha):
 if "logado" not in st.session_state:
     st.session_state.logado = False
 
+if "aceite_termos" not in st.session_state:
+    st.session_state.aceite_termos = False
+
+if "aceite_privacidade" not in st.session_state:
+    st.session_state.aceite_privacidade = False
+
+
+# =====================================================
+# DIALOGS (NOVO)
+# =====================================================
+
+@st.dialog("Termos de Uso", width="large")
+def dialog_termos():
+
+    st.markdown("""
+    ## Termos de Uso
+
+    👉 Cole aqui o texto completo dos termos.
+
+    Texto longo, rolagem normal…
+    """)
+
+    st.divider()
+
+    aceite = st.checkbox("Aceitar termos")
+
+    if st.button("Confirmar"):
+        if aceite:
+            st.session_state.aceite_termos = True
+            st.rerun()
+
+
+@st.dialog("Política de Privacidade", width="large")
+def dialog_privacidade():
+
+    st.markdown("""
+    ## Política de Privacidade
+
+    👉 Cole aqui o texto completo da política.
+
+    Texto longo…
+    """)
+
+    st.divider()
+
+    aceite = st.checkbox("Aceitar política")
+
+    if st.button("Confirmar"):
+        if aceite:
+            st.session_state.aceite_privacidade = True
+            st.rerun()
+
 
 # =====================================================
 # LOGIN / CADASTRO
@@ -93,7 +145,7 @@ if not st.session_state.logado:
 
 
     # =================================================
-    # CADASTRO (SEM BOTÕES)
+    # CADASTRO (UX NOVO — MODAL)
     # =================================================
     with tab_cadastro:
 
@@ -101,16 +153,36 @@ if not st.session_state.logado:
         senha_nova = st.text_input("Senha", type="password", key="cad_senha")
 
         st.markdown("---")
-        st.subheader("📜 Leitura obrigatória")
 
-        aceite_termos = st.checkbox("Aceito os Termos de Uso", key="chk_termos")
-        aceite_privacidade = st.checkbox("Aceito a Política de Privacidade", key="chk_priv")
 
-        st.caption("Os termos completos podem ser consultados no menu lateral.")
+        # -----------------------------
+        # LINKS CLICÁVEIS
+        # -----------------------------
+        col1, col2 = st.columns(2)
 
-        pode_criar = aceite_termos and aceite_privacidade
+        with col1:
+            if st.session_state.aceite_termos:
+                st.success("✅ Termos aceitos")
+            else:
+                if st.button("Aceitar os Termos de Uso"):
+                    dialog_termos()
+
+        with col2:
+            if st.session_state.aceite_privacidade:
+                st.success("✅ Política aceita")
+            else:
+                if st.button("Aceitar a Política de Privacidade"):
+                    dialog_privacidade()
+
 
         st.markdown("---")
+
+        pode_criar = (
+            st.session_state.aceite_termos
+            and
+            st.session_state.aceite_privacidade
+        )
+
 
         if st.button(
             "Criar conta",
