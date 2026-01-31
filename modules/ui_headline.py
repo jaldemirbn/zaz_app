@@ -1,110 +1,81 @@
 # =====================================================
-# zAz — MÓDULO 05
-# ETAPA HEADLINE
+# zAz — MÓDULO 03
+# ETAPA 04 — COLAR IMAGEM (CTRL+V)
 # =====================================================
 
 import streamlit as st
-from modules.ia_engine import gerar_texto
+import streamlit.components.v1 as components
 
 
-def _gerar_headlines(tema, ideias, conceito):
+def render_etapa_imagens():
 
-    prompt = f"""
-Você é um copywriter sênior.
-
-Tema:
-{tema}
-
-Ideias:
-{ideias}
-
-Descrição da imagem:
-{conceito}
-
-Crie 5 headlines curtas, fortes e chamativas.
-
-Retorne uma por linha.
-"""
-
-    resposta = gerar_texto(prompt)
-    return [h.strip() for h in resposta.split("\n") if h.strip()]
-
-
-def render_etapa_headline():
-
+    # 🔒 Gate: só aparece após clicar "Colar imagem"
     if not st.session_state.get("etapa_4_liberada"):
         return
 
+    # -------------------------------------------------
+    # Título (ajuste: aproximado do bloco acima)
+    # -------------------------------------------------
     st.markdown(
-        "<h3 style='color:#FF9D28;'>05 • Headline</h3>",
+        "<h3 style='color:#FF9D28; margin-top:0;'>04. Colar imagem</h3>",
         unsafe_allow_html=True
     )
 
-    tema = st.session_state.get("tema")
-    ideias = st.session_state.get("ideias")
-    conceito = st.session_state.get("conceito_visual")
-
+    st.caption("Copie a imagem no site e cole aqui (Ctrl+V).")
 
     # -------------------------------------------------
-    # GERAR
+    # Área de colagem
     # -------------------------------------------------
-    if st.button("✨ Gerar headline", use_container_width=True):
+    html_code = """
+    <div id="paste-area"
+         tabindex="0"
+         style="
+            border:2px dashed #444;
+            padding:50px;
+            text-align:center;
+            border-radius:10px;
+            color:#aaa;
+            font-size:14px;
+         ">
+        Clique aqui e pressione CTRL+V para colar a imagem
+    </div>
 
-        with st.spinner("Gerando headlines..."):
-            st.session_state["headlines"] = _gerar_headlines(
-                tema, ideias, conceito
-            )
-            st.session_state["headline_escolhida"] = None
+    <script>
+    const area = document.getElementById("paste-area");
 
+    area.focus();
 
-    # -------------------------------------------------
-    # LISTA (AJUSTE AQUI SOMENTE)
-    # -------------------------------------------------
-    if "headlines" in st.session_state:
+    area.addEventListener("paste", (e) => {
 
-        headlines = st.session_state["headlines"]
-        escolhida = st.session_state.get("headline_escolhida")
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
 
+        for (const item of items) {
 
-        # 🔹 se já escolheu → mostra só ela
-        if escolhida:
-            st.radio(
-                "Headline escolhida:",
-                [escolhida],
-                index=0,
-                key="radio_headline_single"
-            )
+            if (item.type.indexOf("image") !== -1) {
 
-        # 🔹 se não escolheu → todas desmarcadas
-        else:
-            escolha = st.radio(
-                "Escolha a headline:",
-                headlines,
-                index=None,  # 👈 todas desmarcadas
-                key="radio_headline"
-            )
+                const blob = item.getAsFile();
+                const reader = new FileReader();
 
-            if escolha:
-                st.session_state["headline_escolhida"] = escolha
-                st.rerun()
+                reader.onload = function(event) {
 
+                    area.innerHTML = "";
 
-        # -------------------------------------------------
-        # BOTÕES (inalterado)
-        # -------------------------------------------------
-        if st.session_state.get("headline_escolhida"):
+                    const img = document.createElement("img");
+                    img.src = event.target.result;
 
-            col1, col2 = st.columns(2)
+                    img.style.maxWidth = "100%";
+                    img.style.height = "auto";
+                    img.style.objectFit = "contain";
+                    img.style.borderRadius = "8px";
 
-            with col1:
-                if st.button("🔁 Escolher outra headline", use_container_width=True):
-                    st.session_state["headline_escolhida"] = None
-                    st.rerun()
+                    area.appendChild(img);
+                };
 
-            with col2:
-                if st.button(
-                    "Criar descrição do post",
-                    use_container_width=True,
-                    key="btn_descricao_post"
-                ):
-                    st.session_state["criar_descricao_post"] = True
+                reader.readAsDataURL(blob);
+            }
+        }
+    });
+    </script>
+    """
+
+    components.html(html_code, height=600)
