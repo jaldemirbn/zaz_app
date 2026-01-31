@@ -1,19 +1,23 @@
-import resend
 import streamlit as st
+import resend
 
 resend.api_key = st.secrets["RESEND_API_KEY"]
 
 
-def enviar_email_confirmacao(destino: str, link: str):
+def enviar_email_confirmacao(destino: str, link: str = ""):
 
-    st.info("DEBUG → chamando Resend agora")
+    st.info("🚀 TESTE DIRETO: chamando Resend...")
 
-    response = resend.Emails.send({
-        "from": "zAz <noreply@appzaz.com.br>",
-        "to": destino,
-        "subject": "Teste Resend zAz",
-        "html": "<h1>Se chegou, Resend está OK</h1>"
-    })
+    try:
+        response = resend.Emails.send({
+            "from": "zAz <noreply@appzaz.com.br>",
+            "to": destino,
+            "subject": "Teste direto Resend",
+            "html": "<h1>Se você recebeu isso, Resend está OK</h1>"
+        })
 
-    st.success("DEBUG → resposta do Resend:")
-    st.write(response)
+        st.success("✅ Resend respondeu:")
+        st.write(response)
+
+    except Exception as e:
+        st.error(f"❌ ERRO RESEND: {e}")
