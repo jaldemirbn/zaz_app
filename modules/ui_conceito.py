@@ -10,7 +10,7 @@ def _gerar_conceito(ideias: list[str]):
 
     texto = "\n".join(ideias)
 
-    prompt = f"""
+   prompt = f"""
 Crie a descrição de UMA IMAGEM FOTOGRÁFICA estática e realista.
 
 Ideias:
@@ -18,12 +18,16 @@ Ideias:
 
 Regras:
 - é uma FOTO (não é filme, não é pôster, não é capa)
-- aparência profissional e natural
-- estilo fotográfico moderno
+- aparência profissional
 - alta nitidez e qualidade
-- descreva apenas elementos visuais (ambiente, luz, cores, objetos, texturas, enquadramento)
-- composição forte e limpa
-- proporção 1:1 para Instagram
+- descreva somente elementos visuais (ambiente, luz, cores, objetos, texturas, enquadramento)
+- composição limpa e equilibrada
+- enquadramento central
+
+FORMATO OBRIGATÓRIO:
+- proporção 1:1
+- imagem quadrada
+- pensada para feed do Instagram
 
 Proibido:
 - texto
@@ -89,3 +93,4 @@ def render_etapa_conceito():
         )
 
         st.session_state["etapa_4_liberada"] = True
+
