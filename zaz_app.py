@@ -19,7 +19,7 @@ from modules.ui_historico import render_etapa_historico
 
 
 # =====================================================
-# CONFIG (MOBILE FIRST)
+# CONFIG
 # =====================================================
 st.set_page_config(
     page_title="zAz",
@@ -27,6 +27,7 @@ st.set_page_config(
     page_icon="🚀"
 )
 
+# PWA
 st.markdown(
     '<link rel="manifest" href="/manifest.json">',
     unsafe_allow_html=True
@@ -58,35 +59,30 @@ def validar_usuario(email, senha):
     return len(r.data) > 0
 
 
-# =====================================================
-# SESSION STATE
-# =====================================================
-if "logado" not in st.session_state:
-    st.session_state.logado = False
-
-
-# =====================================================
-# LOGIN PROFISSIONAL (LOGIN | CADASTRO | TROCA SENHA)
-# =====================================================
-
 def criar_usuario(email, senha):
-    supabase = conectar()
-    supabase.table("usuarios").insert({
+    conectar().table("usuarios").insert({
         "email": email,
         "senha": senha
     }).execute()
 
 
 def atualizar_senha(email, senha):
-    supabase = conectar()
-    supabase.table("usuarios").update({
+    conectar().table("usuarios").update({
         "senha": senha
     }).eq("email", email).execute()
 
 
-if not st.session_state.logado:
+# =====================================================
+# SESSION
+# =====================================================
+if "logado" not in st.session_state:
+    st.session_state.logado = False
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
+
+# =====================================================
+# LOGIN PROFISSIONAL
+# =====================================================
+if not st.session_state.logado:
 
     tab_login, tab_cadastro, tab_senha = st.tabs(
         ["🔐 Entrar", "🆕 Criar conta", "♻️ Trocar senha"]
@@ -113,7 +109,7 @@ if not st.session_state.logado:
 
 
     # =================================================
-    # CADASTRO (COM ACEITE OBRIGATÓRIO)
+    # CADASTRO
     # =================================================
     with tab_cadastro:
 
@@ -125,9 +121,16 @@ if not st.session_state.logado:
         aceite_termos = st.checkbox("Li e aceito os Termos de Uso")
         aceite_privacidade = st.checkbox("Li e aceito a Política de Privacidade")
 
-        st.caption("Termos: /termos  •  Privacidade: /privacidade")
+        st.markdown(
+            """
+            📄 [Ler Termos de Uso](Termos de Uso)  
+            🔒 [Ler Política de Privacidade](Política de Privacidade)
+            """
+        )
 
         pode_criar = aceite_termos and aceite_privacidade
+
+        st.markdown("---")
 
         if st.button(
             "Criar conta",
@@ -160,7 +163,14 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# FLUXO OFICIAL DO zAz
+# FLUXO DO APP
+# =====================================================
+# 01 Ideias
+# 02 Headline
+# 03 Conceito
+# 04 Imagem
+# 05 Postagem
+# 06 Histórico
 # =====================================================
 
 render_etapa_ideias()
