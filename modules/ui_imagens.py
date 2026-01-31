@@ -1,10 +1,11 @@
 # =====================================================
 # zAz — MÓDULO IMAGEM
-# ETAPA 04 — COLAR IMAGEM (CTRL+V)
+# ETAPA 04 — COLAR/UPLOAD IMAGEM
 # =====================================================
 
 import streamlit as st
-import streamlit.components.v1 as components
+from PIL import Image
+import io
 
 
 def render_etapa_imagens():
@@ -17,94 +18,37 @@ def render_etapa_imagens():
         unsafe_allow_html=True
     )
 
-    st.caption("Copie a imagem no site e cole aqui (Ctrl+V).")
+    st.caption("Cole ou selecione a imagem do seu computador.")
 
-    html_code = """
-    <div style="display:flex; flex-direction:column; gap:14px;">
+    # -------------------------------------------------
+    # UPLOAD (estável)
+    # -------------------------------------------------
+    arquivo = st.file_uploader(
+        "Selecione ou arraste a imagem",
+        type=["png", "jpg", "jpeg"],
+        label_visibility="collapsed"
+    )
 
-        <div id="paste-area"
-            tabindex="0"
-            style="
-                border:2px dashed #444;
-                padding:60px;
-                text-align:center;
-                border-radius:12px;
-                color:#aaa;
-                min-height:850px;
-            ">
-            Clique aqui e pressione CTRL+V para colar a imagem
-        </div>
+    if not arquivo:
+        return
 
-        <button id="download-btn"
-            style="
-                padding:10px;
-                border-radius:8px;
-                border:1px solid #333;
-                background:#111;
-                color:#FF9D28;
-                font-weight:600;
-                cursor:pointer;
-            ">
-            ⬇️ Baixar imagem
-        </button>
+    img = Image.open(arquivo)
 
-    </div>
+    # -------------------------------------------------
+    # PREVIEW GRANDE
+    # -------------------------------------------------
+    st.image(img, use_container_width=True)
 
-    <script>
-    const area = document.getElementById("paste-area");
-    const downloadBtn = document.getElementById("download-btn");
+    # -------------------------------------------------
+    # DOWNLOAD
+    # -------------------------------------------------
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
 
-    let currentBlob = null;
-
-    area.focus();
-
-    area.addEventListener("paste", (e) => {
-
-        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-
-        for (const item of items) {
-
-            if (item.type.indexOf("image") !== -1) {
-
-                const blob = item.getAsFile();
-                currentBlob = blob;
-
-                const reader = new FileReader();
-
-                reader.onload = function(event) {
-
-                    area.innerHTML = "";
-
-                    const img = document.createElement("img");
-                    img.src = event.target.result;
-                    img.style.maxWidth = "100%";
-                    img.style.borderRadius = "12px";
-
-                    area.appendChild(img);
-                };
-
-                reader.readAsDataURL(blob);
-            }
-        }
-    });
-
-    // 🔥 DOWNLOAD CONFIÁVEL (Blob → URL)
-    downloadBtn.onclick = function() {
-
-        if (!currentBlob) return;
-
-        const url = URL.createObjectURL(currentBlob);
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "post.png";
-        document.body.appendChild(a);
-        a.click();
-
-        URL.revokeObjectURL(url);
-        a.remove();
-    };
-    </script>
-    """
-
-    components.html(html_code, height=1000)
+    st.download_button(
+        label="⬇️ Baixar imagem",
+        data=buffer.getvalue(),
+        file_name="post.png",
+        mime="image/png",
+        use_container_width=True
+    )
