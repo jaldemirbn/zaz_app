@@ -35,16 +35,28 @@ def conectar():
 
 
 def validar_usuario(email, senha):
-    r = conectar().table("usuarios").select("*").eq("email", email).eq("senha", senha).execute()
+    r = (
+        conectar()
+        .table("usuarios")
+        .select("*")
+        .eq("email", email)
+        .eq("senha", senha)
+        .execute()
+    )
     return len(r.data) > 0
 
 
 def criar_usuario(email, senha):
-    conectar().table("usuarios").insert({"email": email, "senha": senha}).execute()
+    conectar().table("usuarios").insert({
+        "email": email,
+        "senha": senha
+    }).execute()
 
 
 def atualizar_senha(email, senha):
-    conectar().table("usuarios").update({"senha": senha}).eq("email", email).execute()
+    conectar().table("usuarios").update({
+        "senha": senha
+    }).eq("email", email).execute()
 
 
 # =====================================================
@@ -70,7 +82,8 @@ if not st.session_state.logado:
         render_cadastro(criar_usuario)
 
     with tab_senha:
-        render_trocar_senha(atualizar_senha)
+        # 🔥 CORREÇÃO AQUI (SEM ARGUMENTOS)
+        render_trocar_senha()
 
     st.stop()
 
