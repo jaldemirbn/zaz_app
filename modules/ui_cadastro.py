@@ -1,9 +1,10 @@
 import streamlit as st
+import re
 
 
-# ===============================
+# =====================================================
 # STATES
-# ===============================
+# =====================================================
 def _init_states():
 
     defaults = {
@@ -18,19 +19,27 @@ def _init_states():
             st.session_state[k] = v
 
 
-# ===============================
-# DIALOGS
-# ===============================
+# =====================================================
+# VALIDAÇÃO (ADICIONADO)
+# =====================================================
+def email_valido(email: str) -> bool:
+    if not email:
+        return False
+    return re.match(r"^[^@]+@[^@]+\.[^@]+$", email) is not None
+
+
+def senha_valida(senha: str) -> bool:
+    return bool(senha and len(senha) >= 4)
+
+
+# =====================================================
+# TERMOS DE USO (COMPLETO — INTACTO)
+# =====================================================
 @st.dialog("Termos de Uso", width="large")
 def dialog_termos():
 
-
-
-    #===========================================
-    # TERMO DE USO
-    #===========================================
     st.markdown("""
-    ## Bem-vindo ao **zAz**.
+## Bem-vindo ao **zAz**.
 
 Estes Termos de Uso estabelecem as regras, direitos e responsabilidades aplicáveis ao acesso e utilização da plataforma.
 
@@ -199,13 +208,11 @@ O uso contínuo após alterações indica concordância.
 
 ## 12. Contato
 
-Para dúvidas, suporte ou solicitações:
-
 📧 contato@zaz.app
 
 ---
 
-**Ao utilizar o zAz, você declara estar de acordo com todos os termos acima.
+**Ao utilizar o zAz, você declara estar de acordo com todos os termos acima.**
     """)
 
     aceite = st.checkbox("Aceitar termos")
@@ -217,11 +224,14 @@ Para dúvidas, suporte ou solicitações:
             st.rerun()
 
 
+# =====================================================
+# POLÍTICA DE PRIVACIDADE (COMPLETA — INTACTA)
+# =====================================================
 @st.dialog("Política de Privacidade", width="large")
 def dialog_privacidade():
 
     st.markdown("""
-    ## A sua privacidade é importante para nós.  
+## A sua privacidade é importante para nós.  
 Esta Política de Privacidade descreve de forma clara e transparente como o **zAz** coleta, utiliza, armazena e protege as informações de seus usuários.
 
 Ao utilizar a plataforma, você concorda com os termos descritos abaixo.
@@ -359,13 +369,11 @@ O uso contínuo do serviço após alterações indica concordância com a nova v
 
 ## 11. Contato
 
-Em caso de dúvidas ou solicitações:
-
 📧 contato@zaz.app
 
 ---
 
-**Ao utilizar o zAz, você concorda com esta Política de Privacidade
+**Ao utilizar o zAz, você concorda com esta Política de Privacidade.**
     """)
 
     aceite = st.checkbox("Aceitar política")
@@ -377,9 +385,9 @@ Em caso de dúvidas ou solicitações:
             st.rerun()
 
 
-# ===============================
+# =====================================================
 # RENDER
-# ===============================
+# =====================================================
 def render_cadastro(criar_usuario):
 
     _init_states()
@@ -403,23 +411,24 @@ def render_cadastro(criar_usuario):
         elif st.button("Aceitar a Política de Privacidade"):
             st.session_state.abrir_privacidade = True
 
-
     if st.session_state.abrir_termos:
         dialog_termos()
 
     if st.session_state.abrir_privacidade:
         dialog_privacidade()
 
-
     st.markdown("---")
 
+    email_ok = email_valido(email)
+    senha_ok = senha_valida(senha)
+
     pode_criar = (
-        st.session_state.aceite_termos
-        and
-        st.session_state.aceite_privacidade
+        email_ok
+        and senha_ok
+        and st.session_state.aceite_termos
+        and st.session_state.aceite_privacidade
     )
 
     if st.button("Criar conta", use_container_width=True, disabled=not pode_criar):
         criar_usuario(email, senha)
         st.success("Conta criada com sucesso. Faça login.")
-
