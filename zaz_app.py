@@ -58,7 +58,7 @@ def validar_usuario(email, senha):
 
 
 # =====================================================
-# 🔥 CRIAR USUÁRIO (BLINDADO)
+# 🔥 CRIAR USUÁRIO (BLINDADO + DEBUG)
 # =====================================================
 def criar_usuario(email, senha):
 
@@ -73,12 +73,18 @@ def criar_usuario(email, senha):
         "token_confirmacao": token
     }
 
+    print("CRIAR USUARIO INICIO")
+    print("DADOS:", dados)
+
     try:
-        supabase.table("usuarios").insert(dados).execute()
+        response = supabase.table("usuarios").insert(dados).execute()
+
+        print("RESULTADO:", response)
+
         return True
 
-    except Exception:
-        # 👉 geralmente email duplicado
+    except Exception as e:
+        print("ERRO INSERT:", e)
         return False
 
 
@@ -131,5 +137,4 @@ render_etapa_ideias()
 render_etapa_headline()
 render_etapa_conceito()
 render_etapa_imagens()
-render_etapa_postagem()
-render_etapa_historico()
+render_et_
