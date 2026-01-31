@@ -28,25 +28,27 @@ Headline principal:
 Diretrizes obrigatórias:
 - imagem fotográfica hiper-realista
 - qualidade cinematográfica
-- iluminação profissional
 - composição publicitária premium
+- iluminação profissional
 - forte impacto emocional
 
 FORMATO OBRIGATÓRIO:
 - proporção 1:1 (quadrado perfeito)
-- resolução exata 1080x1080 pixels
+- resolução 1080x1080 pixels
 - composição centralizada
-- elementos equilibrados dentro do quadro
-- otimizado especificamente para feed do Instagram
+- otimizado para feed do Instagram
+- elementos equilibrados dentro de um quadro quadrado
+- layout pensado especificamente para feed do Instagram
 - nada panorâmico
 - nada vertical
+- foco total no enquadramento quadrado
 
 TEXTO NA IMAGEM:
-- obrigatoriamente em português
+- obrigatoriamente em português do Brasil
 
 Tarefa:
-Descrever detalhadamente a cena visual do post final,
-já prevendo espaço harmônico para aplicação da headline.
+Descrever detalhadamente a cena visual do post já adaptada ao formato 1080x1080 pixels,
+prevendo espaço ideal para aplicação da headline dentro desse enquadramento.
 
 Retorne apenas a descrição visual em português.
 """
@@ -59,7 +61,6 @@ Retorne apenas a descrição visual em português.
 # -------------------------------------------------
 def render_etapa_conceito():
 
-    # 🔒 só aparece após escolher headline
     if not st.session_state.get("headline_escolhida"):
         return
 
@@ -78,4 +79,34 @@ def render_etapa_conceito():
         unsafe_allow_html=True
     )
 
-    st.info(st.session_state_
+    st.info(st.session_state.conceito_visual)
+
+    st.caption("Copie o texto (Ctrl+C) e gere a imagem no site.")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        if st.button("🔁 Novo conceito", use_container_width=True):
+            st.session_state.conceito_visual = _gerar_conceito(
+                st.session_state.get("ideias", []),
+                st.session_state.get("headline_escolhida")
+            )
+            st.rerun()
+
+    with col2:
+        st.markdown(
+            """
+            <a href="https://labs.google/fx/tools/image-fx" target="_blank"
+               style="display:block;text-align:center;padding:10px 0;
+               border:1px solid #333;border-radius:8px;
+               text-decoration:none;font-weight:600;color:#FF9D28;">
+               🎨 Criar imagem
+            </a>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col3:
+        if st.button("Colar imagem", use_container_width=True, key="btn_liberar_img"):
+            st.session_state["etapa_4_liberada"] = True
+            st.rerun()
