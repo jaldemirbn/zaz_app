@@ -65,26 +65,36 @@ def render_etapa_headline():
 
 
     # -------------------------------------------------
-    # LISTA / FILTRO
+    # LISTA NORMAL (todas visíveis)
     # -------------------------------------------------
     if "headlines" in st.session_state:
 
-        headlines = st.session_state["headlines"]
-        escolhida = st.session_state.get("headline_escolhida")
+        escolha = st.radio(
+            "Escolha a headline:",
+            st.session_state["headlines"],
+            key="radio_headline"
+        )
+
+        st.session_state["headline_escolhida"] = escolha
 
 
-        # 🔥 SE JÁ ESCOLHEU → MOSTRA SÓ ELA
-        if escolhida:
+        # -------------------------------------------------
+        # BOTÕES
+        # -------------------------------------------------
+        if st.session_state.get("headline_escolhida"):
 
-            st.radio(
-                "Headline escolhida:",
-                [escolhida],
-                index=0,
-                key="radio_headline_unica"
-            )
+            col1, col2 = st.columns(2)
 
-        # 🔥 SENÃO → MOSTRA TODAS
-        else:
+            with col1:
+                if st.button("🔁 Escolher outra headline", use_container_width=True):
+                    del st.session_state["headlines"]
+                    del st.session_state["headline_escolhida"]
+                    st.rerun()
 
-            escolha = st.radio(
-                "Esco
+            with col2:
+                if st.button(
+                    "Criar descrição do post",
+                    use_container_width=True,
+                    key="btn_descricao_post"
+                ):
+                    st.session_state["criar_descricao_post"] = True
