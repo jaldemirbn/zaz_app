@@ -4,12 +4,10 @@
 
 import streamlit as st
 from supabase import create_client
-import secrets
 
 from modules.ui_login import render_login
 from modules.ui_cadastro import render_cadastro
 from modules.ui_senha import render_trocar_senha
-from modules.email_service import enviar_email_confirmacao
 
 from modules.ui_ideias import render_etapa_ideias
 from modules.ui_headline import render_etapa_headline
@@ -17,6 +15,8 @@ from modules.ui_conceito import render_etapa_conceito
 from modules.ui_imagens import render_etapa_imagens
 from modules.ui_postagem import render_etapa_postagem
 from modules.ui_historico import render_etapa_historico
+
+from modules.email_service import enviar_email_confirmacao
 
 
 # =====================================================
@@ -48,24 +48,11 @@ def validar_usuario(email, senha):
     return len(r.data) > 0
 
 
-# =====================================================
-# CADASTRO COM EMAIL DE CONFIRMAÇÃO 🔥
-# =====================================================
 def criar_usuario(email, senha):
-
-    token = secrets.token_urlsafe(32)
-
     conectar().table("usuarios").insert({
         "email": email,
-        "senha": senha,
-        "email_confirmado": False,
-        "token_confirmacao": token
+        "senha": senha
     }).execute()
-
-    base_url = st.get_option("browser.serverAddress") or ""
-    link = f"{base_url}?confirm={token}"
-
-    enviar_email_confirmacao(email, link)
 
 
 def atualizar_senha(email, senha):
@@ -79,6 +66,18 @@ def atualizar_senha(email, senha):
 # =====================================================
 if "logado" not in st.session_state:
     st.session_state.logado = False
+
+
+# =====================================================
+# 🔥 BOTÃO DE TESTE RESEND (PROVA ABSOLUTA)
+# =====================================================
+st.divider()
+st.subheader("Debug infraestrutura")
+
+if st.button("🔥 TESTAR RESEND DIRETO"):
+    enviar_email_confirmacao("SEUEMAIL@gmail.com")
+
+st.divider()
 
 
 # =====================================================
