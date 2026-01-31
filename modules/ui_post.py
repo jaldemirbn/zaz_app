@@ -11,40 +11,36 @@ from modules.ia_engine import gerar_texto
 # IA — GERAR DESCRIÇÃO DO POST
 # =====================================================
 
-def _gerar_descricao_post(conceito, headline, imagem_base64=None):
-
-    imagem_info = ""
-
-    # 🔹 se existir imagem salva, manda também
-    if imagem_base64:
-        imagem_info = f"""
-
-Imagem do post em base64 (referência visual real do mesmo post):
-{imagem_base64}
-"""
+def _gerar_descricao_post(conceito, headline):
 
     prompt = f"""
-Você é um designer gráfico sênior especialista em criação de posts.
+Você é um designer gráfico sênior especialista em criação de posts para Instagram.
 
 REGRAS OBRIGATÓRIAS:
-- escrever somente em português
-- usar a MESMA imagem (não alterar, não recriar)
-- não inventar elementos
-- apenas descrever o layout do mesmo post
+- escrever SOMENTE em português do Brasil
+- NÃO criar nova imagem
+- NÃO alterar a cena
+- usar exatamente a descrição da imagem fornecida
+- apenas planejar a MONTAGEM do post
 
-Descrição original da imagem:
+Descrição original da imagem (base fixa):
 {conceito}
 
 Headline escolhida:
 {headline}
 
-{imagem_info}
-
 Tarefa:
-Criar a melhor descrição possível do post final,
-explicando composição, hierarquia visual, tipografia e intenção do design.
+Descrever como o post será montado visualmente, explicando:
+- onde a headline será posicionada
+- hierarquia visual
+- contraste
+- legibilidade
+- composição
+- equilíbrio do layout
 
-Retorne somente o texto.
+Explique como a headline se encaixa na imagem existente.
+
+Retorne somente a descrição final em português.
 """
 
     return gerar_texto(prompt).strip()
@@ -72,14 +68,12 @@ def render_etapa_post():
 
         conceito = st.session_state.get("conceito_visual")
         headline = st.session_state.get("headline_escolhida")
-        imagem_base64 = st.session_state.get("imagem_base64")  # 🔹 NOVO
 
         if conceito and headline:
             with st.spinner("Criando descrição..."):
                 st.session_state["descricao_post"] = _gerar_descricao_post(
                     conceito,
-                    headline,
-                    imagem_base64
+                    headline
                 )
 
     if st.session_state.get("descricao_post"):
