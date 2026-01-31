@@ -88,7 +88,7 @@ def render_etapa_conceito():
             )
             st.rerun()
 
-    # 2️⃣ Criar imagem (abre ImageFX) — TEXTO LARANJA
+    # 2️⃣ Criar imagem (abre ImageFX)
     with col2:
         st.markdown(
             """
@@ -109,10 +109,10 @@ def render_etapa_conceito():
             unsafe_allow_html=True
         )
 
-    # 3️⃣ Liberar etapa imagem
+    # 3️⃣ Colar imagem (libera etapa 04)
     with col3:
         if st.button(
-            "Liberar etapa de imagem",
+            "Colar imagem",
             use_container_width=True,
             key="btn_liberar_img"
         ):
