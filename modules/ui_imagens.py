@@ -1,54 +1,49 @@
+# =====================================================
+# zAz — MÓDULO 03
+# ETAPA 04 — UPLOAD DE IMAGEM
+# =====================================================
+# Função:
+# - aparece após etapa 3
+# - usuário envia imagem criada externamente
+# - salva no session_state
+# - não gera nada
+# - independente de conceito
+# =====================================================
+
 import streamlit as st
 from PIL import Image
 
 
 def render_etapa_imagens():
 
-    imagens = st.session_state.get("imagens_geradas")
-
-    # 🔒 gate
-    if not imagens:
-        return
-
-    if not isinstance(imagens[0], Image.Image):
-        return
-
-    # -------------------------------------------------
-    # AUTO-SELEÇÃO NA PRIMEIRA EXECUÇÃO (NOVO)
-    # -------------------------------------------------
-    if "imagem_escolhida" not in st.session_state or st.session_state.imagem_escolhida is None:
-        st.session_state.imagem_escolhida = imagens[0]
-
     # -------------------------------------------------
     # TÍTULO
     # -------------------------------------------------
     st.markdown(
-        """
-        <h3 style='color:#FF9D28; text-align:left; margin-top:24px;'>
-        04. Imagens
-        </h3>
-        """,
+        "<h3 style='color:#FF9D28; margin-top:24px;'>04. Enviar imagem</h3>",
         unsafe_allow_html=True
     )
 
-    # -------------------------------------------------
-    # GRID
-    # -------------------------------------------------
-    cols = st.columns(3)
-
-    for i, img in enumerate(imagens):
-        with cols[i]:
-            st.image(img, use_column_width=True)
+    st.caption("Faça upload da imagem criada no site.")
 
     # -------------------------------------------------
-    # SELEÇÃO
+    # UPLOAD
     # -------------------------------------------------
-    escolha = st.radio(
-        "Escolha:",
-        list(range(len(imagens))),
-        horizontal=True,
-        index=0,  # ← primeira já marcada
-        format_func=lambda x: f"Imagem {x+1}"
+    arquivo = st.file_uploader(
+        "Selecionar imagem",
+        type=["png", "jpg", "jpeg", "webp"],
+        label_visibility="collapsed"
     )
 
-    st.session_state.imagem_escolhida = imagens[escolha]
+    if not arquivo:
+        return
+
+    # -------------------------------------------------
+    # CARREGAR IMAGEM
+    # -------------------------------------------------
+    img = Image.open(arquivo)
+
+    st.image(img, use_column_width=True)
+
+    # salvar estado
+    st.session_state["imagem_escolhida"] = img
