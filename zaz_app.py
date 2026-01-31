@@ -4,6 +4,7 @@
 
 import streamlit as st
 from supabase import create_client
+import secrets
 
 from modules.ui_login import render_login
 from modules.ui_cadastro import render_cadastro
@@ -36,6 +37,9 @@ def conectar():
     )
 
 
+# =====================================================
+# FUNÇÕES
+# =====================================================
 def validar_usuario(email, senha):
     r = (
         conectar()
@@ -49,10 +53,28 @@ def validar_usuario(email, senha):
 
 
 def criar_usuario(email, senha):
-    conectar().table("usuarios").insert({
-        "email": email,
-        "senha": senha
-    }).execute()
+    supabase = conectar()
+
+    try:
+        token = secrets.token_urlsafe(32)
+
+        supabase.table("usuarios").insert({
+            "email": email,
+            "senha": senha,
+            "email_confirmado": False,
+            "token_confirmacao": token
+        }).execute()
+
+    except:
+        st.error("Email já cadastrado.")
+        return
+
+    base = st.get_option("browser.serverAddress") or ""
+    link = f"{base}?confirm={token}"
+
+    enviar_email_confirmacao(email, link)
+
+    st.success("Conta criada. Verifique seu email para confirmar.")
 
 
 def atualizar_senha(email, senha):
@@ -66,18 +88,6 @@ def atualizar_senha(email, senha):
 # =====================================================
 if "logado" not in st.session_state:
     st.session_state.logado = False
-
-
-# =====================================================
-# 🔥 BOTÃO DE TESTE RESEND (PROVA ABSOLUTA)
-# =====================================================
-st.divider()
-st.subheader("Debug infraestrutura")
-
-if st.button("🔥 TESTAR RESEND DIRETO"):
-    enviar_email_confirmacao("SEUEMAIL@gmail.com")
-
-st.divider()
 
 
 # =====================================================
