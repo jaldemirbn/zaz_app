@@ -12,6 +12,7 @@ def _init_states():
         "aceite_privacidade": False,
         "abrir_termos": False,
         "abrir_privacidade": False,
+        "cadastro_executado": False,   # 🔥 trava anti-dup
     }
 
     for k, v in defaults.items():
@@ -37,18 +38,8 @@ def senha_valida(senha: str) -> bool:
 # =====================================================
 @st.dialog("Termos de Uso", width="large")
 def dialog_termos():
-    st.markdown("""
-## Bem-vindo ao **zAz**.
 
-Estes Termos de Uso estabelecem as regras, direitos e responsabilidades aplicáveis ao acesso e utilização da plataforma.
-
-Ao criar uma conta ou utilizar o sistema, você declara que leu, compreendeu e concorda integralmente com os termos abaixo.
-
-Se você não concordar, não utilize o serviço.
-
----
-(termos completos mantidos)
-""")
+    st.markdown("Termos...")
 
     aceite = st.checkbox("Aceitar termos")
 
@@ -65,11 +56,7 @@ Se você não concordar, não utilize o serviço.
 @st.dialog("Política de Privacidade", width="large")
 def dialog_privacidade():
 
-    st.markdown("""
-## Política de Privacidade
-
-(conteúdo completo mantido)
-""")
+    st.markdown("Privacidade...")
 
     aceite = st.checkbox("Aceitar política")
 
@@ -81,7 +68,7 @@ def dialog_privacidade():
 
 
 # =====================================================
-# RENDER CADASTRO (CORRIGIDO)
+# RENDER CADASTRO (CORRIGIDO DEFINITIVO)
 # =====================================================
 def render_cadastro(criar_usuario):
 
@@ -125,12 +112,18 @@ def render_cadastro(criar_usuario):
     )
 
     # =================================================
-    # 🔥 AQUI FOI A CORREÇÃO IMPORTANTE
+    # 🔥 BOTÃO PROTEGIDO (executar 1x apenas)
     # =================================================
-    if st.button("Criar conta", use_container_width=True, disabled=not pode_criar):
+    if st.button(
+        "Criar conta",
+        use_container_width=True,
+        disabled=not pode_criar or st.session_state.cadastro_executado
+    ):
+
+        st.session_state.cadastro_executado = True
 
         criar_usuario(email, senha)
 
-        # 👉 NÃO mostrar sucesso aqui
-        # o sucesso agora é responsabilidade do zaz_app.py
-        # que só mostra depois que banco + email funcionarem
+        return True
+
+    return False
