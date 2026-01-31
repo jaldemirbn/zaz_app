@@ -1,3 +1,12 @@
+# =====================================================
+# zAz — APP PRINCIPAL (ORQUESTRADOR FINAL)
+# =====================================================
+# Mobile first
+# PWA ready
+# Fluxo linear
+# 1 responsabilidade por módulo
+# =====================================================
+
 import streamlit as st
 from supabase import create_client
 
@@ -14,8 +23,16 @@ from modules.ui_historico import render_etapa_historico
 # =====================================================
 st.set_page_config(
     page_title="zAz",
-    layout="centered",   # 👈 CORRIGIDO (mobile)
+    layout="centered",   # 👈 mobile perfeito
     page_icon="🚀"
+)
+
+# =====================================================
+# PWA MANIFEST (app instalável no celular)
+# =====================================================
+st.markdown(
+    '<link rel="manifest" href="/manifest.json">',
+    unsafe_allow_html=True
 )
 
 
@@ -45,14 +62,14 @@ def validar_usuario(email, senha):
 
 
 # =====================================================
-# SESSION
+# SESSION STATE
 # =====================================================
 if "logado" not in st.session_state:
     st.session_state.logado = False
 
 
 # =====================================================
-# LOGIN
+# LOGIN (PORTÃO DO APP)
 # =====================================================
 if not st.session_state.logado:
 
@@ -62,7 +79,7 @@ if not st.session_state.logado:
 
     with col2:
 
-        st.image("assets/logo.png", width=350)  # 👈 melhor pro mobile
+        st.image("assets/logo.png", width=320)
 
         st.markdown(
             "<h2 style='text-align:center; color:#ff9d28;'>Entrar</h2>",
@@ -84,12 +101,20 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# FLUXO
+# FLUXO OFICIAL DO zAz
+# =====================================================
+# Ordem:
+# 01 Ideias
+# 02 Headline
+# 03 Conceito
+# 04 Imagem
+# 05 Postagem
+# 06 Histórico
 # =====================================================
 
-render_etapa_ideias()        # 01
-render_etapa_headline()     # 02
-render_etapa_conceito()     # 03
-render_etapa_imagens()      # 04
-render_etapa_postagem()     # 05
-render_etapa_historico()    # 06
+render_etapa_ideias()
+render_etapa_headline()
+render_etapa_conceito()
+render_etapa_imagens()
+render_etapa_postagem()
+render_etapa_historico()
