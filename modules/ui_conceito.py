@@ -55,6 +55,8 @@ def render_etapa_conceito():
     # -------------------------------------------------
     # COLUNAS (ESCOPO CORRETO)
     # -------------------------------------------------
+    st.caption("Copie o texto e clique no botão Gerar imagens e cole no site.")
+    
     col1, col2, col3 = st.columns(3)
 
     # 🔁 Novo conceito
@@ -89,4 +91,5 @@ def render_etapa_conceito():
             "https://labs.google/fx/tools/image-fx",
             use_container_width=True
         )
+
 
