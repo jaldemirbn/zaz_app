@@ -14,33 +14,33 @@ from modules.ia_engine import gerar_texto
 def _gerar_descricao_post(conceito, headline):
 
     prompt = f"""
-Você é um designer gráfico sênior especialista em criação de posts para Instagram.
+Você é um designer gráfico sênior.
 
-REGRAS OBRIGATÓRIAS:
-- escrever SOMENTE em português do Brasil
-- NÃO criar nova imagem
-- NÃO alterar a cena
-- usar exatamente a descrição da imagem fornecida
-- apenas planejar a MONTAGEM do post
+INSTRUÇÃO PRINCIPAL:
+Copie EXATAMENTE a descrição visual abaixo.
+NÃO altere.
+NÃO recrie.
+NÃO modifique a cena.
 
-Descrição original da imagem (base fixa):
+Descrição visual original (copiar como base):
 {conceito}
 
-Headline escolhida:
+Depois disso:
+acrescente apenas a explicação de como a headline será aplicada no layout.
+
+Headline:
 {headline}
 
-Tarefa:
-Descrever como o post será montado visualmente, explicando:
-- onde a headline será posicionada
-- hierarquia visual
+Explique:
+- posicionamento do texto
 - contraste
+- hierarquia
 - legibilidade
-- composição
-- equilíbrio do layout
+- composição do post
 
-Explique como a headline se encaixa na imagem existente.
+Escreva somente em português.
 
-Retorne somente a descrição final em português.
+Retorne somente o texto final.
 """
 
     return gerar_texto(prompt).strip()
@@ -71,15 +71,3 @@ def render_etapa_post():
 
         if conceito and headline:
             with st.spinner("Criando descrição..."):
-                st.session_state["descricao_post"] = _gerar_descricao_post(
-                    conceito,
-                    headline
-                )
-
-    if st.session_state.get("descricao_post"):
-
-        st.text_area(
-            "Descrição do post",
-            st.session_state["descricao_post"],
-            height=400
-        )
