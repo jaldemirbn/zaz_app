@@ -1,7 +1,3 @@
-# =====================================================
-# zAz — ORQUESTRADOR (WHATSAPP OTP ONLY • LIMPO)
-# =====================================================
-
 import streamlit as st
 import random
 import requests
@@ -22,11 +18,7 @@ from modules.ui_historico import render_etapa_historico
 # =====================================================
 # CONFIG
 # =====================================================
-st.set_page_config(
-    page_title="zAz",
-    layout="centered",
-    page_icon="🚀"
-)
+st.set_page_config(page_title="zAz", layout="centered", page_icon="🚀")
 
 
 # =====================================================
@@ -41,7 +33,7 @@ def conectar():
 
 
 # =====================================================
-# 🔥 WHATSAPP ENVIO
+# WHATSAPP
 # =====================================================
 def enviar_whatsapp(numero, mensagem):
 
@@ -63,7 +55,7 @@ def enviar_whatsapp(numero, mensagem):
 
 
 # =====================================================
-# AUTH HELPERS
+# AUTH
 # =====================================================
 def validar_usuario(email, senha):
 
@@ -79,9 +71,6 @@ def validar_usuario(email, senha):
     return len(r.data) > 0
 
 
-# =====================================================
-# 🔥 CRIAR USUÁRIO + OTP
-# =====================================================
 def criar_usuario(email, senha, telefone):
 
     codigo = str(random.randint(100000, 999999))
@@ -90,3 +79,88 @@ def criar_usuario(email, senha, telefone):
         "email": email.strip().lower(),
         "senha": senha,
         "telefone": telefone,
+        "email_confirmado": False,
+        "otp_codigo": codigo
+    }
+
+    conectar().table("usuarios").insert(dados).execute()
+
+    enviar_whatsapp(
+        telefone,
+        f"Seu código de confirmação zAz é: {codigo}"
+    )
+
+
+def confirmar_codigo(email, codigo_digitado):
+
+    email = email.strip().lower()
+    codigo_digitado = str(codigo_digitado).strip()
+
+    resp = conectar().table("usuarios") \
+        .select("otp_codigo") \
+        .eq("email", email) \
+        .single() \
+        .execute()
+
+    if not resp.data:
+        return False
+
+    if str(resp.data["otp_codigo"]).strip() != codigo_digitado:
+        return False
+
+    conectar().table("usuarios") \
+        .update({
+            "email_confirmado": True,
+            "otp_codigo": None
+        }) \
+        .eq("email", email) \
+        .execute()
+
+    return True
+
+
+def atualizar_senha(email, senha):
+
+    conectar().table("usuarios") \
+        .update({"senha": senha}) \
+        .eq("email", email) \
+        .execute()
+
+
+# =====================================================
+# SESSION
+# =====================================================
+if "logado" not in st.session_state:
+    st.session_state.logado = False
+
+
+# =====================================================
+# AUTH FLOW
+# =====================================================
+if not st.session_state.logado:
+
+    tab_login, tab_cadastro, tab_senha = st.tabs(
+        ["🔐 Entrar", "🆕 Criar conta", "♻️ Trocar senha"]
+    )
+
+    with tab_login:
+        render_login(validar_usuario)
+
+    with tab_cadastro:
+        render_cadastro(criar_usuario, confirmar_codigo)
+
+    with tab_senha:
+        render_trocar_senha(atualizar_senha)
+
+    st.stop()
+
+
+# =====================================================
+# APP FLOW
+# =====================================================
+render_etapa_ideias()
+render_etapa_headline()
+render_etapa_conceito()
+render_etapa_imagens()
+render_etapa_postagem()
+render_etapa_historico()
