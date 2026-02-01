@@ -122,26 +122,50 @@ def criar_usuario(email, senha, telefone):
 
 
 # =====================================================
-# 🔥 CONFIRMAR OTP
+# 🔥 CONFIRMAR OTP (versão robusta)
 # =====================================================
-def confirmar_codigo(email, codigo):
+def confirmar_codigo(email, codigo_digitado):
 
-    r = (
-        conectar()
-        .table("usuarios")
-        .select("*")
-        .eq("email", email)
-        .eq("otp_codigo", codigo)
-        .execute()
-    )
+    codigo_digitado = str(codigo_digitado).strip()
 
-    if len(r.data) > 0:
-        conectar().table("usuarios").update({
-            "email_confirmado": True
-        }).eq("email", email).execute()
+    try:
+        resp = (
+            conectar()
+            .table("usuarios")
+            .select("otp_codigo")
+            .eq("email", email.strip().lower())
+            .single()
+            .execute()
+        )
+
+        usuario = resp.data
+
+        if not usuario:
+            return False
+
+        codigo_salvo = str(usuario["otp_codigo"]).strip()
+
+        if codigo_salvo != codigo_digitado:
+            return False
+
+        # 🔥 confirma + limpa otp
+        (
+            conectar()
+            .table("usuarios")
+            .update({
+                "email_confirmado": True,
+                "otp_codigo": None
+            })
+            .eq("email", email.strip().lower())
+            .execute()
+        )
+
+        print("USUÁRIO CONFIRMADO ✅")
         return True
 
-    return False
+    except Exception as e:
+        print("ERRO CONFIRMAR OTP ❌", e)
+        return False
 
 
 # =====================================================
