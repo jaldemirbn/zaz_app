@@ -54,7 +54,8 @@ def enviar_email_confirmacao(email, link):
             "Content-Type": "application/json"
         },
         json={
-            "from": "zAz <no-reply@appzaz.com.br>",
+            "from": "zAz <contato@appzaz.com.br>",
+
             "to": [email],
             "subject": "Confirme sua conta",
             "html": f"<a href='{link}'>Confirmar conta</a>"
