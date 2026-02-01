@@ -1,5 +1,5 @@
 # =====================================================
-# zAz — ORQUESTRADOR (VERSÃO FINAL ESTÁVEL + EMAIL + REENVIO)
+# zAz — ORQUESTRADOR (VERSÃO FINAL ESTÁVEL + EMAIL + REENVIO + CONFIRMAÇÃO)
 # =====================================================
 
 import streamlit as st
@@ -41,6 +41,24 @@ def conectar():
 
 
 # =====================================================
+# 🔥 CONFIRMAR TOKEN AUTOMATICAMENTE (NOVO BLOCO)
+# =====================================================
+params = st.query_params
+
+if "token" in params:
+
+    token = params["token"]
+
+    conectar().table("usuarios").update({
+        "email_confirmado": True
+    }).eq("token_confirmacao", token).execute()
+
+    st.success("✅ Email confirmado com sucesso. Agora faça login.")
+
+    st.query_params.clear()
+
+
+# =====================================================
 # EMAIL (RESEND)
 # =====================================================
 def enviar_email_confirmacao(email, link):
@@ -59,11 +77,8 @@ def enviar_email_confirmacao(email, link):
             "subject": "Seu acesso ao zAz — confirme seu email",
             "html": f"""
             <p>Olá 👋</p>
-
             <p>Você criou uma conta no <b>zAz</b>.</p>
-
             <p>Clique no botão abaixo para confirmar:</p>
-
             <p>
             <a href="{link}" style="background:#FFC107;padding:12px 20px;border-radius:8px;color:#000;text-decoration:none;">
             Confirmar email
@@ -102,18 +117,14 @@ def validar_usuario(email, senha):
 # =====================================================
 def criar_usuario(email, senha):
 
-    supabase = conectar()
-
     token = str(uuid.uuid4())
 
-    dados = {
+    conectar().table("usuarios").insert({
         "email": email,
         "senha": senha,
         "email_confirmado": False,
         "token_confirmacao": token
-    }
-
-    supabase.table("usuarios").insert(dados).execute()
+    }).execute()
 
     link = f"https://zazapp.streamlit.app/?token={token}"
 
@@ -127,11 +138,9 @@ def criar_usuario(email, senha):
 # =====================================================
 def reenviar_confirmacao(email):
 
-    supabase = conectar()
-
     token = str(uuid.uuid4())
 
-    supabase.table("usuarios").update({
+    conectar().table("usuarios").update({
         "token_confirmacao": token
     }).eq("email", email).execute()
 
@@ -148,7 +157,7 @@ def reenviar_confirmacao(email):
 def atualizar_senha(email, senha):
 
     conectar().table("usuarios").update({
-        "senha": str(senha)
+        "senha": senha
     }).eq("email", email).execute()
 
 
@@ -168,7 +177,6 @@ if not st.session_state.logado:
         ["🔐 Entrar", "🆕 Criar conta", "♻️ Trocar senha"]
     )
 
-    # 🔥 AQUI ESTÁ O REENVIO SENDO PASSADO
     with tab_login:
         render_login(validar_usuario, reenviar_confirmacao)
 
