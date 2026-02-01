@@ -88,25 +88,17 @@ def criar_usuario(email, senha):
 
     supabase = conectar()
 
-    token = str(uuid.uuid4())
-
     dados = {
-        "email": str(email),
-        "senha": str(senha),
+        "email": email,
+        "senha": senha,
         "email_confirmado": False,
-        "token_confirmacao": token
+        "token_confirmacao": None
     }
 
-    # INSERT
     supabase.table("usuarios").insert(dados).execute()
 
-    # LINK DE CONFIRMAÇÃO
-    link = f"https://SEU_APP.streamlit.app/?token={token}"
-
-    # ENVIA EMAIL
-    enviar_email_confirmacao(email, link)
-
     return True
+
 
 
 # =====================================================
