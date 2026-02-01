@@ -13,7 +13,6 @@ def _init_states():
         "abrir_termos": False,
         "abrir_privacidade": False,
 
-        "cadastro_executado": False,
         "codigo_enviado": False,
         "codigo_confirmado": False
     }
@@ -34,8 +33,9 @@ def senha_valida(senha: str) -> bool:
     return bool(senha and len(senha) >= 4)
 
 
+# 🔥 valida só DDD+número (55 é automático)
 def telefone_valido(tel: str) -> bool:
-    return tel.isdigit() and len(tel) >= 10
+    return tel.isdigit() and 10 <= len(tel) <= 11
 
 
 # =====================================================
@@ -77,14 +77,21 @@ def render_cadastro(criar_usuario, confirmar_codigo):
 
     email = st.text_input("Email", key="cad_email")
     senha = st.text_input("Senha", type="password", key="cad_senha")
-    telefone = st.text_input(
-        "WhatsApp (somente números, ex: 5585987154528)",
+
+    # 🔥 usuário digita só o número, sistema adiciona 55
+    telefone_raw = st.text_input(
+        "WhatsApp (DDD + número)",
+        placeholder="85996655017",
         key="cad_tel"
     )
 
+    telefone = f"55{telefone_raw}" if telefone_raw else ""
+
     st.markdown("---")
 
-    # termos
+    # =================================================
+    # TERMOS
+    # =================================================
     col1, col2 = st.columns(2)
 
     with col1:
@@ -109,7 +116,7 @@ def render_cadastro(criar_usuario, confirmar_codigo):
 
     email_ok = email_valido(email)
     senha_ok = senha_valida(senha)
-    tel_ok = telefone_valido(telefone)
+    tel_ok = telefone_valido(telefone_raw)
 
     pode_criar = (
         email_ok
@@ -120,7 +127,7 @@ def render_cadastro(criar_usuario, confirmar_codigo):
     )
 
     # =================================================
-    # 🔥 ENVIAR CÓDIGO
+    # 🔥 ETAPA 1 — ENVIAR CÓDIGO
     # =================================================
     if not st.session_state.codigo_enviado:
 
@@ -135,10 +142,11 @@ def render_cadastro(criar_usuario, confirmar_codigo):
             st.session_state.codigo_enviado = True
             st.success("📲 Código enviado no WhatsApp")
 
-        return False
+        return
+
 
     # =================================================
-    # 🔥 CONFIRMAR CÓDIGO
+    # 🔥 ETAPA 2 — CONFIRMAR
     # =================================================
     codigo = st.text_input("Digite o código recebido")
 
@@ -149,5 +157,3 @@ def render_cadastro(criar_usuario, confirmar_codigo):
             st.session_state.codigo_confirmado = True
         else:
             st.error("Código inválido")
-
-    return False
