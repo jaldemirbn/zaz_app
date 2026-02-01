@@ -65,13 +65,19 @@ def enviar_whatsapp(numero, mensagem):
 # =====================================================
 # AUTH HELPERS
 # =====================================================
+# =====================================================
+# AUTH HELPERS
+# =====================================================
 def validar_usuario(email, senha):
 
-    # 🔥 CORREÇÃO OBRIGATÓRIA: normalizar email
     email = email.strip().lower()
 
-    r = (
-        conectar()
-        .table("usuarios")
-        .select("*")
-    )
+    r = conectar().table("usuarios") \
+        .select("*") \
+        .eq("email", email) \
+        .eq("senha", senha) \
+        .eq("email_confirmado", True) \
+        .execute()
+
+    return len(r.data) > 0
+
