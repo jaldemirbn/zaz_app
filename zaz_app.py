@@ -81,24 +81,44 @@ def validar_usuario(email, senha):
 
 
 # =====================================================
-# 🔥 CRIAR USUÁRIO + OTP
+# 🔥 CRIAR USUÁRIO + OTP (versão robusta)
 # =====================================================
 def criar_usuario(email, senha, telefone):
 
     codigo = str(random.randint(100000, 999999))
 
-    conectar().table("usuarios").insert({
-        "email": email,
+    dados = {
+        "email": email.strip().lower(),
         "senha": senha,
-        "telefone": telefone,   # 🔥 FALTAVA ISSO
+        "telefone": telefone,
         "email_confirmado": False,
         "otp_codigo": codigo
-    }).execute()
+    }
 
-    enviar_whatsapp(
-        telefone,
-        f"Seu código de confirmação zAz é: {codigo}"
-    )
+    try:
+        conectar().table("usuarios").insert(dados).execute()
+        print("USUÁRIO CRIADO ✅", dados)
+
+    except Exception as e:
+        print("ERRO SUPABASE ❌", e)
+
+        # erro mais comum: duplicado
+        if "duplicate key" in str(e).lower():
+            raise Exception("Telefone ou email já cadastrado.")
+
+        raise Exception("Erro ao criar usuário no banco.")
+
+    try:
+        enviar_whatsapp(
+            telefone,
+            f"Seu código de confirmação zAz é: {codigo}"
+        )
+        print("OTP ENVIADO ✅")
+
+    except Exception as e:
+        print("ERRO WHATSAPP ❌", e)
+        raise Exception("Erro ao enviar WhatsApp.")
+
 
 
 # =====================================================
