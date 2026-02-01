@@ -133,9 +133,13 @@ def render_cadastro(criar_usuario, confirmar_codigo):
 
         if st.button(
             "Enviar código no WhatsApp",
-            use_container_width=True,
-            disabled=not pode_criar
+            use_container_width=True
         ):
+
+            # 🔥 valida depois do clique (não trava botão)
+            if not pode_criar:
+                st.warning("Preencha todos os campos e aceite os termos.")
+                return
 
             criar_usuario(email, senha, telefone)
 
