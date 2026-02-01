@@ -65,9 +65,6 @@ def enviar_whatsapp(numero, mensagem):
 # =====================================================
 # AUTH HELPERS
 # =====================================================
-# =====================================================
-# AUTH HELPERS
-# =====================================================
 def validar_usuario(email, senha):
 
     email = email.strip().lower()
@@ -81,3 +78,15 @@ def validar_usuario(email, senha):
 
     return len(r.data) > 0
 
+
+# =====================================================
+# 🔥 CRIAR USUÁRIO + OTP
+# =====================================================
+def criar_usuario(email, senha, telefone):
+
+    codigo = str(random.randint(100000, 999999))
+
+    dados = {
+        "email": email.strip().lower(),
+        "senha": senha,
+        "telefone": telefone,
