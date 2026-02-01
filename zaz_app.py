@@ -87,6 +87,11 @@ def criar_usuario(email, senha, telefone):
 
     codigo = str(random.randint(100000, 999999))
 
+    print("========== DEBUG CRIAR USUARIO ==========")
+    print("EMAIL:", email)
+    print("TELEFONE:", telefone)
+    print("OTP GERADO:", codigo)
+
     conectar().table("usuarios").insert({
         "email": email,
         "senha": senha,
@@ -94,10 +99,15 @@ def criar_usuario(email, senha, telefone):
         "otp_codigo": codigo
     }).execute()
 
+    print("SALVO NO BANCO ✅")
+
     enviar_whatsapp(
         telefone,
         f"Seu código de confirmação zAz é: {codigo}"
     )
+
+    print("WHATSAPP ENVIADO ✅")
+
 
 
 # =====================================================
