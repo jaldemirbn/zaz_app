@@ -74,4 +74,4 @@ def validar_usuario(email, senha):
         conectar()
         .table("usuarios")
         .select("*")
-        .
+    ).
