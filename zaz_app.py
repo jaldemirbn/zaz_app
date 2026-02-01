@@ -99,7 +99,12 @@ def criar_usuario(email, senha):
 
     supabase.table("usuarios").insert(dados).execute()
 
+    link = f"https://SEU_APP.streamlit.app/?token={token}"
+
+    enviar_email_confirmacao(email, link)
+
     return True
+
 
 
 
