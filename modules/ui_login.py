@@ -1,9 +1,6 @@
 import streamlit as st
 
 
-# =====================================================
-# LOGIN SIMPLES (WHATSAPP FLOW)
-# =====================================================
 def render_login(validar_usuario):
 
     if "logado" not in st.session_state:
