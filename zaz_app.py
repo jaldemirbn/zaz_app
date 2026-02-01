@@ -42,13 +42,12 @@ def conectar():
 
 # =====================================================
 # EMAIL (RESEND)
-# LINHA ~42
 # =====================================================
 def enviar_email_confirmacao(email, link):
 
-    print("ENVIANDO EMAIL PARA:", email)  # 🔥 debug
+    st.info(f"📧 Enviando email para: {email}")
 
-    requests.post(
+    r = requests.post(
         "https://api.resend.com/emails",
         headers={
             "Authorization": f"Bearer {st.secrets['RESEND_API_KEY']}",
@@ -58,12 +57,14 @@ def enviar_email_confirmacao(email, link):
             "from": "zAz <no-reply@seudominio.com>",
             "to": [email],
             "subject": "Confirme sua conta",
-            "html": f"""
-            Clique para confirmar sua conta:<br><br>
-            <a href="{link}">{link}</a>
-            """
+            "html": f"<a href='{link}'>Confirmar conta</a>"
         }
     )
+
+    if r.status_code in (200, 201):
+        st.success("✅ Email enviado com sucesso")
+    else:
+        st.error(f"❌ Falha ao enviar email | status: {r.status_code}")
 
 
 # =====================================================
