@@ -1,5 +1,5 @@
 # =====================================================
-# zAz — ORQUESTRADOR (VERSÃO FINAL ESTÁVEL + EMAIL)
+# zAz — ORQUESTRADOR (VERSÃO FINAL ESTÁVEL + EMAIL + REENVIO)
 # =====================================================
 
 import streamlit as st
@@ -55,10 +55,21 @@ def enviar_email_confirmacao(email, link):
         },
         json={
             "from": "zAz <contato@appzaz.com.br>",
-
             "to": [email],
-            "subject": "Confirme sua conta",
-            "html": f"<a href='{link}'>Confirmar conta</a>"
+            "subject": "Seu acesso ao zAz — confirme seu email",
+            "html": f"""
+            <p>Olá 👋</p>
+
+            <p>Você criou uma conta no <b>zAz</b>.</p>
+
+            <p>Clique no botão abaixo para confirmar:</p>
+
+            <p>
+            <a href="{link}" style="background:#FFC107;padding:12px 20px;border-radius:8px;color:#000;text-decoration:none;">
+            Confirmar email
+            </a>
+            </p>
+            """
         }
     )
 
@@ -87,7 +98,7 @@ def validar_usuario(email, senha):
 
 
 # =====================================================
-# 🔥 CRIAR USUÁRIO
+# CRIAR USUÁRIO
 # =====================================================
 def criar_usuario(email, senha):
 
@@ -112,7 +123,7 @@ def criar_usuario(email, senha):
 
 
 # =====================================================
-# 🔁 REENVIAR CONFIRMAÇÃO (NOVO)
+# REENVIAR CONFIRMAÇÃO
 # =====================================================
 def reenviar_confirmacao(email):
 
@@ -157,8 +168,9 @@ if not st.session_state.logado:
         ["🔐 Entrar", "🆕 Criar conta", "♻️ Trocar senha"]
     )
 
+    # 🔥 AQUI ESTÁ O REENVIO SENDO PASSADO
     with tab_login:
-        render_login(validar_usuario)
+        render_login(validar_usuario, reenviar_confirmacao)
 
     with tab_cadastro:
 
