@@ -1,9 +1,9 @@
 # =====================================================
-# zAz — ORQUESTRADOR (VERSÃO FINAL ESTÁVEL + EMAIL + REENVIO + CONFIRMAÇÃO)
+# zAz — ORQUESTRADOR (WHATSAPP OTP ONLY • LIMPO)
 # =====================================================
 
 import streamlit as st
-import uuid
+import random
 import requests
 from supabase import create_client
 
@@ -41,57 +41,25 @@ def conectar():
 
 
 # =====================================================
-# 🔥 CONFIRMAR TOKEN AUTOMATICAMENTE (NOVO BLOCO)
+# 🔥 WHATSAPP ENVIO
 # =====================================================
-params = st.query_params
+def enviar_whatsapp(numero, mensagem):
 
-if "token" in params:
+    url = f"https://graph.facebook.com/v22.0/{st.secrets['WA_PHONE_ID']}/messages"
 
-    token = params["token"]
+    headers = {
+        "Authorization": f"Bearer {st.secrets['WA_TOKEN']}",
+        "Content-Type": "application/json"
+    }
 
-    conectar().table("usuarios").update({
-        "email_confirmado": True
-    }).eq("token_confirmacao", token).execute()
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": numero,
+        "type": "text",
+        "text": {"body": mensagem}
+    }
 
-    st.success("✅ Email confirmado com sucesso. Agora faça login.")
-
-    st.query_params.clear()
-
-
-# =====================================================
-# EMAIL (RESEND)
-# =====================================================
-def enviar_email_confirmacao(email, link):
-
-    st.info(f"📧 Enviando email para: {email}")
-
-    r = requests.post(
-        "https://api.resend.com/emails",
-        headers={
-            "Authorization": f"Bearer {st.secrets['RESEND_API_KEY']}",
-            "Content-Type": "application/json"
-        },
-        json={
-            "from": "zAz <contato@appzaz.com.br>",
-            "to": [email],
-            "subject": "Seu acesso ao zAz — confirme seu email",
-            "html": f"""
-            <p>Olá 👋</p>
-            <p>Você criou uma conta no <b>zAz</b>.</p>
-            <p>Clique no botão abaixo para confirmar:</p>
-            <p>
-            <a href="{link}" style="background:#FFC107;padding:12px 20px;border-radius:8px;color:#000;text-decoration:none;">
-            Confirmar email
-            </a>
-            </p>
-            """
-        }
-    )
-
-    if r.status_code in (200, 201):
-        st.success("✅ Email enviado com sucesso")
-    else:
-        st.error(f"❌ Falha ao enviar email | status: {r.status_code}")
+    requests.post(url, headers=headers, json=payload)
 
 
 # =====================================================
@@ -113,42 +81,46 @@ def validar_usuario(email, senha):
 
 
 # =====================================================
-# CRIAR USUÁRIO
+# 🔥 CRIAR USUÁRIO + OTP
 # =====================================================
-def criar_usuario(email, senha):
+def criar_usuario(email, senha, telefone):
 
-    token = str(uuid.uuid4())
+    codigo = str(random.randint(100000, 999999))
 
     conectar().table("usuarios").insert({
         "email": email,
         "senha": senha,
         "email_confirmado": False,
-        "token_confirmacao": token
+        "otp_codigo": codigo
     }).execute()
 
-    link = f"https://zazapp.streamlit.app/?token={token}"
-
-    enviar_email_confirmacao(email, link)
-
-    return True
+    enviar_whatsapp(
+        telefone,
+        f"Seu código de confirmação zAz é: {codigo}"
+    )
 
 
 # =====================================================
-# REENVIAR CONFIRMAÇÃO
+# 🔥 CONFIRMAR OTP
 # =====================================================
-def reenviar_confirmacao(email):
+def confirmar_codigo(email, codigo):
 
-    token = str(uuid.uuid4())
+    r = (
+        conectar()
+        .table("usuarios")
+        .select("*")
+        .eq("email", email)
+        .eq("otp_codigo", codigo)
+        .execute()
+    )
 
-    conectar().table("usuarios").update({
-        "token_confirmacao": token
-    }).eq("email", email).execute()
+    if len(r.data) > 0:
+        conectar().table("usuarios").update({
+            "email_confirmado": True
+        }).eq("email", email).execute()
+        return True
 
-    link = f"https://zazapp.streamlit.app/?token={token}"
-
-    enviar_email_confirmacao(email, link)
-
-    st.success("📧 Novo email de confirmação enviado")
+    return False
 
 
 # =====================================================
@@ -178,14 +150,10 @@ if not st.session_state.logado:
     )
 
     with tab_login:
-        render_login(validar_usuario, reenviar_confirmacao)
+        render_login(validar_usuario)
 
     with tab_cadastro:
-
-        ok = render_cadastro(criar_usuario)
-
-        if ok:
-            st.success("Conta criada. Verifique seu email para confirmar.")
+        render_cadastro(criar_usuario, confirmar_codigo)
 
     with tab_senha:
         render_trocar_senha(atualizar_senha)
