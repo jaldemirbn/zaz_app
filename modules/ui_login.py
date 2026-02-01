@@ -25,14 +25,4 @@ def render_login(validar_usuario):
         else:
             st.error("Email ou senha inválidos")
 
-    # =================================================
-    # 🔁 REENVIAR CONFIRMAÇÃO (NOVO)
-    # =================================================
-    st.markdown("---")
-
-    if st.button("Reenviar email de confirmação", use_container_width=True):
-
-        if email:
-            reenviar_confirmacao(email)
-        else:
-            st.warning("Digite seu email primeiro")
+  
