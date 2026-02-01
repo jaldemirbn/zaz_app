@@ -88,11 +88,13 @@ def criar_usuario(email, senha):
 
     supabase = conectar()
 
+    token = str(uuid.uuid4())
+
     dados = {
         "email": email,
         "senha": senha,
         "email_confirmado": False,
-        "token_confirmacao": None
+        "token_confirmacao": token
     }
 
     supabase.table("usuarios").insert(dados).execute()
