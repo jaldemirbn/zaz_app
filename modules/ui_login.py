@@ -1,5 +1,5 @@
 import streamlit as st
-from zaz_app import reenviar_confirmacao
+
 
 
 # =====================================================
