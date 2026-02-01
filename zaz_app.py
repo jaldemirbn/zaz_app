@@ -42,8 +42,11 @@ def conectar():
 
 # =====================================================
 # EMAIL (RESEND)
+# LINHA ~42
 # =====================================================
 def enviar_email_confirmacao(email, link):
+
+    print("ENVIANDO EMAIL PARA:", email)  # 🔥 debug
 
     requests.post(
         "https://api.resend.com/emails",
@@ -82,7 +85,8 @@ def validar_usuario(email, senha):
 
 
 # =====================================================
-# 🔥 CRIAR USUÁRIO + ENVIO EMAIL
+# 🔥 CRIAR USUÁRIO
+# LINHA ~78
 # =====================================================
 def criar_usuario(email, senha):
 
@@ -104,8 +108,6 @@ def criar_usuario(email, senha):
     enviar_email_confirmacao(email, link)
 
     return True
-
-
 
 
 # =====================================================
@@ -142,4 +144,20 @@ if not st.session_state.logado:
         ok = render_cadastro(criar_usuario)
 
         if ok:
-            st.success("Conta criada. Verifique seu emai")
+            st.success("Conta criada. Verifique seu email para confirmar.")
+
+    with tab_senha:
+        render_trocar_senha(atualizar_senha)
+
+    st.stop()
+
+
+# =====================================================
+# APP FLOW
+# =====================================================
+render_etapa_ideias()
+render_etapa_headline()
+render_etapa_conceito()
+render_etapa_imagens()
+render_etapa_postagem()
+render_etapa_historico()
