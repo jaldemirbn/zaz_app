@@ -88,7 +88,6 @@ def validar_usuario(email, senha):
 
 # =====================================================
 # 🔥 CRIAR USUÁRIO
-# LINHA ~78
 # =====================================================
 def criar_usuario(email, senha):
 
@@ -110,6 +109,26 @@ def criar_usuario(email, senha):
     enviar_email_confirmacao(email, link)
 
     return True
+
+
+# =====================================================
+# 🔁 REENVIAR CONFIRMAÇÃO (NOVO)
+# =====================================================
+def reenviar_confirmacao(email):
+
+    supabase = conectar()
+
+    token = str(uuid.uuid4())
+
+    supabase.table("usuarios").update({
+        "token_confirmacao": token
+    }).eq("email", email).execute()
+
+    link = f"https://zazapp.streamlit.app/?token={token}"
+
+    enviar_email_confirmacao(email, link)
+
+    st.success("📧 Novo email de confirmação enviado")
 
 
 # =====================================================
