@@ -1,5 +1,6 @@
 # =====================================================
 # zAz — MÓDULO CANVAS INTERNO
+# Editor visual do post (mini Canva interno)
 # =====================================================
 
 import streamlit as st
@@ -9,14 +10,22 @@ import io
 
 def render_etapa_canvas():
 
+    # -------------------------------------------------
+    # só renderiza se tiver imagem
+    # -------------------------------------------------
     if "imagem_bytes" not in st.session_state:
         return
+
 
     st.markdown(
         "<h3 style='color:#FF9D28;'>07. Canvas do post</h3>",
         unsafe_allow_html=True
     )
 
+
+    # -------------------------------------------------
+    # CARREGA IMAGEM
+    # -------------------------------------------------
     img = Image.open(io.BytesIO(st.session_state["imagem_bytes"]))
 
 
@@ -43,28 +52,32 @@ def render_etapa_canvas():
     with col4:
         cor = st.color_picker("Cor", "#FFFFFF")
 
-    # 🔥 NOVO → seleção de fonte
+    # -------------------------------------------------
+    # FONTES SEGURAS (DejaVu family)
+    # -------------------------------------------------
+
     with col5:
         fonte_nome = st.selectbox(
             "Fonte",
             [
                 "Sans",
                 "Sans Bold",
+                "Light",
                 "Serif",
-                "Itálica"
+                "Serif Bold",
+                "Mono",
+                "Mono Bold"
             ]
         )
-
-
-    # -------------------------------------------------
-    # MAPA DE FONTES
-    # -------------------------------------------------
 
     fontes = {
         "Sans": "DejaVuSans.ttf",
         "Sans Bold": "DejaVuSans-Bold.ttf",
+        "Light": "DejaVuSans-ExtraLight.ttf",
         "Serif": "DejaVuSerif.ttf",
-        "Itálica": "DejaVuSans-Oblique.ttf"
+        "Serif Bold": "DejaVuSerif-Bold.ttf",
+        "Mono": "DejaVuSansMono.ttf",
+        "Mono Bold": "DejaVuSansMono-Bold.ttf"
     }
 
     font = ImageFont.truetype(fontes[fonte_nome], tamanho)
@@ -77,9 +90,11 @@ def render_etapa_canvas():
     preview = img.copy()
     draw = ImageDraw.Draw(preview)
 
-    # contorno
-    for dx in range(-2, 3):
-        for dy in range(-2, 3):
+    # contorno preto para legibilidade
+    contorno = 2
+
+    for dx in range(-contorno, contorno + 1):
+        for dy in range(-contorno, contorno + 1):
             draw.text((x + dx, y + dy), texto, font=font, fill="black")
 
     draw.text((x, y), texto, font=font, fill=cor)
