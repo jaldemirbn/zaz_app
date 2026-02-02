@@ -1,6 +1,4 @@
 import streamlit as st
-import random
-import requests
 from supabase import create_client
 
 from modules.ui_login import render_login
@@ -33,91 +31,35 @@ def conectar():
 
 
 # =====================================================
-# WHATSAPP
-# =====================================================
-def enviar_whatsapp(numero, mensagem):
-
-    url = f"https://graph.facebook.com/v22.0/{st.secrets['WA_PHONE_ID']}/messages"
-
-
-    headers = {
-        "Authorization": f"Bearer {st.secrets['WA_TOKEN']}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "messaging_product": "whatsapp",
-        "to": numero,
-        "type": "text",
-        "text": {"body": mensagem}
-    }
-
-    requests.post(url, headers=headers, json=payload)
-
-
-# =====================================================
 # AUTH
 # =====================================================
 def validar_usuario(email, senha):
 
     email = email.strip().lower()
 
-    r = conectar().table("usuarios") \
-        .select("*") \
-        .eq("email", email) \
-        .eq("senha", senha) \
-        .eq("email_confirmado", True) \
+    r = (
+        conectar()
+        .table("usuarios")
+        .select("*")
+        .eq("email", email)
+        .eq("senha", senha)
         .execute()
+    )
 
     return len(r.data) > 0
 
 
+# 🔥 CADASTRO SIMPLES (SEM OTP)
 def criar_usuario(email, senha, telefone):
-
-    codigo = str(random.randint(100000, 999999))
 
     dados = {
         "email": email.strip().lower(),
         "senha": senha,
         "telefone": telefone,
-        "email_confirmado": False,
-        "otp_codigo": codigo
+        "email_confirmado": True  # já nasce confirmado
     }
 
     conectar().table("usuarios").insert(dados).execute()
-
-    enviar_whatsapp(
-        telefone,
-        f"Seu código de confirmação zAz é: {codigo}"
-    )
-
-
-def confirmar_codigo(email, codigo_digitado):
-
-    email = email.strip().lower()
-    codigo_digitado = str(codigo_digitado).strip()
-
-    resp = conectar().table("usuarios") \
-        .select("otp_codigo") \
-        .eq("email", email) \
-        .single() \
-        .execute()
-
-    if not resp.data:
-        return False
-
-    if str(resp.data["otp_codigo"]).strip() != codigo_digitado:
-        return False
-
-    conectar().table("usuarios") \
-        .update({
-            "email_confirmado": True,
-            "otp_codigo": None
-        }) \
-        .eq("email", email) \
-        .execute()
-
-    return True
 
 
 def atualizar_senha(email, senha):
@@ -148,7 +90,7 @@ if not st.session_state.logado:
         render_login(validar_usuario)
 
     with tab_cadastro:
-        render_cadastro(criar_usuario, confirmar_codigo)
+        render_cadastro(criar_usuario)  # 🔥 não precisa mais confirmar_codigo
 
     with tab_senha:
         render_trocar_senha(atualizar_senha)
