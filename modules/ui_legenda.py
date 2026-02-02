@@ -1,9 +1,3 @@
-# =====================================================
-# zAz — MÓDULO 08
-# ETAPA 08 — LEGENDA
-# Copywriter com tons + formatação profissional
-# =====================================================
-
 import streamlit as st
 from modules.ia_engine import gerar_texto
 
@@ -17,42 +11,91 @@ def _gerar_legenda(contexto, texto_usuario, tons):
     tons_txt = ", ".join(tons)
 
     prompt = f"""
-Você é um copywriter profissional especialista em Instagram.
+Você é um copywriter.
 
-OBJETIVO:
-Criar uma legenda humana, envolvente e persuasiva.
+Gere:
+1) 3 a 7 frases curtas
+2) 1 CTA
+3) hashtags
 
-REGRAS DE CONTEÚDO:
-- 3 a 7 frases curtas
-- usar emojis estrategicamente
-- incorporar o texto do usuário naturalmente
-- respeitar os tons solicitados
-- linguagem brasileira autêntica
-- incluir uma CTA clara e persuasiva
+Retorne EXATAMENTE nesse formato:
 
-REGRAS DE FORMATAÇÃO (OBRIGATÓRIO):
-- cada frase deve ficar em uma linha
-- colocar uma linha em branco entre cada frase
-- deixar a CTA isolada com uma linha antes e depois
-- após a CTA escrever exatamente: Criado com @zAz_app
-- deixar uma linha em branco
-- finalizar com hashtags relevantes
-- a última hashtag deve ser sempre #zaz_app
+FRASES:
+- frase 1
+- frase 2
+- frase 3
+
+CTA:
+cta aqui
+
+HASHTAGS:
+#tag1 #tag2 #tag3
 
 CONTEXTO:
 Headline: {contexto.get("headline")}
-Conceito visual: {contexto.get("conceito")}
-
-Texto do usuário:
-{texto_usuario}
-
-Tons desejados:
-{tons_txt}
-
-Retorne apenas a legenda final formatada.
+Conceito: {contexto.get("conceito")}
+Texto usuário: {texto_usuario}
+Tons: {tons_txt}
 """
 
-    return gerar_texto(prompt).strip()
+    bruto = gerar_texto(prompt).strip()
+
+    # =================================================
+    # 🔥 FORMATAÇÃO CONTROLADA NO PYTHON (GARANTIA)
+    # =================================================
+
+    frases = []
+    cta = ""
+    hashtags = ""
+
+    modo = None
+
+    for linha in bruto.splitlines():
+
+        linha = linha.strip()
+
+        if not linha:
+            continue
+
+        if "FRASES" in linha.upper():
+            modo = "frases"
+            continue
+
+        if "CTA" in linha.upper():
+            modo = "cta"
+            continue
+
+        if "HASHTAGS" in linha.upper():
+            modo = "hashtags"
+            continue
+
+        if modo == "frases":
+            linha = linha.lstrip("- ").strip()
+            frases.append(linha)
+
+        elif modo == "cta":
+            cta = linha
+
+        elif modo == "hashtags":
+            hashtags = linha
+
+    # monta layout final (100% fixo)
+    partes = []
+
+    for f in frases:
+        partes.append(f)
+        partes.append("")
+
+    partes.append("")
+    partes.append(cta)
+    partes.append("")
+    partes.append("")
+    partes.append("Criado com @zAz_app")
+    partes.append("")
+    partes.append("")
+    partes.append(f"{hashtags} #zaz_app")
+
+    return "\n".join(partes).strip()
 
 
 # =====================================================
@@ -61,7 +104,6 @@ Retorne apenas a legenda final formatada.
 
 def render_etapa_legenda():
 
-    # só aparece depois do canvas/post
     if "imagem_bytes" not in st.session_state:
         return
 
@@ -70,20 +112,10 @@ def render_etapa_legenda():
         unsafe_allow_html=True
     )
 
-
-    # -------------------------------------------------
-    # TEXTO LIVRE
-    # -------------------------------------------------
-
     texto_usuario = st.text_area(
         "O que você gostaria de colocar na legenda?",
         height=110
     )
-
-
-    # -------------------------------------------------
-    # TONS (GRID 3x5 CHECKBOX)
-    # -------------------------------------------------
 
     st.caption("Escolha o tom da legenda")
 
@@ -93,13 +125,11 @@ def render_etapa_legenda():
         "Irônico/Sarcástico",
         "Resiliente/Perrengue",
         "Acolhedor/Comunitário",
-
         "Sarcasmo",
         "Educativo/Didático",
         "Inspiracional/Motivacional",
         "Vulnerável/Autêntico",
         "Visual/Emoji-heavy",
-
         "Comercial/Promocional",
         "Opinião/Polêmico",
         "Profissional/Formal",
@@ -124,11 +154,6 @@ def render_etapa_legenda():
             if st.checkbox(tons_lista[i+10], key=f"tom_{i+10}"):
                 tons_escolhidos.append(tons_lista[i+10])
 
-
-    # -------------------------------------------------
-    # BOTÃO GERAR
-    # -------------------------------------------------
-
     if st.button("Criar legenda", use_container_width=True):
 
         contexto = {
@@ -143,15 +168,10 @@ def render_etapa_legenda():
                 tons_escolhidos
             )
 
-
-    # -------------------------------------------------
-    # RESULTADO
-    # -------------------------------------------------
-
     if st.session_state.get("legenda_gerada"):
 
         st.text_area(
             "Legenda pronta",
             st.session_state["legenda_gerada"],
-            height=320
+            height=340
         )
