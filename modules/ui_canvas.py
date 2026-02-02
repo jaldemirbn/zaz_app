@@ -62,7 +62,6 @@ def render_etapa_canvas():
             [
                 "Sans",
                 "Sans Bold",
-                "Light",
                 "Serif",
                 "Serif Bold",
                 "Mono",
