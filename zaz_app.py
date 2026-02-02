@@ -11,8 +11,7 @@ from modules.ui_conceito import render_etapa_conceito
 from modules.ui_imagens import render_etapa_imagens
 from modules.ui_post import render_etapa_post
 from modules.ui_canvas import render_etapa_canvas
-
-
+from modules.ui_legenda import render_etapa_legenda
 
 # =====================================================
 # CONFIG
@@ -107,4 +106,4 @@ render_etapa_conceito()
 render_etapa_imagens()
 render_etapa_post()
 render_etapa_canvas()
-
+render_etapa_postagem()
