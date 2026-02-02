@@ -9,7 +9,8 @@ import io
 
 def render_etapa_canvas():
 
-    if not st.session_state.get("imagem_bytes"):
+    # só depende da imagem existir
+    if "imagem_bytes" not in st.session_state:
         return
 
     st.markdown(
@@ -17,51 +18,67 @@ def render_etapa_canvas():
         unsafe_allow_html=True
     )
 
+    # -------------------------------------------------
+    # CARREGA IMAGEM
+    # -------------------------------------------------
     img = Image.open(io.BytesIO(st.session_state["imagem_bytes"]))
+
+
+    # -------------------------------------------------
+    # CONTROLES (SEMPRE VISÍVEIS)
+    # -------------------------------------------------
 
     texto = st.text_input(
         "Texto",
         st.session_state.get("headline_escolhida", "")
     )
 
-    # 🔥 NOVO → cor da fonte
+    # 🔥 COLOR PICKER (AGORA GARANTIDO)
     cor = st.color_picker("Cor do texto", "#FFFFFF")
 
-
-    margem = 150
-
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
-        x = st.slider("X", 0, img.width - margem, 40)
+        x = st.slider("X", 0, img.width, 40)
 
     with col2:
-        y = st.slider("Y", 0, img.height - margem, 40)
+        y = st.slider("Y", 0, img.height, 40)
 
-    tamanho = st.slider("Tamanho", 20, 200, 80)
+    with col3:
+        tamanho = st.slider("Tamanho", 20, 200, 80)
 
+
+    # -------------------------------------------------
+    # DESENHAR
+    # -------------------------------------------------
 
     preview = img.copy()
     draw = ImageDraw.Draw(preview)
 
+    # 🔥 fonte confiável (tamanho REAL)
     font = ImageFont.truetype("DejaVuSans-Bold.ttf", tamanho)
 
-    # contorno preto pra legibilidade
-    contorno = 3
-
-    for dx in range(-contorno, contorno + 1):
-        for dy in range(-contorno, contorno + 1):
+    # contorno preto (legibilidade)
+    for dx in range(-2, 3):
+        for dy in range(-2, 3):
             draw.text((x + dx, y + dy), texto, font=font, fill="black")
 
-    # 🔥 usa a cor escolhida
-    draw.text((x, y), texto, fill=cor, font=font)
+    draw.text((x, y), texto, font=font, fill=cor)
 
     st.image(preview, use_container_width=True)
 
+
+    # -------------------------------------------------
+    # EXPORTAR
+    # -------------------------------------------------
 
     buffer = io.BytesIO()
     preview.save(buffer, format="PNG")
 
     st.download_button(
         "⬇️ Baixar post final",
-        buffe
+        buffer.getvalue(),
+        "post_final.png",
+        "image/png",
+        use_container_width=True
+    )
