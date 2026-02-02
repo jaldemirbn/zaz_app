@@ -3,6 +3,9 @@ from PIL import Image, ImageDraw, ImageFont
 import io
 
 
+# =====================================================
+# CROP CENTRAL POR PROPORÇÃO
+# =====================================================
 def crop_aspect(img, ratio):
     w, h = img.size
     current = w / h
@@ -17,6 +20,9 @@ def crop_aspect(img, ratio):
         return img.crop((0, offset, w, offset + new_h))
 
 
+# =====================================================
+# RENDER CANVAS
+# =====================================================
 def render_etapa_canvas():
 
     if "imagem_bytes" not in st.session_state:
@@ -28,7 +34,10 @@ def render_etapa_canvas():
         io.BytesIO(st.session_state["imagem_bytes"])
     ).convert("RGBA")
 
-    # -------- formato --------
+
+    # =================================================
+    # FORMATO
+    # =================================================
     formato = st.selectbox(
         "Formato",
         ["Original", "1:1", "4:5", "9:16", "16:9", "3:4"]
@@ -47,12 +56,20 @@ def render_etapa_canvas():
     else:
         img = base_img.copy()
 
-    # -------- controles --------
-    texto = st.text_input(
-        "Texto",
-        st.session_state.get("headline_escolhida", "")
+
+    # =================================================
+    # TEXTO (AGORA MULTILINHA)
+    # =================================================
+    texto = st.text_area(
+        "Texto (use Enter para quebrar linha)",
+        st.session_state.get("headline_escolhida", ""),
+        height=120
     )
 
+
+    # =================================================
+    # CONTROLES
+    # =================================================
     c1, c2, c3, c4, c5 = st.columns(5)
 
     with c1:
@@ -73,10 +90,18 @@ def render_etapa_canvas():
             ["Sans", "Sans Bold", "Serif", "Serif Bold", "Mono", "Mono Bold"]
         )
 
-    usar_fundo = st.checkbox("Fundo", True)
+
+    # =================================================
+    # FUNDO DO TEXTO
+    # =================================================
+    usar_fundo = st.checkbox("Fundo atrás do texto", True)
     cor_fundo = st.color_picker("Cor fundo", "#000000")
     alpha = st.slider("Transparência", 0, 255, 140)
 
+
+    # =================================================
+    # FONTES SEGURAS
+    # =================================================
     fontes = {
         "Sans": "DejaVuSans.ttf",
         "Sans Bold": "DejaVuSans-Bold.ttf",
@@ -88,12 +113,16 @@ def render_etapa_canvas():
 
     font = ImageFont.truetype(fontes[fonte_nome], tamanho)
 
+
+    # =================================================
+    # DESENHAR
+    # =================================================
     preview = img.copy()
     overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
 
-    bbox = draw.textbbox((x, y), texto, font=font)
-    pad = 20
+    bbox = draw.multiline_textbbox((x, y), texto, font=font, spacing=6)
+    padding = 20
 
     if usar_fundo:
         r = int(cor_fundo[1:3], 16)
@@ -101,22 +130,33 @@ def render_etapa_canvas():
         b = int(cor_fundo[5:7], 16)
 
         draw.rectangle(
-            (bbox[0]-pad, bbox[1]-pad, bbox[2]+pad, bbox[3]+pad),
+            (bbox[0]-padding, bbox[1]-padding, bbox[2]+padding, bbox[3]+padding),
             fill=(r, g, b, alpha)
         )
 
-    draw.text((x, y), texto, font=font, fill=cor_texto)
+    draw.multiline_text(
+        (x, y),
+        texto,
+        font=font,
+        fill=cor_texto,
+        spacing=6
+    )
 
     preview = Image.alpha_composite(preview, overlay)
 
     st.image(preview, use_container_width=True)
 
+
+    # =================================================
+    # EXPORTAR
+    # =================================================
     buffer = io.BytesIO()
     preview.convert("RGB").save(buffer, format="PNG")
 
     st.download_button(
-        "Baixar post final",
+        "⬇️ Baixar post final",
         buffer.getvalue(),
         "post_final.png",
-        "image/png"
+        "image/png",
+        use_container_width=True
     )
