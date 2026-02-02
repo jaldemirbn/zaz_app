@@ -68,7 +68,7 @@ def render_etapa_legenda():
     # TONS EM GRID 3x5
     # -------------------------------------------------
 
-    st.markdown("### Escolha o tom da legenda:")
+    st.write("Escolha o tom da legenda:")
 
     tons = [
         "Humorístico/Zueira",
