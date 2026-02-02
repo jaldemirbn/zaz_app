@@ -1,6 +1,6 @@
 # =====================================================
 # zAz — MÓDULO IMAGEM
-# ETAPA 04 — COLAR/UPLOAD IMAGEM
+# ETAPA 05 — COLAR/UPLOAD IMAGEM
 # =====================================================
 
 import streamlit as st
@@ -36,16 +36,19 @@ def render_etapa_imagens():
 
         img = Image.open(arquivo)
 
-        # 🔥 ESSENCIAL → salvar para os próximos módulos
-        st.session_state["imagem_escolhida"] = img
+        # =================================================
+        # 🔥 CORREÇÃO CRÍTICA
+        # salvar BYTES (estável no session_state)
+        # =================================================
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+
+        st.session_state["imagem_bytes"] = buffer.getvalue()
 
         # PREVIEW
         st.image(img, use_container_width=True)
 
         # DOWNLOAD
-        buffer = io.BytesIO()
-        img.save(buffer, format="PNG")
-
         st.download_button(
             label="⬇️ Baixar imagem",
             data=buffer.getvalue(),
