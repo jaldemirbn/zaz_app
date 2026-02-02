@@ -28,7 +28,10 @@ def render_etapa_canvas():
     if "imagem_bytes" not in st.session_state:
         return
 
-    st.markdown("### 07. Canvas do post")
+    st.markdown(
+    "<h3 style='color:#FF9D28;'>07. Canvas do post</h3>",
+    unsafe_allow_html=True
+)
 
     base_img = Image.open(
         io.BytesIO(st.session_state["imagem_bytes"])
