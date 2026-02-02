@@ -107,7 +107,7 @@ def render_etapa_conceito():
             )
 
     st.markdown(
-        "<h3 style='color:#FF9D28;'>03 • Conceito visual</h3>",
+        "<h3 style='color:#FF9D28;'>04. Conceito visual</h3>",
         unsafe_allow_html=True
     )
 
@@ -142,3 +142,4 @@ def render_etapa_conceito():
         if st.button("Colar imagem", use_container_width=True, key="btn_liberar_img"):
             st.session_state["etapa_4_liberada"] = True
             st.rerun()
+
