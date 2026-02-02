@@ -1,9 +1,3 @@
-# =====================================================
-# zAz — MÓDULO 09
-# ETAPA 09 — POSTAGEM
-# Preview final do post (imagem do canvas + legenda)
-# =====================================================
-
 import streamlit as st
 from PIL import Image
 import io
@@ -11,73 +5,65 @@ import io
 
 def render_etapa_postagem():
 
-    # -------------------------------------------------
-    # SÓ APARECE SE TIVER RESULTADO FINAL
-    # -------------------------------------------------
-
-    if "imagem_final_bytes" not in st.session_state:
-        return
-
-    if "legenda_gerada" not in st.session_state:
-        return
-
-
-    # -------------------------------------------------
-    # TÍTULO
-    # -------------------------------------------------
-
     st.markdown(
         "<h3 style='color:#FF9D28;'>09. Postagem</h3>",
         unsafe_allow_html=True
     )
 
-
     # -------------------------------------------------
-    # PREVIEW DA IMAGEM FINAL (VEM DO CANVAS)
-    # -------------------------------------------------
-
-    img = Image.open(
-        io.BytesIO(st.session_state["imagem_final_bytes"])
-    )
-
-    st.image(
-        img,
-        caption="Preview do post final",
-        use_container_width=True
-    )
-
-
-    # -------------------------------------------------
-    # LEGENDA FINAL
+    # IMAGEM
     # -------------------------------------------------
 
-    st.text_area(
-        "Legenda final",
-        st.session_state["legenda_gerada"],
-        height=550
-    )
+    if "imagem_final_bytes" in st.session_state:
+
+        img = Image.open(
+            io.BytesIO(st.session_state["imagem_final_bytes"])
+        )
+
+        st.image(img, use_container_width=True)
+
+    else:
+        st.info("⚠️ Gere o Canvas para visualizar a imagem final.")
 
 
     # -------------------------------------------------
-    # AÇÕES RÁPIDAS
+    # LEGENDA
+    # -------------------------------------------------
+
+    if "legenda_gerada" in st.session_state:
+
+        st.text_area(
+            "Legenda final",
+            st.session_state["legenda_gerada"],
+            height=550
+        )
+
+    else:
+        st.info("⚠️ Gere a legenda para visualizar aqui.")
+
+
+    # -------------------------------------------------
+    # AÇÕES
     # -------------------------------------------------
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.download_button(
-            "⬇️ Baixar imagem final",
-            st.session_state["imagem_final_bytes"],
-            file_name="post_final.png",
-            mime="image/png",
-            use_container_width=True
-        )
+        if "imagem_final_bytes" in st.session_state:
+            st.download_button(
+                "⬇️ Baixar imagem",
+                st.session_state["imagem_final_bytes"],
+                "post_final.png",
+                "image/png",
+                use_container_width=True
+            )
 
     with col2:
-        st.download_button(
-            "⬇️ Baixar legenda (.txt)",
-            st.session_state["legenda_gerada"],
-            file_name="legenda.txt",
-            mime="text/plain",
-            use_container_width=True
-        )
+        if "legenda_gerada" in st.session_state:
+            st.download_button(
+                "⬇️ Baixar legenda",
+                st.session_state["legenda_gerada"],
+                "legenda.txt",
+                "text/plain",
+                use_container_width=True
+            )
