@@ -1,6 +1,6 @@
 # =====================================================
 # zAz — MÓDULO CANVAS INTERNO
-# Editor visual do post (mini Canva interno PRO)
+# Canvas PRO (texto + fontes + fundo + formatos)
 # =====================================================
 
 import streamlit as st
@@ -8,6 +8,33 @@ from PIL import Image, ImageDraw, ImageFont
 import io
 
 
+# =====================================================
+# CROP CENTRAL POR PROPORÇÃO
+# =====================================================
+def crop_aspect(img, ratio):
+
+    w, h = img.size
+    target = ratio
+
+    current = w / h
+
+    if current > target:
+        # corta largura
+        new_w = int(h * target)
+        offset = (w - new_w) // 2
+        box = (offset, 0, offset + new_w, h)
+    else:
+        # corta altura
+        new_h = int(w / target)
+        offset = (h - new_h) // 2
+        box = (0, offset, w, offset + new_h)
+
+    return img.crop(box)
+
+
+# =====================================================
+# RENDER
+# =====================================================
 def render_etapa_canvas():
 
     if "imagem_bytes" not in st.session_state:
@@ -18,11 +45,42 @@ def render_etapa_canvas():
         unsafe_allow_html=True
     )
 
-    img = Image.open(io.BytesIO(st.session_state["imagem_bytes"])).convert("RGBA")
+    base_img = Image.open(
+        io.BytesIO(st.session_state["imagem_bytes"])
+    ).convert("RGBA")
+
+    # =================================================
+    # FORMATO (NOVO)
+    # =================================================
+
+    formato = st.selectbox(
+        "Formato do post",
+        [
+            "Original",
+            "1:1 (Quadrado)",
+            "4:5 (Instagram Feed)",
+            "9:16 (Stories/Reels)",
+            "16:9 (Paisagem)",
+            "3:4 (Retrato)"
+        ]
+    )
+
+    ratios = {
+        "1:1 (Quadrado)": 1/1,
+        "4:5 (Instagram Feed)": 4/5,
+        "9:16 (Stories/Reels)": 9/16,
+        "16:9 (Paisagem)": 16/9,
+        "3:4 (Retrato)": 3/4
+    }
+
+    if formato != "Original":
+        img = crop_aspect(base_img, ratios[formato])
+    else:
+        img = base_img.copy()
 
 
     # =================================================
-    # CONTROLES
+    # CONTROLES TEXTO
     # =================================================
 
     texto = st.text_input(
@@ -50,25 +108,17 @@ def render_etapa_canvas():
             ["Sans", "Sans Bold", "Serif", "Serif Bold", "Mono", "Mono Bold"]
         )
 
+    # =================================================
+    # FUNDO TEXTO
+    # =================================================
 
-    # -------------------------------------------------
-    # FUNDO DO TEXTO (NOVO)
-    # -------------------------------------------------
-
-    col6, col7, col8 = st.columns(3)
-
-    with col6:
-        usar_fundo = st.checkbox("Fundo atrás do texto", True)
-
-    with col7:
-        cor_fundo = st.color_picker("Cor fundo", "#000000")
-
-    with col8:
-        alpha = st.slider("Transparência", 0, 255, 140)
+    usar_fundo = st.checkbox("Fundo atrás do texto", True)
+    cor_fundo = st.color_picker("Cor fundo", "#000000")
+    alpha = st.slider("Transparência", 0, 255, 140)
 
 
     # =================================================
-    # FONTES SEGURAS
+    # FONTES
     # =================================================
 
     fontes = {
@@ -89,49 +139,10 @@ def render_etapa_canvas():
 
     preview = img.copy()
     overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
-
     draw = ImageDraw.Draw(overlay)
 
-    # mede texto
     bbox = draw.textbbox((x, y), texto, font=font)
     padding = 20
 
     if usar_fundo:
-        r, g, b = tuple(int(cor_fundo[i:i+2], 16) for i in (1, 3, 5))
-
-        draw.rectangle(
-            (
-                bbox[0] - padding,
-                bbox[1] - padding,
-                bbox[2] + padding,
-                bbox[3] + padding
-            ),
-            fill=(r, g, b, alpha)
-        )
-
-    # contorno
-    for dx in range(-2, 3):
-        for dy in range(-2, 3):
-            draw.text((x + dx, y + dy), texto, font=font, fill="black")
-
-    draw.text((x, y), texto, font=font, fill=cor_texto)
-
-    preview = Image.alpha_composite(preview, overlay)
-
-    st.image(preview, use_container_width=True)
-
-
-    # =================================================
-    # EXPORTAR
-    # =================================================
-
-    buffer = io.BytesIO()
-    preview.convert("RGB").save(buffer, format="PNG")
-
-    st.download_button(
-        "⬇️ Baixar post final",
-        buffer.getvalue(),
-        "post_final.png",
-        "image/png",
-        use_container_width=True
-    )
+        r, g, b = tuple(int(cor_fundo_
