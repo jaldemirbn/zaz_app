@@ -164,7 +164,7 @@ def render_etapa_legenda():
 
     texto_usuario = st.text_area(
         "O que você gostaria de colocar na legenda?",
-        height=110
+        height=330
     )
 
     # -------------------------------------------------
