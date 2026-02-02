@@ -24,28 +24,30 @@ def render_etapa_canvas():
     img = Image.open(io.BytesIO(st.session_state["imagem_bytes"]))
 
 
-    # -------------------------------------------------
-    # CONTROLES (SEMPRE VISÍVEIS)
-    # -------------------------------------------------
+   # -------------------------------------------------
+# CONTROLES
+# -------------------------------------------------
 
-    texto = st.text_input(
-        "Texto",
-        st.session_state.get("headline_escolhida", "")
-    )
+texto = st.text_input(
+    "Texto",
+    st.session_state.get("headline_escolhida", "")
+)
 
-    # 🔥 COLOR PICKER (AGORA GARANTIDO)
-    cor = st.color_picker("Cor do texto", "#FFFFFF")
+# 🔥 tudo dentro das colunas (layout estável)
+col1, col2, col3, col4 = st.columns(4)
 
-    col1, col2, col3 = st.columns(3)
+with col1:
+    x = st.slider("X", 0, img.width, 40)
 
-    with col1:
-        x = st.slider("X", 0, img.width, 40)
+with col2:
+    y = st.slider("Y", 0, img.height, 40)
 
-    with col2:
-        y = st.slider("Y", 0, img.height, 40)
+with col3:
+    tamanho = st.slider("Tamanho", 20, 200, 80)
 
-    with col3:
-        tamanho = st.slider("Tamanho", 20, 200, 80)
+with col4:
+    cor = st.color_picker("Cor", "#FFFFFF")
+
 
 
     # -------------------------------------------------
