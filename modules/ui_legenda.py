@@ -149,10 +149,6 @@ Retorne o texto corrido, sem formatação especial.
 
 def render_etapa_legenda():
 
-    # só aparece depois do canvas/post
-   if "imagem_final_bytes" not in st.session_state:
-        return
-
     st.markdown(
         "<h3 style='color:#FF9D28;'>08. Legenda</h3>",
         unsafe_allow_html=True
@@ -179,13 +175,11 @@ def render_etapa_legenda():
         "Irônico/Sarcástico",
         "Resiliente/Perrengue",
         "Acolhedor/Comunitário",
-
         "Sarcasmo",
         "Educativo/Didático",
         "Inspiracional/Motivacional",
         "Vulnerável/Autêntico",
         "Visual/Emoji-heavy",
-
         "Comercial/Promocional",
         "Opinião/Polêmico",
         "Profissional/Formal",
