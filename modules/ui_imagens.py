@@ -30,11 +30,14 @@ def render_etapa_imagens():
     )
 
     # -------------------------------------------------
-    # SÓ RENDERIZA SE EXISTIR (SEM RETURN)
+    # RENDER
     # -------------------------------------------------
     if arquivo:
 
         img = Image.open(arquivo)
+
+        # 🔥 ESSENCIAL → salvar para os próximos módulos
+        st.session_state["imagem_escolhida"] = img
 
         # PREVIEW
         st.image(img, use_container_width=True)
