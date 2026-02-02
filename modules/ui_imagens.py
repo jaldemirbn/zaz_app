@@ -21,7 +21,7 @@ def render_etapa_imagens():
     st.caption("Cole ou selecione a imagem do seu computador.")
 
     # -------------------------------------------------
-    # UPLOAD (estável)
+    # UPLOAD
     # -------------------------------------------------
     arquivo = st.file_uploader(
         "Selecione ou arraste a imagem",
@@ -29,27 +29,24 @@ def render_etapa_imagens():
         label_visibility="collapsed"
     )
 
-    if not arquivo:
-        return
-
-    img = Image.open(arquivo)
-
     # -------------------------------------------------
-    # PREVIEW GRANDE
+    # SÓ RENDERIZA SE EXISTIR (SEM RETURN)
     # -------------------------------------------------
-    st.image(img, use_container_width=True)
+    if arquivo:
 
-    # -------------------------------------------------
-    # DOWNLOAD
-    # -------------------------------------------------
-    buffer = io.BytesIO()
-    img.save(buffer, format="PNG")
+        img = Image.open(arquivo)
 
-    st.download_button(
-        label="⬇️ Baixar imagem",
-        data=buffer.getvalue(),
-        file_name="post.png",
-        mime="image/png",
-        use_container_width=True
-    )
+        # PREVIEW
+        st.image(img, use_container_width=True)
 
+        # DOWNLOAD
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+
+        st.download_button(
+            label="⬇️ Baixar imagem",
+            data=buffer.getvalue(),
+            file_name="post.png",
+            mime="image/png",
+            use_container_width=True
+        )
