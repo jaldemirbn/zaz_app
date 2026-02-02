@@ -56,10 +56,11 @@ def render_etapa_post():
         return
 
     st.markdown(
-        "<h3 style='color:#FF9D28;'>06. Post visual</h3>",
+        "<h3 style='color:#FF9D28;'>06. Criação do post</h3>",
         unsafe_allow_html=True
     )
 
+    # 🔹 botão logo abaixo do título
     if st.button(
         "Criar descrição do post",
         use_container_width=True,
@@ -83,4 +84,3 @@ def render_etapa_post():
             st.session_state["descricao_post"],
             height=400
         )
-
