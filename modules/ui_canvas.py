@@ -39,7 +39,7 @@ def render_etapa_canvas():
     draw = ImageDraw.Draw(preview)
 
     try:
-        font = ImageFont.truetype("arial.ttf", tamanho)
+        font = ImageFont.truetype("DejaVuSans-Bold.ttf", tamanho)
     except:
         font = ImageFont.load_default()
 
