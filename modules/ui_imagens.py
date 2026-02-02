@@ -14,7 +14,7 @@ def render_etapa_imagens():
         return
 
     st.markdown(
-        "<h3 style='color:#FF9D28; margin-top:0;'>04. Colar imagem</h3>",
+        "<h3 style='color:#FF9D28; margin-top:0;'>05. Colar imagem</h3>",
         unsafe_allow_html=True
     )
 
@@ -52,3 +52,4 @@ def render_etapa_imagens():
         mime="image/png",
         use_container_width=True
     )
+
