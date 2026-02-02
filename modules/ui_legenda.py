@@ -1,8 +1,3 @@
-# =====================================================
-# zAz — MÓDULO 08
-# ETAPA 08 — LEGENDA (Copywriter com personalidade)
-# =====================================================
-
 import streamlit as st
 from modules.ia_engine import gerar_texto
 
@@ -18,18 +13,17 @@ def _gerar_legenda(contexto, texto_usuario, tons):
     prompt = f"""
 Você é um copywriter profissional especialista em redes sociais brasileiras.
 
-Crie uma legenda altamente humana, natural e envolvente.
+Crie uma legenda envolvente.
 
 REGRAS:
 - 3 a 7 linhas
-- usar emojis estrategicamente
+- emojis estratégicos
 - incorporar o texto do usuário naturalmente
 - respeitar os tons solicitados
-- linguagem brasileira autêntica
 - incluir CTA clara no final
-- finalizar com hashtags relacionadas
+- finalizar com hashtags relevantes
 
-CONTEXTO DO POST:
+CONTEXTO:
 Headline: {contexto.get("headline")}
 Conceito visual: {contexto.get("conceito")}
 
@@ -51,7 +45,6 @@ Retorne apenas a legenda final.
 
 def render_etapa_legenda():
 
-    # só aparece depois do post/canvas
     if "imagem_bytes" not in st.session_state:
         return
 
@@ -62,7 +55,7 @@ def render_etapa_legenda():
 
 
     # -------------------------------------------------
-    # TEXTO LIVRE
+    # TEXTO
     # -------------------------------------------------
 
     texto_usuario = st.text_area(
@@ -72,26 +65,24 @@ def render_etapa_legenda():
 
 
     # -------------------------------------------------
-    # TONS (3 COLUNAS × 5)
+    # TONS EM GRID 3x5
     # -------------------------------------------------
 
-    grupo1 = [
+    st.markdown("### Escolha o tom da legenda:")
+
+    tons = [
         "Humorístico/Zueira",
         "Informal/Coloquial",
         "Irônico/Sarcástico",
         "Resiliente/Perrengue",
-        "Acolhedor/Comunitário"
-    ]
+        "Acolhedor/Comunitário",
 
-    grupo2 = [
         "Sarcasmo",
         "Educativo/Didático",
         "Inspiracional/Motivacional",
         "Vulnerável/Autêntico",
-        "Visual/Emoji-heavy"
-    ]
+        "Visual/Emoji-heavy",
 
-    grupo3 = [
         "Comercial/Promocional",
         "Opinião/Polêmico",
         "Profissional/Formal",
@@ -99,18 +90,22 @@ def render_etapa_legenda():
         "Regional/Cultural"
     ]
 
-    col1, col2, col3 = st.columns(3)
+    tons_escolhidos = []
 
-    with col1:
-        t1 = st.multiselect("Grupo 1", grupo1)
+    for i in range(5):
+        col1, col2, col3 = st.columns(3)
 
-    with col2:
-        t2 = st.multiselect("Grupo 2", grupo2)
+        with col1:
+            if st.checkbox(tons[i], key=f"tom_{i}"):
+                tons_escolhidos.append(tons[i])
 
-    with col3:
-        t3 = st.multiselect("Grupo 3", grupo3)
+        with col2:
+            if st.checkbox(tons[i+5], key=f"tom_{i+5}"):
+                tons_escolhidos.append(tons[i+5])
 
-    tons_escolhidos = t1 + t2 + t3
+        with col3:
+            if st.checkbox(tons[i+10], key=f"tom_{i+10}"):
+                tons_escolhidos.append(tons[i+10])
 
 
     # -------------------------------------------------
