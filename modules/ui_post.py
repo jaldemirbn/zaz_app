@@ -52,9 +52,7 @@ Retorne somente a descrição final em português.
 
 def render_etapa_post():
 
-    if not st.session_state.get("criar_descricao_post"):
-        return
-
+    # 🔹 título sempre visível
     st.markdown(
         "<h3 style='color:#FF9D28;'>06. Criação do post</h3>",
         unsafe_allow_html=True
