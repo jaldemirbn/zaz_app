@@ -150,7 +150,7 @@ Retorne o texto corrido, sem formatação especial.
 def render_etapa_legenda():
 
     # só aparece depois do canvas/post
-    if "imagem_bytes" not in st.session_state:
+   if "imagem_final_bytes" not in st.session_state:
         return
 
     st.markdown(
