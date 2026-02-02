@@ -37,8 +37,7 @@ def conectar():
 # =====================================================
 def enviar_whatsapp(numero, mensagem):
 
-    url = f"https://graph.facebook.com/v22.0/{st.secrets['884864668054580
-']}/messages"
+    url = f"https://graph.facebook.com/v22.0/{st.secrets['WA_PHONE_ID']}/messages"
 
     headers = {
         "Authorization": f"Bearer {st.secrets['WA_TOKEN']}",
