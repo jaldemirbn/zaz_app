@@ -29,9 +29,9 @@ def render_etapa_canvas():
         return
 
     st.markdown(
-    "<h3 style='color:#FF9D28;'>07. Canvas do post</h3>",
-    unsafe_allow_html=True
-)
+        "<h3 style='color:#FF9D28;'>07. Canvas do post</h3>",
+        unsafe_allow_html=True
+    )
 
     base_img = Image.open(
         io.BytesIO(st.session_state["imagem_bytes"])
@@ -61,7 +61,7 @@ def render_etapa_canvas():
 
 
     # =================================================
-    # TEXTO (AGORA MULTILINHA)
+    # TEXTO
     # =================================================
     texto = st.text_area(
         "Texto (use Enter para quebrar linha)",
@@ -94,17 +94,11 @@ def render_etapa_canvas():
         )
 
 
-    # =================================================
-    # FUNDO DO TEXTO
-    # =================================================
     usar_fundo = st.checkbox("Fundo atrás do texto", True)
     cor_fundo = st.color_picker("Cor fundo", "#000000")
     alpha = st.slider("Transparência", 0, 255, 140)
 
 
-    # =================================================
-    # FONTES SEGURAS
-    # =================================================
     fontes = {
         "Sans": "DejaVuSans.ttf",
         "Sans Bold": "DejaVuSans-Bold.ttf",
@@ -151,10 +145,13 @@ def render_etapa_canvas():
 
 
     # =================================================
-    # EXPORTAR
+    # EXPORTAR  🔥 AQUI ESTÁ A CORREÇÃO
     # =================================================
     buffer = io.BytesIO()
     preview.convert("RGB").save(buffer, format="PNG")
+
+    # 🔥 SALVA PARA O MÓDULO POSTAGEM
+    st.session_state["imagem_final_bytes"] = buffer.getvalue()
 
     st.download_button(
         "⬇️ Baixar post final",
