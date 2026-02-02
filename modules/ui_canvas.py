@@ -23,32 +23,31 @@ def render_etapa_canvas():
     # -------------------------------------------------
     img = Image.open(io.BytesIO(st.session_state["imagem_bytes"]))
 
-# -------------------------------------------------
-# CONTROLES
-# -------------------------------------------------
 
-texto = st.text_input(
-    "Texto",
-    st.session_state.get("headline_escolhida", "")
-)
+    # -------------------------------------------------
+    # CONTROLES  ← 🔥 AGORA DENTRO DA FUNÇÃO
+    # -------------------------------------------------
 
-# 🔥 define primeiro (nunca dá NameError)
-cor = "#FFFFFF"
+    texto = st.text_input(
+        "Texto",
+        st.session_state.get("headline_escolhida", "")
+    )
 
-col1, col2, col3, col4 = st.columns(4)
+    cor = "#FFFFFF"
 
-with col1:
-    x = st.slider("X", 0, img.width, 40)
+    col1, col2, col3, col4 = st.columns(4)
 
-with col2:
-    y = st.slider("Y", 0, img.height, 40)
+    with col1:
+        x = st.slider("X", 0, img.width, 40)
 
-with col3:
-    tamanho = st.slider("Tamanho", 20, 200, 80)
+    with col2:
+        y = st.slider("Y", 0, img.height, 40)
 
-with col4:
-    cor = st.color_picker("Cor", cor)
+    with col3:
+        tamanho = st.slider("Tamanho", 20, 200, 80)
 
+    with col4:
+        cor = st.color_picker("Cor", cor)
 
 
     # -------------------------------------------------
@@ -58,10 +57,8 @@ with col4:
     preview = img.copy()
     draw = ImageDraw.Draw(preview)
 
-    # 🔥 fonte confiável (tamanho REAL)
     font = ImageFont.truetype("DejaVuSans-Bold.ttf", tamanho)
 
-    # contorno preto (legibilidade)
     for dx in range(-2, 3):
         for dy in range(-2, 3):
             draw.text((x + dx, y + dy), texto, font=font, fill="black")
