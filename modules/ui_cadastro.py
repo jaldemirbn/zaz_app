@@ -3,26 +3,6 @@ import re
 
 
 # =====================================================
-# STATES
-# =====================================================
-def _init_states():
-
-    defaults = {
-        "aceite_termos": False,
-        "aceite_privacidade": False,
-        "abrir_termos": False,
-        "abrir_privacidade": False,
-
-        "codigo_enviado": False,
-        "codigo_confirmado": False
-    }
-
-    for k, v in defaults.items():
-        if k not in st.session_state:
-            st.session_state[k] = v
-
-
-# =====================================================
 # VALIDAÇÃO
 # =====================================================
 def email_valido(email: str) -> bool:
@@ -33,7 +13,6 @@ def senha_valida(senha: str) -> bool:
     return bool(senha and len(senha) >= 4)
 
 
-# 🔥 valida só DDD+número (55 é automático)
 def telefone_valido(tel: str) -> bool:
     return tel.isdigit() and 10 <= len(tel) <= 11
 
@@ -43,74 +22,60 @@ def telefone_valido(tel: str) -> bool:
 # =====================================================
 @st.dialog("Termos de Uso", width="large")
 def dialog_termos():
-
     aceite = st.checkbox("Aceitar termos")
 
     if st.button("Confirmar"):
         if aceite:
             st.session_state.aceite_termos = True
-            st.session_state.abrir_termos = False
             st.rerun()
 
 
-# =====================================================
-# PRIVACIDADE
-# =====================================================
 @st.dialog("Política de Privacidade", width="large")
 def dialog_privacidade():
-
     aceite = st.checkbox("Aceitar política")
 
     if st.button("Confirmar"):
         if aceite:
             st.session_state.aceite_privacidade = True
-            st.session_state.abrir_privacidade = False
             st.rerun()
 
 
 # =====================================================
-# 🔥 CADASTRO COM WHATSAPP OTP
+# 🔥 CADASTRO SIMPLES (SEM OTP)
 # =====================================================
-def render_cadastro(criar_usuario, confirmar_codigo):
+def render_cadastro(criar_usuario):
 
-    _init_states()
+    if "aceite_termos" not in st.session_state:
+        st.session_state.aceite_termos = False
 
-    email = st.text_input("Email", key="cad_email")
-    senha = st.text_input("Senha", type="password", key="cad_senha")
+    if "aceite_privacidade" not in st.session_state:
+        st.session_state.aceite_privacidade = False
 
-    # 🔥 usuário digita só o número, sistema adiciona 55
+    email = st.text_input("Email")
+    senha = st.text_input("Senha", type="password")
+
     telefone_raw = st.text_input(
-        "WhatsApp (DDD + número)",
-        placeholder="85996655017",
-        key="cad_tel"
+        "Telefone (DDD + número)",
+        placeholder="85996655017"
     )
 
     telefone = f"55{telefone_raw}" if telefone_raw else ""
 
     st.markdown("---")
 
-    # =================================================
-    # TERMOS
-    # =================================================
     col1, col2 = st.columns(2)
 
     with col1:
         if st.session_state.aceite_termos:
             st.success("✅ Termos aceitos")
         elif st.button("Aceitar Termos"):
-            st.session_state.abrir_termos = True
+            dialog_termos()
 
     with col2:
         if st.session_state.aceite_privacidade:
             st.success("✅ Privacidade aceita")
         elif st.button("Aceitar Privacidade"):
-            st.session_state.abrir_privacidade = True
-
-    if st.session_state.abrir_termos:
-        dialog_termos()
-
-    if st.session_state.abrir_privacidade:
-        dialog_privacidade()
+            dialog_privacidade()
 
     st.markdown("---")
 
@@ -126,38 +91,12 @@ def render_cadastro(criar_usuario, confirmar_codigo):
         and st.session_state.aceite_privacidade
     )
 
-    # =================================================
-    # 🔥 ETAPA 1 — ENVIAR CÓDIGO
-    # =================================================
-    if not st.session_state.codigo_enviado:
+    if st.button("Criar conta", use_container_width=True):
 
-        if st.button(
-            "Enviar código no WhatsApp",
-            use_container_width=True
-        ):
+        if not pode_criar:
+            st.warning("Preencha todos os campos corretamente.")
+            return
 
-            # 🔥 valida depois do clique (não trava botão)
-            if not pode_criar:
-                st.warning("Preencha todos os campos e aceite os termos.")
-                return
+        criar_usuario(email, senha, telefone)
 
-            criar_usuario(email, senha, telefone)
-
-            st.session_state.codigo_enviado = True
-            st.success("📲 Código enviado no WhatsApp")
-
-        return
-
-
-    # =================================================
-    # 🔥 ETAPA 2 — CONFIRMAR
-    # =================================================
-    codigo = st.text_input("Digite o código recebido")
-
-    if st.button("Confirmar código", use_container_width=True):
-
-        if confirmar_codigo(email, codigo):
-            st.success("✅ Conta confirmada. Agora faça login.")
-            st.session_state.codigo_confirmado = True
-        else:
-            st.error("Código inválido")
+        st.success("Conta criada com sucesso! Agora faça login.")
