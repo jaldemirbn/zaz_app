@@ -1,5 +1,5 @@
 #===================================================
-#             Etapa 03 - Concceito
+#             Etapa 04 - Concceito
 #==================================================
 import streamlit as st
 from modules.ia_engine import gerar_texto
@@ -145,5 +145,6 @@ def render_etapa_conceito():
         if st.button("Colar imagem", use_container_width=True, key="btn_liberar_img"):
             st.session_state["etapa_4_liberada"] = True
             st.rerun()
+
 
 
