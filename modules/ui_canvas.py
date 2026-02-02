@@ -23,8 +23,7 @@ def render_etapa_canvas():
     # -------------------------------------------------
     img = Image.open(io.BytesIO(st.session_state["imagem_bytes"]))
 
-
-   # -------------------------------------------------
+# -------------------------------------------------
 # CONTROLES
 # -------------------------------------------------
 
@@ -33,7 +32,9 @@ texto = st.text_input(
     st.session_state.get("headline_escolhida", "")
 )
 
-# 🔥 tudo dentro das colunas (layout estável)
+# 🔥 define primeiro (nunca dá NameError)
+cor = "#FFFFFF"
+
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
@@ -46,7 +47,7 @@ with col3:
     tamanho = st.slider("Tamanho", 20, 200, 80)
 
 with col4:
-    cor = st.color_picker("Cor", "#FFFFFF")
+    cor = st.color_picker("Cor", cor)
 
 
 
