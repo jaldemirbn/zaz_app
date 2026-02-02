@@ -56,8 +56,7 @@ def criar_usuario(email, senha, telefone):
         "email": email.strip().lower(),
         "senha": senha,
         "telefone": telefone,
-        "email_confirmado": True  # já nasce confirmado
-    }
+        }
 
     conectar().table("usuarios").insert(dados).execute()
 
