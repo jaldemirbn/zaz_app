@@ -9,7 +9,6 @@ import io
 
 def render_etapa_canvas():
 
-    # só depende da imagem existir
     if "imagem_bytes" not in st.session_state:
         return
 
@@ -18,14 +17,11 @@ def render_etapa_canvas():
         unsafe_allow_html=True
     )
 
-    # -------------------------------------------------
-    # CARREGA IMAGEM
-    # -------------------------------------------------
     img = Image.open(io.BytesIO(st.session_state["imagem_bytes"]))
 
 
     # -------------------------------------------------
-    # CONTROLES  ← 🔥 AGORA DENTRO DA FUNÇÃO
+    # CONTROLES
     # -------------------------------------------------
 
     texto = st.text_input(
@@ -33,9 +29,7 @@ def render_etapa_canvas():
         st.session_state.get("headline_escolhida", "")
     )
 
-    cor = "#FFFFFF"
-
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4, col5 = st.columns(5)
 
     with col1:
         x = st.slider("X", 0, img.width, 40)
@@ -47,7 +41,33 @@ def render_etapa_canvas():
         tamanho = st.slider("Tamanho", 20, 200, 80)
 
     with col4:
-        cor = st.color_picker("Cor", cor)
+        cor = st.color_picker("Cor", "#FFFFFF")
+
+    # 🔥 NOVO → seleção de fonte
+    with col5:
+        fonte_nome = st.selectbox(
+            "Fonte",
+            [
+                "Sans",
+                "Sans Bold",
+                "Serif",
+                "Itálica"
+            ]
+        )
+
+
+    # -------------------------------------------------
+    # MAPA DE FONTES
+    # -------------------------------------------------
+
+    fontes = {
+        "Sans": "DejaVuSans.ttf",
+        "Sans Bold": "DejaVuSans-Bold.ttf",
+        "Serif": "DejaVuSerif.ttf",
+        "Itálica": "DejaVuSans-Oblique.ttf"
+    }
+
+    font = ImageFont.truetype(fontes[fonte_nome], tamanho)
 
 
     # -------------------------------------------------
@@ -57,8 +77,7 @@ def render_etapa_canvas():
     preview = img.copy()
     draw = ImageDraw.Draw(preview)
 
-    font = ImageFont.truetype("DejaVuSans-Bold.ttf", tamanho)
-
+    # contorno
     for dx in range(-2, 3):
         for dy in range(-2, 3):
             draw.text((x + dx, y + dy), texto, font=font, fill="black")
