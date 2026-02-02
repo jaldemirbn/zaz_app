@@ -1,3 +1,9 @@
+# =====================================================
+# zAz — MÓDULO 08
+# ETAPA 08 — LEGENDA
+# Copywriter com tons + formatação profissional
+# =====================================================
+
 import streamlit as st
 from modules.ia_engine import gerar_texto
 
@@ -11,17 +17,27 @@ def _gerar_legenda(contexto, texto_usuario, tons):
     tons_txt = ", ".join(tons)
 
     prompt = f"""
-Você é um copywriter profissional especialista em redes sociais brasileiras.
+Você é um copywriter profissional especialista em Instagram.
 
-Crie uma legenda envolvente.
+OBJETIVO:
+Criar uma legenda humana, envolvente e persuasiva.
 
-REGRAS:
-- 3 a 7 linhas
-- emojis estratégicos
+REGRAS DE CONTEÚDO:
+- 3 a 7 frases curtas
+- usar emojis estrategicamente
 - incorporar o texto do usuário naturalmente
 - respeitar os tons solicitados
-- incluir CTA clara no final
+- linguagem brasileira autêntica
+- incluir uma CTA clara e persuasiva
+
+REGRAS DE FORMATAÇÃO (OBRIGATÓRIO):
+- cada frase deve ficar em uma linha
+- colocar uma linha em branco entre cada frase
+- deixar a CTA isolada com uma linha antes e depois
+- após a CTA escrever exatamente: Criado com @zAz_app
+- deixar uma linha em branco
 - finalizar com hashtags relevantes
+- a última hashtag deve ser sempre #zaz_app
 
 CONTEXTO:
 Headline: {contexto.get("headline")}
@@ -33,7 +49,7 @@ Texto do usuário:
 Tons desejados:
 {tons_txt}
 
-Retorne apenas a legenda final.
+Retorne apenas a legenda final formatada.
 """
 
     return gerar_texto(prompt).strip()
@@ -45,6 +61,7 @@ Retorne apenas a legenda final.
 
 def render_etapa_legenda():
 
+    # só aparece depois do canvas/post
     if "imagem_bytes" not in st.session_state:
         return
 
@@ -55,22 +72,22 @@ def render_etapa_legenda():
 
 
     # -------------------------------------------------
-    # TEXTO
+    # TEXTO LIVRE
     # -------------------------------------------------
 
     texto_usuario = st.text_area(
         "O que você gostaria de colocar na legenda?",
-        height=100
+        height=110
     )
 
 
     # -------------------------------------------------
-    # TONS EM GRID 3x5
+    # TONS (GRID 3x5 CHECKBOX)
     # -------------------------------------------------
 
-    st.write("Escolha o tom da legenda:")
+    st.caption("Escolha o tom da legenda")
 
-    tons = [
+    tons_lista = [
         "Humorístico/Zueira",
         "Informal/Coloquial",
         "Irônico/Sarcástico",
@@ -96,20 +113,20 @@ def render_etapa_legenda():
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            if st.checkbox(tons[i], key=f"tom_{i}"):
-                tons_escolhidos.append(tons[i])
+            if st.checkbox(tons_lista[i], key=f"tom_{i}"):
+                tons_escolhidos.append(tons_lista[i])
 
         with col2:
-            if st.checkbox(tons[i+5], key=f"tom_{i+5}"):
-                tons_escolhidos.append(tons[i+5])
+            if st.checkbox(tons_lista[i+5], key=f"tom_{i+5}"):
+                tons_escolhidos.append(tons_lista[i+5])
 
         with col3:
-            if st.checkbox(tons[i+10], key=f"tom_{i+10}"):
-                tons_escolhidos.append(tons[i+10])
+            if st.checkbox(tons_lista[i+10], key=f"tom_{i+10}"):
+                tons_escolhidos.append(tons_lista[i+10])
 
 
     # -------------------------------------------------
-    # BOTÃO
+    # BOTÃO GERAR
     # -------------------------------------------------
 
     if st.button("Criar legenda", use_container_width=True):
@@ -136,5 +153,5 @@ def render_etapa_legenda():
         st.text_area(
             "Legenda pronta",
             st.session_state["legenda_gerada"],
-            height=240
+            height=320
         )
