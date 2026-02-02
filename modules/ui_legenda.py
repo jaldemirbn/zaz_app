@@ -95,7 +95,6 @@ Retorne o texto corrido, sem formatação especial.
     partes.append("")
     partes.append("")
     partes.append("Criado com @zAz_app")
-    partes.append("https://www.instagram.com/j_aldemir/?hl=pt-br")
     partes.append("")
     partes.append("")
 
