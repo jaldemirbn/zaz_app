@@ -1,6 +1,6 @@
 # =====================================================
 # zAz — MÓDULO 06
-# ETAPA POST VISUAL
+# ETAPA 06 - Post
 # =====================================================
 
 import streamlit as st
@@ -56,7 +56,7 @@ def render_etapa_post():
         return
 
     st.markdown(
-        "<h3 style='color:#FF9D28;'>06 • Post visual</h3>",
+        "<h3 style='color:#FF9D28;'>06. Post visual</h3>",
         unsafe_allow_html=True
     )
 
@@ -83,3 +83,4 @@ def render_etapa_post():
             st.session_state["descricao_post"],
             height=400
         )
+
