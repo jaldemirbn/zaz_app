@@ -19,27 +19,93 @@ def _gerar_legenda(contexto, texto_usuario, tons):
 Você é um copywriter brasileiro especialista em Instagram.
 
 Escreva uma legenda humana, natural e envolvente.
-Use emojis estrategicamente para deixar o texto mais vivo.
+Use emojis estrategicamente.
 
-REGRAS DE CONTEÚDO:
+Regras:
 - 3 a 7 frases curtas
-- incluir uma CTA clara e persuasiva
-- incluir hashtags REAIS e usadas no Instagram
-- usar hashtags verdadeiras relacionadas ao nicho, tema e contexto
-- NÃO inventar hashtags genéricas (#tag1, #exemplo, #teste são proibidas)
-- evitar hashtags aleatórias ou desconectadas
+- incluir uma CTA clara
+- incluir hashtags reais e relevantes
 - linguagem brasileira natural
 
-CONTEXTO DO POST:
+Contexto:
 Headline: {contexto.get("headline")}
-Conceito visual: {contexto.get("conceito")}
+Conceito: {contexto.get("conceito")}
 Texto do usuário: {texto_usuario}
-Tons desejados: {tons_txt}
+Tons: {tons_txt}
 
-Retorne a legenda como um texto normal, sem listas ou marcações.
+Retorne o texto corrido, sem formatação especial.
 """
 
     bruto = gerar_texto(prompt).strip()
+
+    # =================================================
+    # 1️⃣ SEPARAR HASHTAGS
+    # =================================================
+    palavras = bruto.split()
+    texto_sem_hashtags = []
+    hashtags = []
+
+    for p in palavras:
+        if p.startswith("#"):
+            hashtags.append(p)
+        else:
+            texto_sem_hashtags.append(p)
+
+    texto = " ".join(texto_sem_hashtags)
+
+    # =================================================
+    # 2️⃣ SEPARAR FRASES (pontuação real)
+    # =================================================
+    import re
+    frases = re.split(r'(?<=[.!?])\s+', texto)
+
+    frases = [f.strip() for f in frases if len(f.strip()) > 0]
+
+    # =================================================
+    # 3️⃣ IDENTIFICAR CTA (heurística simples)
+    # =================================================
+    cta = ""
+    frases_limpa = []
+
+    gatilhos_cta = [
+        "comenta", "clique", "clique", "salve", "compartilhe",
+        "envie", "manda", "chama", "fale", "confira"
+    ]
+
+    for f in frases:
+        if any(g in f.lower() for g in gatilhos_cta) and not cta:
+            cta = f
+        else:
+            frases_limpa.append(f)
+
+    if not cta and frases_limpa:
+        cta = frases_limpa.pop(-1)
+
+    # =================================================
+    # 4️⃣ MONTAR LAYOUT FINAL (PADRÃO OURO)
+    # =================================================
+    partes = []
+
+    for f in frases_limpa:
+        partes.append(f)
+        partes.append("")
+
+    partes.append("")
+    partes.append(cta)
+    partes.append("")
+    partes.append("")
+    partes.append("Criado com @zAz_app")
+    partes.append("https://www.instagram.com/j_aldemir/?hl=pt-br")
+    partes.append("")
+    partes.append("")
+
+    if hashtags:
+        partes.append(" ".join(hashtags) + " #zaz_app")
+    else:
+        partes.append("#zaz_app")
+
+    return "\n".join(partes).strip()
+
 
     # =================================================
     # FORMATAÇÃO CONTROLADA (SEM PERDER EMOJIS)
