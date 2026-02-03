@@ -32,17 +32,26 @@ def render_etapa_historico():
     if not email:
         return
 
-    # =================================================
-    # ESTADO VISIBILIDADE
-    # =================================================
-    if "mostrar_historico" not in st.session_state:
-        st.session_state["mostrar_historico"] = False
 
-    if st.button("📚 Histórico", use_container_width=True):
-        st.session_state["mostrar_historico"] = not st.session_state["mostrar_historico"]
+    # =================================================
+    # TÍTULO
+    # =================================================
+    st.markdown(
+        "<h3 style='color:#FF9D28;'>10. Histórico</h3>",
+        unsafe_allow_html=True
+    )
 
-    if not st.session_state["mostrar_historico"]:
-        return
+
+    # =================================================
+    # 🔥 BOTÃO VOLTAR (NOVO — ESSENCIAL)
+    # =================================================
+    if st.button("⬅ Voltar para o app", use_container_width=True):
+        st.session_state.etapa = 1
+        st.rerun()
+
+
+    st.divider()
+
 
     # =================================================
     # BUSCAR NO BANCO
@@ -62,13 +71,6 @@ def render_etapa_historico():
         st.info("Nenhum post salvo ainda.")
         return
 
-    # =================================================
-    # TÍTULO
-    # =================================================
-    st.markdown(
-        "<h3 style='color:#FF9D28;'>10. Histórico</h3>",
-        unsafe_allow_html=True
-    )
 
     # =================================================
     # LISTA
