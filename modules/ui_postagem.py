@@ -34,7 +34,7 @@ def salvar_post():
     ).decode()
 
     dados = {
-        "email": st.session_state.get("email"),  # dono
+        "email": st.session_state.get("email"),
         "headline": st.session_state.get("headline_escolhida", ""),
         "conceito": st.session_state.get("conceito_visual", ""),
         "legenda": st.session_state.get("legenda_gerada", ""),
@@ -86,10 +86,10 @@ def render_etapa_postagem():
         st.info("⚠️ Gere a legenda para visualizar aqui.")
 
     # -------------------------------------------------
-    # AÇÕES
+    # DOWNLOADS
     # -------------------------------------------------
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
 
     with col1:
         if "imagem_final_bytes" in st.session_state:
@@ -98,7 +98,8 @@ def render_etapa_postagem():
                 st.session_state["imagem_final_bytes"],
                 "post_final.png",
                 "image/png",
-                use_container_width=True
+                use_container_width=True,
+                key="baixar_img_post"
             )
 
     with col2:
@@ -108,46 +109,18 @@ def render_etapa_postagem():
                 st.session_state["legenda_gerada"],
                 "legenda.txt",
                 "text/plain",
-                use_container_width=True
+                use_container_width=True,
+                key="baixar_leg_post"
             )
 
-  # -------------------------------------------------
-# DOWNLOADS
-# -------------------------------------------------
+    # -------------------------------------------------
+    # SALVAR
+    # -------------------------------------------------
 
-col1, col2 = st.columns(2)
-
-with col1:
-    if "imagem_final_bytes" in st.session_state:
-        st.download_button(
-            "⬇️ Baixar imagem",
-            st.session_state["imagem_final_bytes"],
-            "post_final.png",
-            "image/png",
-            use_container_width=True
-        )
-
-with col2:
-    if "legenda_gerada" in st.session_state:
-        st.download_button(
-            "⬇️ Baixar legenda",
-            st.session_state["legenda_gerada"],
-            "legenda.txt",
-            "text/plain",
-            use_container_width=True
-        )
-
-
-# -------------------------------------------------
-# 🔥 SALVAR (FORA DAS COLUNAS)
-# -------------------------------------------------
-
-if (
-    "imagem_final_bytes" in st.session_state
-    and "legenda_gerada" in st.session_state
-):
-    if st.button("💾 Salvar no histórico", use_container_width=True):
-        salvar_post()
-        st.success("Post salvo no histórico!")
-
-
+    if (
+        "imagem_final_bytes" in st.session_state
+        and "legenda_gerada" in st.session_state
+    ):
+        if st.button("💾 Salvar no histórico", use_container_width=True):
+            salvar_post()
+            st.success("Post salvo no histórico!")
