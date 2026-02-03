@@ -38,8 +38,9 @@ def render_etapa_conceito():
     if not st.session_state.get("headline_escolhida"):
         return
 
+
     # -------------------------------------------------
-    # STATES (🔥 importante no wizard)
+    # STATES
     # -------------------------------------------------
     if "conceito_visual" not in st.session_state:
         st.session_state.conceito_visual = None
@@ -105,11 +106,33 @@ def render_etapa_conceito():
 
 
     # -------------------------------------------------
-    # COLAR IMAGEM → AVANÇA ETAPA (🔥 WIZARD)
+    # LIBERAR IMAGEM (🔥 AGORA NÃO AVANÇA)
     # -------------------------------------------------
     with col3:
         if st.button("Colar imagem", use_container_width=True):
-
             st.session_state.etapa_4_liberada = True
-            st.session_state.etapa = 4   # 🔥 AVANÇA PRA IMAGENS
+            st.success("Upload liberado. Clique em Próximo ➡")
+
+
+    # =================================================
+    # 🔥 NAVEGAÇÃO WIZARD (NOVO)
+    # =================================================
+    st.divider()
+
+    colA, colB = st.columns(2)
+
+    # ⬅ VOLTAR
+    with colA:
+        if st.button("⬅ Voltar", use_container_width=True):
+            st.session_state.etapa = 2
             st.rerun()
+
+    # ➡ PRÓXIMO
+    with colB:
+        if st.button("Próximo ➡", use_container_width=True):
+
+            if not st.session_state.get("etapa_4_liberada"):
+                st.warning("Clique em 'Colar imagem' primeiro.")
+            else:
+                st.session_state.etapa = 4
+                st.rerun()
