@@ -26,9 +26,9 @@ def render_logo():
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- título ---
+    # --- título (COR LARANJA APLICADA AQUI) ---
     st.markdown(
-        f"<h2 style='text-align:center; margin-bottom:4px;'>{TITULO}</h2>",
+        f"<h2 style='text-align:center; margin-bottom:4px; color:#FF9D28;'>{TITULO}</h2>",
         unsafe_allow_html=True
     )
 
@@ -38,4 +38,4 @@ def render_logo():
         unsafe_allow_html=True
     )
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=
