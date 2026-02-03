@@ -1,6 +1,5 @@
 import streamlit as st
 from supabase import create_client
-import base64
 
 from modules.ui_login import render_login
 from modules.ui_cadastro import render_cadastro
@@ -162,10 +161,9 @@ with col2:
 
 
 # =====================================================
-# 🔥 SALVAR DRAFT (CORREÇÃO DEFINITIVA AQUI)
+# 🔥 SALVAR DRAFT (APENAS ATÉ ETAPA 8)
 # =====================================================
-# NÃO salva quando estiver no histórico (9)
-if email and st.session_state.etapa in [1,2,3,4,5,6,7,8]:
+if email and st.session_state.etapa <= 8:
     salvar_draft(email)
 
 
