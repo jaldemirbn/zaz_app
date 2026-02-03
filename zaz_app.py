@@ -24,7 +24,7 @@ st.set_page_config(page_title="zAz", layout="centered", page_icon="🚀")
 
 
 # =====================================================
-# 🎨 ESTILO GLOBAL zAz
+# 🎨 CSS GLOBAL
 # =====================================================
 st.markdown("""
 <style>
@@ -90,19 +90,19 @@ def carregar_etapa(email):
 
 
 # =====================================================
-# LOGO GLOBAL
+# LOGO
 # =====================================================
 render_logo()
 
 
 # =====================================================
-# 🔥 SIDEBAR GLOBAL
+# SIDEBAR
 # =====================================================
 with st.sidebar:
 
     st.markdown("### zAz app")
 
-    # 🔥 NÃO salva etapa aqui
+    # 🔥 Histórico NÃO persiste
     if st.button("📚 Histórico", use_container_width=True):
         st.session_state.etapa = 9
         st.rerun()
@@ -140,7 +140,7 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# 🔥 CARREGAR ETAPA SALVA
+# CARREGAR ETAPA SALVA
 # =====================================================
 email = st.session_state.get("email")
 
@@ -162,7 +162,41 @@ with col2:
 
 
 # =====================================================
-# 🔥 SALVAR ETAPA AUTOMATICAMENTE (exceto histórico)
+# 🔥 SALVAR ETAPA (exceto histórico)
 # =====================================================
 if email and st.session_state.etapa != 9:
-    salvar_etapa(email, st.session_s
+    salvar_etapa(email, st.session_state.etapa)
+
+
+# =====================================================
+# WIZARD
+# =====================================================
+etapa = st.session_state.etapa
+
+
+if etapa == 1:
+    render_etapa_ideias()
+
+elif etapa == 2:
+    render_etapa_headline()
+
+elif etapa == 3:
+    render_etapa_conceito()
+
+elif etapa == 4:
+    render_etapa_imagens()
+
+elif etapa == 5:
+    render_etapa_post()
+
+elif etapa == 6:
+    render_etapa_canvas()
+
+elif etapa == 7:
+    render_etapa_legenda()
+
+elif etapa == 8:
+    render_etapa_postagem()
+
+elif etapa == 9:
+    render_etapa_historico()
