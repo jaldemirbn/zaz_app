@@ -13,6 +13,7 @@ from modules.ui_post import render_etapa_post
 from modules.ui_canvas import render_etapa_canvas
 from modules.ui_legenda import render_etapa_legenda
 from modules.ui_postagem import render_etapa_postagem
+from modules.ui_historico import render_etapa_historico
 
 # =====================================================
 # CONFIG
@@ -109,3 +110,5 @@ render_etapa_post()
 render_etapa_canvas()
 render_etapa_legenda()
 render_etapa_postagem()
+render_etapa_historico()
+
