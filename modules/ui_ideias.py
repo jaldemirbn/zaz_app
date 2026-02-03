@@ -1,34 +1,6 @@
 # =====================================================
-# 🔒 ARQUITETURA SEQUENCIAL — REGRA GLOBAL DO zAz
-# =====================================================
-# Este módulo é o PONTO DE ENTRADA do sistema.
-#
-# Filosofia do fluxo:
-# 01 Ideias      → raiz (sempre aparece)
-# 02 Conceito    → depende das ideias confirmadas
-# 03 Imagens     → depende do conceito
-# 04/05 Headline → depende da imagem escolhida
-# 06 Post        → depende da headline
-# 07 Legenda     → depende do post
-#
-# Dentro deste módulo:
-# - Etapa 01 → gerar ideias (livre)
-# - Etapa 02 → só aparece após gerar ideias
-# - Etapa 03 → apenas prepara estados internos
-#
-# Somente quando:
-#     st.session_state.modo_filtrado == True
-# os próximos módulos são liberados.
-#
-# ⚠️ IMPORTANTE:
-# Este é o único módulo independente do app.
-# NÃO criar dependência anterior aqui.
-# =====================================================
-
-
-# =====================================================
 # zAz — MÓDULO 01
-# ETAPA IDEIAS
+# ETAPA IDEIAS (WIZARD PADRÃO)
 # =====================================================
 
 import streamlit as st
@@ -42,17 +14,6 @@ def render_etapa_ideias():
         <h3 style='color:#ff9d28; text-align:left; margin-bottom:8px;'>
         01. O que você deseja postar hoje?
         </h3>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        """
-        <style>
-        div.stButton button p {
-            color: #ff9d28 !important;
-        }
-        </style>
         """,
         unsafe_allow_html=True
     )
@@ -72,11 +33,11 @@ def render_etapa_ideias():
 
 
     # -------------------------------------------------
-    # INPUT + BOTÃO (AGORA COM FORM → ENTER FUNCIONA)
+    # INPUT + FORM
     # -------------------------------------------------
-    with st.form("form_gerar_ideias", clear_on_submit=False):
+    with st.form("form_gerar_ideias"):
 
-        col_input, col_btn = st.columns([7, 2], gap="small")
+        col_input, col_btn = st.columns([7, 2])
 
         with col_input:
             tema = st.text_input(
@@ -86,17 +47,9 @@ def render_etapa_ideias():
             )
 
         with col_btn:
-            gerar = st.form_submit_button(
-                "Gerar ideias",
-                use_container_width=True
-            )
+            gerar = st.form_submit_button("Gerar ideias", use_container_width=True)
 
-
-        # -------------------------------------------------
-        # GERAR (fica dentro do form)
-        # -------------------------------------------------
         if gerar and tema:
-
             with st.spinner("Gerando ideias..."):
                 resposta = gerar_ideias(tema)
 
@@ -107,61 +60,40 @@ def render_etapa_ideias():
             st.session_state.modo_filtrado = False
 
 
-	
     # -------------------------------------------------
-    # LIMPAR (NOVO)
+    # LIMPAR
     # -------------------------------------------------
-    col_space, col_reset = st.columns([7, 2], gap="small")
-
-    with col_reset:
-        if st.button("Limpar", use_container_width=True):
-            st.session_state.clear()
-            st.rerun()
+    if st.button("Limpar"):
+        st.session_state.clear()
+        st.rerun()
 
 
     # -------------------------------------------------
-    # ETAPA 02
+    # LISTA DE IDEIAS
     # -------------------------------------------------
     if st.session_state.ideias:
 
-        st.markdown(
-            """
-            <h3 style='color:#ff9d28; text-align:left; margin-top:20px;'>
-            02. Ideias para serem postadas
-            </h3>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown("### Escolha as ideias")
 
         selecionadas = []
 
         for ideia in st.session_state.ideias:
-            marcado = st.checkbox(ideia, key=f"ideia_{ideia}")
-            if marcado:
+            if st.checkbox(ideia, key=f"ideia_{ideia}"):
                 selecionadas.append(ideia)
 
-        if st.button("Ideias escolhidas"):
-            if selecionadas:
-                st.session_state.ideias = selecionadas
-                st.session_state.modo_filtrado = True
-                st.rerun()
 
-        if st.session_state.ideias != st.session_state.ideias_originais:
-            if st.button("Mostrar ideias"):
-                st.session_state.ideias = st.session_state.ideias_originais.copy()
-                for ideia in st.session_state.ideias_originais:
-                    st.session_state.pop(f"ideia_{ideia}", None)
-                st.session_state.modo_filtrado = False
-                st.rerun()
+        # =================================================
+        # BOTÃO PRÓXIMO (🔥 padrão wizard)
+        # =================================================
+        st.divider()
 
+        if st.button("Próximo ➡", use_container_width=True):
 
-# -------------------------------------------------
-# ETAPA 03 (LÓGICA SOMENTE - NÃO RENDERIZA)
-# -------------------------------------------------
-def preparar_etapa_imagens():
+            if not selecionadas:
+                st.warning("Selecione pelo menos uma ideia.")
+                return
 
-    if "descricoes_imagem" not in st.session_state:
-        st.session_state.descricoes_imagem = {}
-
-    if "descricao_escolhida" not in st.session_state:
-        st.session_state.descricao_escolhida = {}
+            st.session_state.ideias = selecionadas
+            st.session_state.modo_filtrado = True
+            st.session_state.etapa = 2   # 🔥 vai pra headline
+            st.rerun()
