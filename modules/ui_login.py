@@ -24,5 +24,6 @@ def render_login(supabase):
 
             st.rerun()
 
-        except Exception:
-            st.error("Email ou senha inválidos")
+       except Exception as e:
+    st.error(e)
+
