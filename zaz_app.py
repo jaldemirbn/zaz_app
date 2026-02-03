@@ -65,12 +65,11 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# HEADER (LOGOUT GLOBAL)
+# SIDEBAR (LOGOUT GLOBAL)  ← AQUI AGORA FUNCIONA SEMPRE
 # =====================================================
+with st.sidebar:
+    st.markdown("### Conta")
 
-col1, col2 = st.columns([6, 1])
-
-with col2:
     if st.button("🚪 Sair"):
         supabase.auth.sign_out()
         st.session_state.clear()
