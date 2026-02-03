@@ -1,12 +1,12 @@
-#===================================================
-#             Etapa 04 - Concceito
-#==================================================
+# =====================================================
+#             Etapa 04 - Conceito
+# =====================================================
 import streamlit as st
 from modules.ia_engine import gerar_texto
 
 
 # -------------------------------------------------
-# IA — GERAR CONCEITO (PADRÃO PROFISSIONAL ESTRUTURADO)
+# IA — GERAR CONCEITO
 # -------------------------------------------------
 def _gerar_conceito(ideias: list[str], headline: str):
 
@@ -18,74 +18,13 @@ Crie um prompt profissional de geração de imagem para IA seguindo EXATAMENTE a
 [Sujeito] + [Ação] + [Ambiente] + [Estilo Artístico] + [Técnicas] +
 [Configurações de Câmera] + [Paleta de Cores] + [Atmosfera] + [Qualidade]
 
-Objetivo:
-Criar a descrição visual de um post publicitário de Instagram.
-
-Informações base:
-Ideias estratégicas:
+Ideias:
 {texto}
 
 Headline:
 {headline}
 
-Diretrizes obrigatórias:
-
-SUJEITO:
-- elemento principal claro e impactante relacionado à headline
-
-AÇÃO:
-- pose ou interação dinâmica que comunique a mensagem
-
-AMBIENTE:
-- cenário coerente com marketing profissional
-
-ESTILO:
-- photorealistic
-- cinematic
-- publicidade premium
-
-TÉCNICAS:
-- depth of field
-- sharp focus
-- volumetric lighting
-- cinematic lighting
-- rim light
-
-CÂMERA:
-- DSLR
-- lente 50mm ou 85mm
-- f/1.8 ou f/2.8
-- bokeh natural
-
-CORES:
-- paleta harmoniosa
-- contraste profissional
-- tons estratégicos para conversão
-
-ATMOSFERA:
-- persuasiva
-- moderna
-- emocional
-- impacto visual forte
-
-QUALIDADE:
-- ultra-detailed
-- hyper-realistic
-- 8K
-- HDR
-
-FORMATO OBRIGATÓRIO:
-- proporção 1:1
-- resolução 1080x1080
-- composição centralizada
-- layout pensado para feed do Instagram
-
-TEXTO:
-- qualquer texto visível deve estar obrigatoriamente em português
-- prever espaço limpo para encaixar a headline
-
-Saída:
-Retorne APENAS a descrição estruturada da imagem, em um único parágrafo técnico, sem explicações.
+Retorne apenas a descrição técnica em um único parágrafo.
 """
 
     return gerar_texto(prompt).strip()
@@ -99,9 +38,19 @@ def render_etapa_conceito():
     if not st.session_state.get("headline_escolhida"):
         return
 
+    # -------------------------------------------------
+    # STATES (🔥 importante no wizard)
+    # -------------------------------------------------
     if "conceito_visual" not in st.session_state:
         st.session_state.conceito_visual = None
 
+    if "etapa_4_liberada" not in st.session_state:
+        st.session_state.etapa_4_liberada = False
+
+
+    # -------------------------------------------------
+    # GERA AUTOMÁTICO
+    # -------------------------------------------------
     if not st.session_state.conceito_visual:
         with st.spinner("Criando conceito..."):
             st.session_state.conceito_visual = _gerar_conceito(
@@ -109,6 +58,10 @@ def render_etapa_conceito():
                 st.session_state.get("headline_escolhida")
             )
 
+
+    # -------------------------------------------------
+    # UI
+    # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28;'>04. Conceito visual</h3>",
         unsafe_allow_html=True
@@ -116,10 +69,15 @@ def render_etapa_conceito():
 
     st.info(st.session_state.conceito_visual)
 
-    st.caption("Copie o texto (Ctrl+C) e gere a imagem no site.")
+    st.caption("Copie o texto e gere a imagem no site.")
+
 
     col1, col2, col3 = st.columns(3)
 
+
+    # -------------------------------------------------
+    # NOVO CONCEITO
+    # -------------------------------------------------
     with col1:
         if st.button("🔁 Novo conceito", use_container_width=True):
             st.session_state.conceito_visual = _gerar_conceito(
@@ -128,6 +86,10 @@ def render_etapa_conceito():
             )
             st.rerun()
 
+
+    # -------------------------------------------------
+    # LINK
+    # -------------------------------------------------
     with col2:
         st.markdown(
             """
@@ -141,10 +103,13 @@ def render_etapa_conceito():
             unsafe_allow_html=True
         )
 
+
+    # -------------------------------------------------
+    # COLAR IMAGEM → AVANÇA ETAPA (🔥 WIZARD)
+    # -------------------------------------------------
     with col3:
-        if st.button("Colar imagem", use_container_width=True, key="btn_liberar_img"):
-            st.session_state["etapa_4_liberada"] = True
+        if st.button("Colar imagem", use_container_width=True):
+
+            st.session_state.etapa_4_liberada = True
+            st.session_state.etapa = 4   # 🔥 AVANÇA PRA IMAGENS
             st.rerun()
-
-
-
