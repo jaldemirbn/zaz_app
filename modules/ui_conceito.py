@@ -106,33 +106,21 @@ def render_etapa_conceito():
 
 
     # -------------------------------------------------
-    # LIBERAR IMAGEM (🔥 AGORA NÃO AVANÇA)
+    # COLAR IMAGEM → AVANÇA AUTOMÁTICO
     # -------------------------------------------------
     with col3:
         if st.button("Colar imagem", use_container_width=True):
+
             st.session_state.etapa_4_liberada = True
-            st.success("Upload liberado. Clique em Próximo ➡")
+            st.session_state.etapa = 4
+            st.rerun()
 
 
     # =================================================
-    # 🔥 NAVEGAÇÃO WIZARD (NOVO)
+    # 🔥 APENAS VOLTAR (NOVO)
     # =================================================
     st.divider()
 
-    colA, colB = st.columns(2)
-
-    # ⬅ VOLTAR
-    with colA:
-        if st.button("⬅ Voltar", use_container_width=True):
-            st.session_state.etapa = 2
-            st.rerun()
-
-    # ➡ PRÓXIMO
-    with colB:
-        if st.button("Próximo ➡", use_container_width=True):
-
-            if not st.session_state.get("etapa_4_liberada"):
-                st.warning("Clique em 'Colar imagem' primeiro.")
-            else:
-                st.session_state.etapa = 4
-                st.rerun()
+    if st.button("⬅ Voltar", use_container_width=True):
+        st.session_state.etapa = 2
+        st.rerun()
