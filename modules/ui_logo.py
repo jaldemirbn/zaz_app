@@ -36,17 +36,25 @@ def _divisor():
 
 
 def _textos():
+
     st.markdown(
         f"""
-        <div style='text-align:center'>
-            <h2 style='margin-bottom:4px; font-size:{FONTE_TITULO}px;'>
-                {TITULO}
-            </h2>
+        <h2 style="
+            text-align:center;
+            margin-bottom:6px;
+            font-size:{FONTE_TITULO}px;
+        ">
+            {TITULO}
+        </h2>
 
-            <p style='opacity:{COR_SUBTITULO}; margin-top:0px; font-size:{FONTE_SUBTITULO}px;'>
-                {SUBTITULO}
-            </p>
-        </div>
+        <p style="
+            text-align:center;
+            opacity:{COR_SUBTITULO};
+            font-size:{FONTE_SUBTITULO}px;
+            margin-top:0;
+        ">
+            {SUBTITULO}
+        </p>
         """,
         unsafe_allow_html=True
     )
