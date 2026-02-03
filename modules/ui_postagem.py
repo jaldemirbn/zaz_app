@@ -23,25 +23,25 @@ def conectar():
 
 def salvar_post():
 
+    # segurança básica
     if "imagem_final_bytes" not in st.session_state:
         return
 
     if "legenda_gerada" not in st.session_state:
         return
 
-    user = conectar().auth.get_user()
+    # 🔥 AGORA PEGA DO LOGIN (correto no Streamlit)
+    email = st.session_state.get("email")
 
-    if not user or not user.user:
+    if not email:
         return
-
-    email = user.user.email
 
     imagem_b64 = base64.b64encode(
         st.session_state["imagem_final_bytes"]
     ).decode()
 
     dados = {
-        "email": email,  # ← agora vem do JWT (100% confiável)
+        "email": email,
         "headline": st.session_state.get("headline_escolhida", ""),
         "conceito": st.session_state.get("conceito_visual", ""),
         "legenda": st.session_state.get("legenda_gerada", ""),
@@ -49,7 +49,6 @@ def salvar_post():
     }
 
     conectar().table("posts").insert(dados).execute()
-
 
 
 # =====================================================
@@ -132,4 +131,3 @@ def render_etapa_postagem():
         if st.button("💾 Salvar no histórico", use_container_width=True):
             salvar_post()
             st.success("Post salvo no histórico!")
-
