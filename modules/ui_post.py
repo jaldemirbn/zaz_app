@@ -72,11 +72,11 @@ def render_etapa_post():
 
 
         # =================================================
-        # 🔥 ABRIR CANVAS IA (NOVA ABA)
+        # 🔥 ABRIR CANVA AI (NOVA ABA)
         # =================================================
         st.markdown(
             """
-            <a href="https://canvas.google.com/" target="_blank"
+            <a href="https://www.canva.com/ai" target="_blank"
                style="
                display:block;
                text-align:center;
@@ -86,7 +86,7 @@ def render_etapa_post():
                text-decoration:none;
                background:#FF9D28;
                color:black;">
-               🎨 Criar post no Canvas IA
+               🎨 Criar post no Canva IA
             </a>
             """,
             unsafe_allow_html=True
@@ -106,7 +106,7 @@ def render_etapa_post():
                 st.session_state.etapa = 4
                 st.rerun()
 
-        # ➡ PRÓXIMO (canvas interno ou próxima etapa)
+        # ➡ PRÓXIMO (canvas interno / próxima etapa)
         with col2:
             if st.button("Próximo ➡", use_container_width=True):
                 st.session_state.etapa = 6
