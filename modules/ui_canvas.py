@@ -25,13 +25,18 @@ def crop_aspect(img, ratio):
 # =====================================================
 def render_etapa_canvas():
 
-    if "imagem_bytes" not in st.session_state:
-        return
-
     st.markdown(
         "<h3 style='color:#FF9D28;'>07. Canvas do post</h3>",
         unsafe_allow_html=True
     )
+
+    # =================================================
+    # 🔥 CORREÇÃO PRINCIPAL AQUI
+    # =================================================
+    if "imagem_bytes" not in st.session_state:
+        st.info("Envie uma imagem na etapa anterior para continuar.")
+        return
+
 
     base_img = Image.open(
         io.BytesIO(st.session_state["imagem_bytes"])
@@ -162,19 +167,17 @@ def render_etapa_canvas():
 
 
     # =================================================
-    # 🔥 NAVEGAÇÃO WIZARD (NOVO)
+    # 🔥 NAVEGAÇÃO WIZARD
     # =================================================
     st.divider()
 
     col1, col2 = st.columns(2)
 
-    # ⬅ VOLTAR (post)
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
             st.session_state.etapa = 6
             st.rerun()
 
-    # ➡ PRÓXIMO (legenda)
     with col2:
         if st.button("Próximo ➡", use_container_width=True):
             st.session_state.etapa = 8
