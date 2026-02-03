@@ -37,8 +37,7 @@ def render_etapa_imagens():
         img = Image.open(arquivo)
 
         # =================================================
-        # 🔥 CORREÇÃO CRÍTICA
-        # salvar BYTES (estável no session_state)
+        # salvar BYTES
         # =================================================
         buffer = io.BytesIO()
         img.save(buffer, format="PNG")
@@ -56,3 +55,22 @@ def render_etapa_imagens():
             mime="image/png",
             use_container_width=True
         )
+
+        # =================================================
+        # 🔥 NAVEGAÇÃO WIZARD (NOVO)
+        # =================================================
+        st.divider()
+
+        col1, col2 = st.columns(2)
+
+        # ⬅ VOLTAR (conceito)
+        with col1:
+            if st.button("⬅ Voltar", use_container_width=True):
+                st.session_state.etapa = 3
+                st.rerun()
+
+        # ➡ PRÓXIMO (post)
+        with col2:
+            if st.button("Próximo ➡", use_container_width=True):
+                st.session_state.etapa = 5
+                st.rerun()
