@@ -17,13 +17,11 @@ def render_login(supabase):
                 "password": senha
             })
 
-            # login OK
             st.session_state.logado = True
             st.session_state["user"] = res.user
             st.session_state["email"] = res.user.email
 
             st.rerun()
 
-       except Exception as e:
-    st.error(e)
-
+        except Exception as e:
+            st.error(e)
