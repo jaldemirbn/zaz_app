@@ -65,10 +65,16 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# SIDEBAR (LOGOUT GLOBAL)  ← AQUI AGORA FUNCIONA SEMPRE
+# SIDEBAR (LOGO + CONTA)
 # =====================================================
 with st.sidebar:
-    st.markdown("### Conta")
+
+    st.image("assets/logo.png", use_container_width=True)
+
+    st.markdown("### zAz")
+    st.caption("Planejador Estratégico de Conteúdo")
+
+    st.divider()
 
     if st.button("🚪 Sair"):
         supabase.auth.sign_out()
