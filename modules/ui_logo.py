@@ -5,7 +5,7 @@ import streamlit as st
 # CONFIG
 # =====================================================
 LOGO_PATH = "assets/logo.png"
-LOGO_WIDTH = 450
+LOGO_WIDTH = 350
 
 TITULO = "Planejamento estratégico com IA."
 SUBTITULO = "Transformando ideias em postagens!"
