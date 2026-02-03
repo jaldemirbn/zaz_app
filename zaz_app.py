@@ -34,11 +34,9 @@ div.stDownloadButton > button,
 div.stFormSubmitButton > button,
 button[kind="primary"] {
     background: transparent !important;
-    background-color: transparent !important;
     color: #FF9D28 !important;
     font-weight: 700 !important;
     border: 1px solid #FF9D28 !important;
-    box-shadow: none !important;
 }
 
 div.stButton > button:hover,
@@ -46,7 +44,6 @@ div.stDownloadButton > button:hover,
 div.stFormSubmitButton > button:hover,
 button[kind="primary"]:hover {
     background-color: rgba(255,157,40,0.08) !important;
-    box-shadow: none !important;
 }
 
 </style>
@@ -68,7 +65,7 @@ supabase = conectar()
 
 
 # =====================================================
-# 🔥 PERSISTÊNCIA DE ETAPA (NOVO)
+# 🔥 PERSISTÊNCIA DE ETAPA
 # =====================================================
 def salvar_etapa(email, etapa):
     supabase.table("user_state").upsert({
@@ -105,10 +102,9 @@ with st.sidebar:
 
     st.markdown("### zAz app")
 
+    # 🔥 NÃO salva etapa aqui
     if st.button("📚 Histórico", use_container_width=True):
         st.session_state.etapa = 9
-        if "email" in st.session_state:
-            salvar_etapa(st.session_state["email"], 9)
         st.rerun()
 
 
@@ -144,7 +140,7 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# 🔥 CARREGAR ETAPA SALVA AO LOGAR
+# 🔥 CARREGAR ETAPA SALVA
 # =====================================================
 email = st.session_state.get("email")
 
@@ -166,41 +162,7 @@ with col2:
 
 
 # =====================================================
-# 🔥 SALVAR ETAPA AUTOMATICAMENTE
+# 🔥 SALVAR ETAPA AUTOMATICAMENTE (exceto histórico)
 # =====================================================
-if email:
-    salvar_etapa(email, st.session_state.etapa)
-
-
-# =====================================================
-# APP FLOW (WIZARD SEQUENCIAL)
-# =====================================================
-etapa = st.session_state.etapa
-
-
-if etapa == 1:
-    render_etapa_ideias()
-
-elif etapa == 2:
-    render_etapa_headline()
-
-elif etapa == 3:
-    render_etapa_conceito()
-
-elif etapa == 4:
-    render_etapa_imagens()
-
-elif etapa == 5:
-    render_etapa_post()
-
-elif etapa == 6:
-    render_etapa_canvas()
-
-elif etapa == 7:
-    render_etapa_legenda()
-
-elif etapa == 8:
-    render_etapa_postagem()
-
-elif etapa == 9:
-    render_etapa_historico()
+if email and st.session_state.etapa != 9:
+    salvar_etapa(email, st.session_s
