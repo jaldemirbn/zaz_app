@@ -127,7 +127,7 @@ def render_etapa_postagem():
             )
 
     # -------------------------------------------------
-    # FINALIZAR
+    # BOTÕES DE AÇÃO
     # -------------------------------------------------
     if (
         "imagem_final_bytes" in st.session_state
@@ -135,12 +135,22 @@ def render_etapa_postagem():
     ):
         st.divider()
 
-        if st.button("✅ Finalizar e salvar no histórico", use_container_width=True):
-            salvar_post()
-            st.success("Post salvo com sucesso no histórico!")
+        colA, colB = st.columns(2)
+
+        # 💾 NOVO BOTÃO SALVAR (ADICIONADO)
+        with colA:
+            if st.button("💾 Salvar no histórico", use_container_width=True):
+                salvar_post()
+                st.success("Post salvo no histórico!")
+
+        # mantém o finalizar antigo (sem mexer)
+        with colB:
+            if st.button("✅ Finalizar e salvar no histórico", use_container_width=True):
+                salvar_post()
+                st.success("Post salvo com sucesso no histórico!")
 
     # -------------------------------------------------
-    # VOLTAR (CORRIGIDO)
+    # VOLTAR
     # -------------------------------------------------
     st.divider()
 
