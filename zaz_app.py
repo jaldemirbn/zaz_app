@@ -53,10 +53,10 @@ if not st.session_state.logado:
     )
 
     with tab_login:
-        render_login(supabase)   # ← 🔥 AQUI É A MUDANÇA
+        render_login(supabase)
 
     with tab_cadastro:
-        st.info("Cadastro agora é feito pelo Supabase Auth")
+        render_cadastro(supabase)   # ← 🔥 AGORA USA O CADASTRO REAL
 
     with tab_senha:
         st.info("Troca de senha será via Supabase futuramente")
