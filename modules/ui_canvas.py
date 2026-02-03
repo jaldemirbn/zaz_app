@@ -17,7 +17,7 @@ def crop_aspect(img, ratio):
     else:
         new_h = int(w / ratio)
         offset = (h - new_h) // 2
-        return img.crop((0, offset, w, offset + new_h))
+        return img.crop((0, offset, w, new_h + offset))
 
 
 # =====================================================
@@ -30,9 +30,6 @@ def render_etapa_canvas():
         unsafe_allow_html=True
     )
 
-    # =================================================
-    # 🔥 CORREÇÃO PRINCIPAL AQUI
-    # =================================================
     if "imagem_bytes" not in st.session_state:
         st.info("Envie uma imagem na etapa anterior para continuar.")
         return
@@ -43,9 +40,6 @@ def render_etapa_canvas():
     ).convert("RGBA")
 
 
-    # =================================================
-    # FORMATO
-    # =================================================
     formato = st.selectbox(
         "Formato",
         ["Original", "1:1", "4:5", "9:16", "16:9", "3:4"]
@@ -65,9 +59,6 @@ def render_etapa_canvas():
         img = base_img.copy()
 
 
-    # =================================================
-    # TEXTO
-    # =================================================
     texto = st.text_area(
         "Texto (use Enter para quebrar linha)",
         st.session_state.get("headline_escolhida", ""),
@@ -75,9 +66,6 @@ def render_etapa_canvas():
     )
 
 
-    # =================================================
-    # CONTROLES
-    # =================================================
     c1, c2, c3, c4, c5 = st.columns(5)
 
     with c1:
@@ -116,9 +104,6 @@ def render_etapa_canvas():
     font = ImageFont.truetype(fontes[fonte_nome], tamanho)
 
 
-    # =================================================
-    # DESENHAR
-    # =================================================
     preview = img.copy()
     overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
@@ -149,9 +134,6 @@ def render_etapa_canvas():
     st.image(preview, use_container_width=True)
 
 
-    # =================================================
-    # EXPORTAR
-    # =================================================
     buffer = io.BytesIO()
     preview.convert("RGB").save(buffer, format="PNG")
 
@@ -166,9 +148,6 @@ def render_etapa_canvas():
     )
 
 
-    # =================================================
-    # 🔥 NAVEGAÇÃO WIZARD
-    # =================================================
     st.divider()
 
     col1, col2 = st.columns(2)
@@ -180,5 +159,5 @@ def render_etapa_canvas():
 
     with col2:
         if st.button("Próximo ➡", use_container_width=True):
-            st.session_state.etapa = 8
+            st.session_state.etapa = 7   # ← CORREÇÃO AQUI
             st.rerun()
