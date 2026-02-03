@@ -2,8 +2,7 @@ import streamlit as st
 
 
 # =====================================================
-# CONFIGURAÇÕES VISUAIS
-# (ajuste rápido aqui sem mexer no resto)
+# CONFIG
 # =====================================================
 LOGO_PATH = "assets/logo.png"
 LOGO_WIDTH = 450
@@ -11,72 +10,32 @@ LOGO_WIDTH = 450
 TITULO = "Planejamento estratégico com IA"
 SUBTITULO = "Transformando ideias em execução"
 
-COR_SUBTITULO = 0.6
-FONTE_TITULO = 28
-FONTE_SUBTITULO = 16
-
 
 # =====================================================
-# COMPONENTES INTERNOS
+# RENDER
 # =====================================================
-
-def _espaco_topo():
-    st.markdown("<br><br>", unsafe_allow_html=True)
-
-
-def _logo():
-    st.image(LOGO_PATH, width=LOGO_WIDTH)
-
-
-def _divisor():
-    st.markdown(
-        "<hr style='margin-top:25px;margin-bottom:25px;opacity:0.2;'>",
-        unsafe_allow_html=True
-    )
-
-
-def _textos():
-
-    st.markdown(
-        f"""
-        <h2 style="
-            text-align:center;
-            margin-bottom:6px;
-            font-size:{FONTE_TITULO}px;
-        ">
-            {TITULO}
-        </h2>
-
-        <p style="
-            text-align:center;
-            opacity:{COR_SUBTITULO};
-            font-size:{FONTE_SUBTITULO}px;
-            margin-top:0;
-        ">
-            {SUBTITULO}
-        </p>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-def _espaco_base():
-    st.markdown("<br><br>", unsafe_allow_html=True)
-
-
-# =====================================================
-# RENDER PRINCIPAL
-# =====================================================
-
 def render_logo():
 
-    _espaco_topo()
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns([0.5, 3, 0.5])
+    # --- logo central ---
+    col1, col2, col3 = st.columns([1, 2, 1])
 
     with col2:
-        _logo()
-        _divisor()
-        _textos()
+        st.image(LOGO_PATH, width=LOGO_WIDTH)
 
-    _espaco_base()
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # --- título ---
+    st.markdown(
+        f"<h2 style='text-align:center; margin-bottom:4px;'>{TITULO}</h2>",
+        unsafe_allow_html=True
+    )
+
+    # --- subtítulo ---
+    st.markdown(
+        f"<p style='text-align:center; opacity:0.6; margin-top:0;'>{SUBTITULO}</p>",
+        unsafe_allow_html=True
+    )
+
+    st.markdown("<br><br>", unsafe_allow_html=True)
