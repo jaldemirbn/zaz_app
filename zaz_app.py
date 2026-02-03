@@ -29,10 +29,11 @@ st.set_page_config(page_title="zAz", layout="centered", page_icon="🚀")
 st.markdown("""
 <style>
 
-/* TODOS os tipos de botão do Streamlit */
+/* TODOS os tipos de botão */
 div.stButton > button,
 div.stDownloadButton > button,
-div.stFormSubmitButton > button {
+div.stFormSubmitButton > button,
+button[kind="primary"] {
 
     background-color: transparent !important;
     color: #FF9D28 !important;
@@ -40,10 +41,12 @@ div.stFormSubmitButton > button {
     border: 1px solid #FF9D28 !important;
 }
 
-/* hover */
+
+/* HOVER */
 div.stButton > button:hover,
 div.stDownloadButton > button:hover,
-div.stFormSubmitButton > button:hover {
+div.stFormSubmitButton > button:hover,
+button[kind="primary"]:hover {
 
     background-color: rgba(255,157,40,0.08) !important;
 }
