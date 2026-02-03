@@ -4,6 +4,7 @@ from supabase import create_client
 from modules.ui_login import render_login
 from modules.ui_cadastro import render_cadastro
 from modules.ui_senha import render_trocar_senha
+from modules.ui_logo import render_logo  # ← LOGO
 
 from modules.ui_ideias import render_etapa_ideias
 from modules.ui_headline import render_etapa_headline
@@ -65,17 +66,13 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# SIDEBAR (LOGO + CONTA)
+# HEADER (LOGO + LOGOUT)
 # =====================================================
-with st.sidebar:
+render_logo()
 
-    st.image("assets/logo.png", use_container_width=True)
+col1, col2 = st.columns([8, 1])
 
-    st.markdown("### zAz")
-    st.caption("Planejador Estratégico de Conteúdo")
-
-    st.divider()
-
+with col2:
     if st.button("🚪 Sair"):
         supabase.auth.sign_out()
         st.session_state.clear()
