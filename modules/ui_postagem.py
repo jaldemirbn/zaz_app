@@ -23,14 +23,12 @@ def conectar():
 
 def salvar_post():
 
-    # segurança básica
     if "imagem_final_bytes" not in st.session_state:
         return
 
     if "legenda_gerada" not in st.session_state:
         return
 
-    # 🔥 AGORA PEGA DO LOGIN (correto no Streamlit)
     email = st.session_state.get("email")
 
     if not email:
@@ -65,7 +63,6 @@ def render_etapa_postagem():
     # -------------------------------------------------
     # IMAGEM
     # -------------------------------------------------
-
     if "imagem_final_bytes" in st.session_state:
 
         img = Image.open(
@@ -80,7 +77,6 @@ def render_etapa_postagem():
     # -------------------------------------------------
     # LEGENDA
     # -------------------------------------------------
-
     if "legenda_gerada" in st.session_state:
 
         st.text_area(
@@ -95,7 +91,6 @@ def render_etapa_postagem():
     # -------------------------------------------------
     # DOWNLOADS
     # -------------------------------------------------
-
     col1, col2 = st.columns(2)
 
     with col1:
@@ -123,7 +118,6 @@ def render_etapa_postagem():
     # -------------------------------------------------
     # SALVAR
     # -------------------------------------------------
-
     if (
         "imagem_final_bytes" in st.session_state
         and "legenda_gerada" in st.session_state
@@ -131,3 +125,13 @@ def render_etapa_postagem():
         if st.button("💾 Salvar no histórico", use_container_width=True):
             salvar_post()
             st.success("Post salvo no histórico!")
+
+
+    # =================================================
+    # 🔥 NAVEGAÇÃO WIZARD (ÚLTIMA ETAPA → SÓ VOLTAR)
+    # =================================================
+    st.divider()
+
+    if st.button("⬅ Voltar", use_container_width=True):
+        st.session_state.etapa = 8  # legenda
+        st.rerun()
