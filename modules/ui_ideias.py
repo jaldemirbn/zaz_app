@@ -154,6 +154,18 @@ def render_etapa_ideias():
                 st.session_state.modo_filtrado = False
                 st.rerun()
 
+# =================================================
+# NAVEGAÇÃO WIZARD (🔥 apenas acrescentado)
+# =================================================
+st.divider()
+
+if st.button("Prosseguir ➡", use_container_width=True):
+
+    if not st.session_state.get("modo_filtrado"):
+        st.warning("Escolha pelo menos uma ideia primeiro.")
+    else:
+        st.session_state.etapa = 2
+        st.rerun()
 
 # -------------------------------------------------
 # ETAPA 03 (LÓGICA SOMENTE - NÃO RENDERIZA)
@@ -165,3 +177,4 @@ def preparar_etapa_imagens():
 
     if "descricao_escolhida" not in st.session_state:
         st.session_state.descricao_escolhida = {}
+
