@@ -78,4 +78,28 @@ def render_etapa_post():
         # 🔥 BOTÃO CRÍTICO
         if st.button("Criar post", use_container_width=True):
             st.session_state["mostrar_canvas"] = True
-            st.rerun()  # ← força render imediato
+            st.rerun()
+
+
+        # =================================================
+        # 🔥 NAVEGAÇÃO WIZARD (NOVO)
+        # =================================================
+        st.divider()
+
+        col1, col2 = st.columns(2)
+
+        # ⬅ VOLTAR (imagens)
+        with col1:
+            if st.button("⬅ Voltar", use_container_width=True):
+                st.session_state.etapa = 4
+                st.rerun()
+
+        # ➡ PRÓXIMO (canvas)
+        with col2:
+            if st.button("Próximo ➡", use_container_width=True):
+
+                if not st.session_state.get("mostrar_canvas"):
+                    st.warning("Clique em 'Criar post' primeiro.")
+                else:
+                    st.session_state.etapa = 6
+                    st.rerun()
