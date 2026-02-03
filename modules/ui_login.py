@@ -13,6 +13,10 @@ def render_login(validar_usuario):
 
         if validar_usuario(email, senha):
             st.session_state.logado = True
+
+            # 🔥 ESSENCIAL → salvar dono do usuário
+            st.session_state["email"] = email.strip().lower()
+
             st.rerun()
         else:
             st.error("Email ou senha inválidos")
