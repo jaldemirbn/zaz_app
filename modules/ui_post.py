@@ -72,24 +72,13 @@ def render_etapa_post():
 
 
         # =================================================
-        # 🔥 ABRIR CANVA AI (NOVA ABA)
+        # 🔥 ABRIR CANVA IA (CORREÇÃO DEFINITIVA MOBILE)
         # =================================================
-        st.markdown(
-            """
-            <a href="https://www.canva.com/ai" target="_blank"
-               style="
-               display:block;
-               text-align:center;
-               padding:12px 0;
-               border-radius:10px;
-               font-weight:600;
-               text-decoration:none;
-               background:#FF9D28;
-               color:black;">
-               🎨 Criar post no Canva IA
-            </a>
-            """,
-            unsafe_allow_html=True
+        # link_button abre nova aba sem matar sessão
+        st.link_button(
+            "🎨 Criar post no Canva IA",
+            "https://www.canva.com/ai",
+            use_container_width=True
         )
 
 
@@ -100,13 +89,13 @@ def render_etapa_post():
 
         col1, col2 = st.columns(2)
 
-        # ⬅ VOLTAR (imagens)
+        # ⬅ VOLTAR
         with col1:
             if st.button("⬅ Voltar", use_container_width=True):
                 st.session_state.etapa = 4
                 st.rerun()
 
-        # ➡ PRÓXIMO (canvas interno / próxima etapa)
+        # ➡ PRÓXIMO
         with col2:
             if st.button("Próximo ➡", use_container_width=True):
                 st.session_state.etapa = 6
