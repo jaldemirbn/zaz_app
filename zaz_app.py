@@ -4,7 +4,7 @@ from supabase import create_client
 from modules.ui_login import render_login
 from modules.ui_cadastro import render_cadastro
 from modules.ui_senha import render_trocar_senha
-from modules.ui_logo import render_logo  # ← LOGO
+from modules.ui_logo import render_logo
 
 from modules.ui_ideias import render_etapa_ideias
 from modules.ui_headline import render_etapa_headline
@@ -38,6 +38,12 @@ supabase = conectar()
 
 
 # =====================================================
+# LOGO GLOBAL (🔥 AGORA SEMPRE APARECE)
+# =====================================================
+render_logo()
+
+
+# =====================================================
 # SESSION
 # =====================================================
 if "logado" not in st.session_state:
@@ -66,10 +72,8 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# HEADER (LOGO + LOGOUT)
+# LOGOUT (SÓ APÓS LOGIN)
 # =====================================================
-render_logo()
-
 col1, col2 = st.columns([8, 1])
 
 with col2:
