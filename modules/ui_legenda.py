@@ -147,6 +147,9 @@ def render_etapa_legenda():
                 tons_escolhidos.append(tons_lista[i + 10])
 
 
+    # =================================================
+    # GERAR
+    # =================================================
     if st.button("Criar legenda", use_container_width=True):
 
         contexto = {
@@ -162,6 +165,9 @@ def render_etapa_legenda():
             )
 
 
+    # =================================================
+    # RESULTADO
+    # =================================================
     if st.session_state.get("legenda_gerada"):
 
         st.text_area(
@@ -169,3 +175,25 @@ def render_etapa_legenda():
             st.session_state["legenda_gerada"],
             height=550
         )
+
+
+    # =================================================
+    # 🔥 NAVEGAÇÃO WIZARD (NOVO)
+    # =================================================
+    st.divider()
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("⬅ Voltar", use_container_width=True):
+            st.session_state.etapa = 6
+            st.rerun()
+
+    with col2:
+        if st.button("Prosseguir ➡", use_container_width=True):
+
+            if not st.session_state.get("legenda_gerada"):
+                st.warning("Crie a legenda antes de continuar.")
+            else:
+                st.session_state.etapa = 8
+                st.rerun()
