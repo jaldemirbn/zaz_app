@@ -28,8 +28,14 @@ def render_logo():
         st.markdown(
             """
             <div style='text-align:center'>
-                <h2 style='margin-bottom:5px;'>Planejamento estratégico com IA</h1>
-                <p style='opacity:0.6;'>Transforme ideias em execução</p>
+               <h2 style='margin-bottom:5px; white-space: nowrap;'>
+    Planejamento estratégico com IA
+</h2>
+
+<p style='opacity:0.6; margin-top:6px;'>
+    Transformando ideias em execução
+</p>
+
             </div>
             """,
             unsafe_allow_html=True
