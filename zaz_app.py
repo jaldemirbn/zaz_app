@@ -24,31 +24,38 @@ st.set_page_config(page_title="zAz", layout="centered", page_icon="🚀")
 
 
 # =====================================================
-# 🎨 ESTILO GLOBAL zAz (🔥 AQUI É O LUGAR CERTO)
+# 🎨 ESTILO GLOBAL zAz (CORRIGIDO)
 # =====================================================
 st.markdown("""
 <style>
 
-/* TODOS os tipos de botão */
+/* ===== TODOS OS TIPOS DE BOTÃO ===== */
 div.stButton > button,
 div.stDownloadButton > button,
 div.stFormSubmitButton > button,
 button[kind="primary"] {
 
+    background: transparent !important;
     background-color: transparent !important;
+
     color: #FF9D28 !important;
+
     font-weight: 700 !important;
+
     border: 1px solid #FF9D28 !important;
+
+    box-shadow: none !important;
 }
 
 
-/* HOVER */
+/* ===== HOVER ===== */
 div.stButton > button:hover,
 div.stDownloadButton > button:hover,
 div.stFormSubmitButton > button:hover,
 button[kind="primary"]:hover {
 
     background-color: rgba(255,157,40,0.08) !important;
+    box-shadow: none !important;
 }
 
 </style>
