@@ -38,7 +38,7 @@ supabase = conectar()
 
 
 # =====================================================
-# LOGO GLOBAL (🔥 AGORA SEMPRE APARECE)
+# LOGO GLOBAL (sempre aparece)
 # =====================================================
 render_logo()
 
@@ -48,6 +48,10 @@ render_logo()
 # =====================================================
 if "logado" not in st.session_state:
     st.session_state.logado = False
+
+# 🔥 controle do wizard
+if "etapa" not in st.session_state:
+    st.session_state.etapa = 1
 
 
 # =====================================================
@@ -72,7 +76,7 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# LOGOUT (SÓ APÓS LOGIN)
+# LOGOUT
 # =====================================================
 col1, col2 = st.columns([8, 1])
 
@@ -84,14 +88,34 @@ with col2:
 
 
 # =====================================================
-# APP FLOW
+# APP FLOW (WIZARD SEQUENCIAL 🔥)
 # =====================================================
-render_etapa_ideias()
-render_etapa_headline()
-render_etapa_conceito()
-render_etapa_imagens()
-render_etapa_post()
-render_etapa_canvas()
-render_etapa_legenda()
-render_etapa_postagem()
-render_etapa_historico()
+etapa = st.session_state.etapa
+
+
+if etapa == 1:
+    render_etapa_ideias()
+
+elif etapa == 2:
+    render_etapa_headline()
+
+elif etapa == 3:
+    render_etapa_conceito()
+
+elif etapa == 4:
+    render_etapa_imagens()
+
+elif etapa == 5:
+    render_etapa_post()
+
+elif etapa == 6:
+    render_etapa_canvas()
+
+elif etapa == 7:
+    render_etapa_legenda()
+
+elif etapa == 8:
+    render_etapa_postagem()
+
+elif etapa == 9:
+    render_etapa_historico()
