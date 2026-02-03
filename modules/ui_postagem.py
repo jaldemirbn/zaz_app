@@ -111,12 +111,43 @@ def render_etapa_postagem():
                 use_container_width=True
             )
 
-    # -------------------------------------------------
-    # 🔥 SALVAR HISTÓRICO
-    # -------------------------------------------------
+  # -------------------------------------------------
+# DOWNLOADS
+# -------------------------------------------------
 
-    with col3:
-        if st.button("💾 Salvar no histórico", use_container_width=True):
+col1, col2 = st.columns(2)
 
-            salvar_post()
-            st.success("Post salvo no histórico!")
+with col1:
+    if "imagem_final_bytes" in st.session_state:
+        st.download_button(
+            "⬇️ Baixar imagem",
+            st.session_state["imagem_final_bytes"],
+            "post_final.png",
+            "image/png",
+            use_container_width=True
+        )
+
+with col2:
+    if "legenda_gerada" in st.session_state:
+        st.download_button(
+            "⬇️ Baixar legenda",
+            st.session_state["legenda_gerada"],
+            "legenda.txt",
+            "text/plain",
+            use_container_width=True
+        )
+
+
+# -------------------------------------------------
+# 🔥 SALVAR (FORA DAS COLUNAS)
+# -------------------------------------------------
+
+if (
+    "imagem_final_bytes" in st.session_state
+    and "legenda_gerada" in st.session_state
+):
+    if st.button("💾 Salvar no histórico", use_container_width=True):
+        salvar_post()
+        st.success("Post salvo no histórico!")
+
+
