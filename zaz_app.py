@@ -34,7 +34,6 @@ def conectar():
         st.secrets["SUPABASE_KEY"]
     )
 
-
 supabase = conectar()
 
 
@@ -120,7 +119,7 @@ with st.sidebar:
 
 
 # =====================================================
-# 🔐 LOGIN VIA DRAFT (PERSISTENTE)
+# LOGIN VIA DRAFT
 # =====================================================
 email = st.session_state.get("email")
 
@@ -163,9 +162,10 @@ with col2:
 
 
 # =====================================================
-# SALVAR DRAFT
+# 🔥 SALVAR DRAFT (CORREÇÃO DEFINITIVA AQUI)
 # =====================================================
-if email:
+# NÃO salva quando estiver no histórico (9)
+if email and st.session_state.etapa in [1,2,3,4,5,6,7,8]:
     salvar_draft(email)
 
 
