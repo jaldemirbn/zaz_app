@@ -24,26 +24,38 @@ st.set_page_config(page_title="zAz", layout="centered", page_icon="🚀")
 
 
 # =====================================================
-# 🎨 CSS GLOBAL
+# 🎨 ESTILO GLOBAL zAz
 # =====================================================
 st.markdown("""
 <style>
 
+/* ===== TODOS OS TIPOS DE BOTÃO ===== */
 div.stButton > button,
 div.stDownloadButton > button,
 div.stFormSubmitButton > button,
 button[kind="primary"] {
+
     background: transparent !important;
+    background-color: transparent !important;
+
     color: #FF9D28 !important;
+
     font-weight: 700 !important;
+
     border: 1px solid #FF9D28 !important;
+
+    box-shadow: none !important;
 }
 
+
+/* ===== HOVER ===== */
 div.stButton > button:hover,
 div.stDownloadButton > button:hover,
 div.stFormSubmitButton > button:hover,
 button[kind="primary"]:hover {
+
     background-color: rgba(255,157,40,0.08) !important;
+    box-shadow: none !important;
 }
 
 </style>
@@ -65,44 +77,18 @@ supabase = conectar()
 
 
 # =====================================================
-# 🔥 PERSISTÊNCIA DE ETAPA
-# =====================================================
-def salvar_etapa(email, etapa):
-    supabase.table("user_state").upsert({
-        "email": email,
-        "etapa": etapa
-    }).execute()
-
-
-def carregar_etapa(email):
-    resp = (
-        supabase
-        .table("user_state")
-        .select("etapa")
-        .eq("email", email)
-        .execute()
-    )
-
-    if resp.data:
-        return resp.data[0]["etapa"]
-
-    return 1
-
-
-# =====================================================
-# LOGO
+# LOGO GLOBAL
 # =====================================================
 render_logo()
 
 
 # =====================================================
-# SIDEBAR
+# 🔥 SIDEBAR GLOBAL (NOVO)
 # =====================================================
 with st.sidebar:
 
     st.markdown("### zAz app")
 
-    # 🔥 Histórico NÃO persiste
     if st.button("📚 Histórico", use_container_width=True):
         st.session_state.etapa = 9
         st.rerun()
@@ -140,16 +126,6 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# CARREGAR ETAPA SALVA
-# =====================================================
-email = st.session_state.get("email")
-
-if email and not st.session_state.get("etapa_carregada"):
-    st.session_state.etapa = carregar_etapa(email)
-    st.session_state.etapa_carregada = True
-
-
-# =====================================================
 # LOGOUT
 # =====================================================
 col1, col2 = st.columns([8, 1])
@@ -162,14 +138,7 @@ with col2:
 
 
 # =====================================================
-# 🔥 SALVAR ETAPA (exceto histórico)
-# =====================================================
-if email and st.session_state.etapa != 9:
-    salvar_etapa(email, st.session_state.etapa)
-
-
-# =====================================================
-# WIZARD
+# APP FLOW (WIZARD SEQUENCIAL)
 # =====================================================
 etapa = st.session_state.etapa
 
