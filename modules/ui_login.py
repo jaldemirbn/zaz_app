@@ -1,7 +1,7 @@
 import streamlit as st
 
 
-def render_login(validar_usuario):
+def render_login(supabase):
 
     if "logado" not in st.session_state:
         st.session_state.logado = False
@@ -11,12 +11,18 @@ def render_login(validar_usuario):
 
     if st.button("Entrar", use_container_width=True):
 
-        if validar_usuario(email, senha):
-            st.session_state.logado = True
+        try:
+            res = supabase.auth.sign_in_with_password({
+                "email": email.strip().lower(),
+                "password": senha
+            })
 
-            # 🔥 ESSENCIAL → salvar dono do usuário
-            st.session_state["email"] = email.strip().lower()
+            # login OK
+            st.session_state.logado = True
+            st.session_state["user"] = res.user
+            st.session_state["email"] = res.user.email
 
             st.rerun()
-        else:
+
+        except Exception:
             st.error("Email ou senha inválidos")
