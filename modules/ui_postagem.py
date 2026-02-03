@@ -140,9 +140,10 @@ def render_etapa_postagem():
             st.success("Post salvo com sucesso no histórico!")
 
     # -------------------------------------------------
-    # VOLTAR (simples)
+    # VOLTAR (CORRIGIDO)
     # -------------------------------------------------
     st.divider()
 
     if st.button("⬅ Voltar", use_container_width=True):
+        st.session_state.etapa = 8
         st.rerun()
