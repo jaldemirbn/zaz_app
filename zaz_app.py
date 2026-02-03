@@ -15,6 +15,7 @@ from modules.ui_legenda import render_etapa_legenda
 from modules.ui_postagem import render_etapa_postagem
 from modules.ui_historico import render_etapa_historico
 
+
 # =====================================================
 # CONFIG
 # =====================================================
@@ -32,43 +33,7 @@ def conectar():
     )
 
 
-# =====================================================
-# AUTH
-# =====================================================
-def validar_usuario(email, senha):
-
-    email = email.strip().lower()
-
-    r = (
-        conectar()
-        .table("usuarios")
-        .select("*")
-        .eq("email", email)
-        .eq("senha", senha)
-        .execute()
-    )
-
-    return len(r.data) > 0
-
-
-# 🔥 CADASTRO SIMPLES (SEM OTP)
-def criar_usuario(email, senha, telefone):
-
-    dados = {
-        "email": email.strip().lower(),
-        "senha": senha,
-        "telefone": telefone,
-        }
-
-    conectar().table("usuarios").insert(dados).execute()
-
-
-def atualizar_senha(email, senha):
-
-    conectar().table("usuarios") \
-        .update({"senha": senha}) \
-        .eq("email", email) \
-        .execute()
+supabase = conectar()
 
 
 # =====================================================
@@ -88,13 +53,13 @@ if not st.session_state.logado:
     )
 
     with tab_login:
-        render_login(validar_usuario)
+        render_login(supabase)   # ← 🔥 AQUI É A MUDANÇA
 
     with tab_cadastro:
-        render_cadastro(criar_usuario)  # 🔥 não precisa mais confirmar_codigo
+        st.info("Cadastro agora é feito pelo Supabase Auth")
 
     with tab_senha:
-        render_trocar_senha(atualizar_senha)
+        st.info("Troca de senha será via Supabase futuramente")
 
     st.stop()
 
@@ -111,4 +76,3 @@ render_etapa_canvas()
 render_etapa_legenda()
 render_etapa_postagem()
 render_etapa_historico()
-
