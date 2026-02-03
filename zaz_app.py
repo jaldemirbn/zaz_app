@@ -56,12 +56,25 @@ if not st.session_state.logado:
         render_login(supabase)
 
     with tab_cadastro:
-        render_cadastro(supabase)   # ← 🔥 AGORA USA O CADASTRO REAL
+        render_cadastro(supabase)
 
     with tab_senha:
         st.info("Troca de senha será via Supabase futuramente")
 
     st.stop()
+
+
+# =====================================================
+# HEADER (LOGOUT GLOBAL)
+# =====================================================
+
+col1, col2 = st.columns([6, 1])
+
+with col2:
+    if st.button("🚪 Sair"):
+        supabase.auth.sign_out()
+        st.session_state.clear()
+        st.rerun()
 
 
 # =====================================================
