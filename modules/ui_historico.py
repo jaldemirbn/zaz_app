@@ -37,24 +37,13 @@ def render_etapa_historico():
     # TÍTULO
     # =================================================
     st.markdown(
-        "<h3 style='color:#FF9D28;'>10. Histórico</h3>",
+        "<h3 style='color:#FF9D28;'>09. Histórico</h3>",
         unsafe_allow_html=True
     )
 
 
     # =================================================
-    # 🔥 BOTÃO VOLTAR (NOVO — ESSENCIAL)
-    # =================================================
-    if st.button("⬅ Voltar para o app", use_container_width=True):
-        st.session_state.etapa = 1
-        st.rerun()
-
-
-    st.divider()
-
-
-    # =================================================
-    # BUSCAR NO BANCO
+    # BUSCAR POSTS
     # =================================================
     res = (
         conectar()
@@ -67,24 +56,23 @@ def render_etapa_historico():
 
     posts = res.data
 
+
     if not posts:
         st.info("Nenhum post salvo ainda.")
-        return
 
 
     # =================================================
     # LISTA
     # =================================================
-    for i, post in enumerate(posts, start=1):
+    for i, post in enumerate(posts or [], start=1):
 
         with st.expander(f"Postagem #{i}"):
 
-            # IMAGEM
             img_bytes = base64.b64decode(post["imagem_base64"])
             img = Image.open(io.BytesIO(img_bytes))
+
             st.image(img, use_container_width=True)
 
-            # LEGENDA
             st.text_area(
                 "Legenda",
                 post["legenda"],
@@ -111,3 +99,13 @@ def render_etapa_historico():
                     "text/plain",
                     use_container_width=True
                 )
+
+
+    # =================================================
+    # 🔥 MAÇANETA (VOLTA PRO APP)
+    # =================================================
+    st.divider()
+
+    if st.button("⬅ Voltar para o app", use_container_width=True):
+        st.session_state.etapa = 1
+        st.rerun()
