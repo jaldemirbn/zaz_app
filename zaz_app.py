@@ -25,33 +25,6 @@ st.set_page_config(page_title="zAz", layout="centered", page_icon="🚀")
 
 
 # =====================================================
-# 🎨 ESTILO GLOBAL zAz
-# =====================================================
-st.markdown("""
-<style>
-div.stButton > button,
-div.stDownloadButton > button,
-div.stFormSubmitButton > button,
-button[kind="primary"] {
-    background: transparent !important;
-    background-color: transparent !important;
-    color: #FF9D28 !important;
-    font-weight: 700 !important;
-    border: 1px solid #FF9D28 !important;
-    box-shadow: none !important;
-}
-div.stButton > button:hover,
-div.stDownloadButton > button:hover,
-div.stFormSubmitButton > button:hover,
-button[kind="primary"]:hover {
-    background-color: rgba(255,157,40,0.08) !important;
-    box-shadow: none !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
-
-# =====================================================
 # SUPABASE
 # =====================================================
 @st.cache_resource
@@ -66,28 +39,35 @@ supabase = conectar()
 
 
 # =====================================================
-# 🔐 LOGIN PERSISTENTE (NOVO — AQUI ESTÁ A MÁGICA)
+# SESSION DEFAULTS
 # =====================================================
-sessao = supabase.auth.get_session()
-
-if sessao and sessao.session:
-    st.session_state.logado = True
-    st.session_state.email = sessao.session.user.email
-else:
+if "logado" not in st.session_state:
     st.session_state.logado = False
 
+if "etapa" not in st.session_state:
+    st.session_state.etapa = 1
+
 
 # =====================================================
-# 💾 DRAFT (mantido como estava)
+# 💾 DRAFT
 # =====================================================
 def salvar_draft(email):
 
-    dados = {}
+    chaves_permitidas = [
+        "headline_escolhida",
+        "conceito_visual",
+        "descricao_post",
+        "legenda_gerada",
+        "ideias",
+        "ideias_originais",
+        "modo_filtrado"
+    ]
 
-    for k, v in st.session_state.items():
-
-        if isinstance(v, (str, int, float, bool)):
-            dados[k] = v
+    dados = {
+        k: st.session_state[k]
+        for k in chaves_permitidas
+        if k in st.session_state
+    }
 
     supabase.table("user_draft").upsert({
         "email": email,
@@ -107,7 +87,7 @@ def carregar_draft(email):
     )
 
     if not resp.data:
-        return
+        return False
 
     row = resp.data[0]
 
@@ -118,9 +98,11 @@ def carregar_draft(email):
     for k, v in dados.items():
         st.session_state[k] = v
 
+    return True
+
 
 # =====================================================
-# LOGO GLOBAL
+# LOGO
 # =====================================================
 render_logo()
 
@@ -138,10 +120,13 @@ with st.sidebar:
 
 
 # =====================================================
-# SESSION DEFAULTS
+# 🔐 LOGIN VIA DRAFT (PERSISTENTE)
 # =====================================================
-if "etapa" not in st.session_state:
-    st.session_state.etapa = 1
+email = st.session_state.get("email")
+
+if email:
+    if carregar_draft(email):
+        st.session_state.logado = True
 
 
 # =====================================================
@@ -163,16 +148,6 @@ if not st.session_state.logado:
         st.info("Troca de senha será via Supabase futuramente")
 
     st.stop()
-
-
-# =====================================================
-# CARREGAR DRAFT
-# =====================================================
-email = st.session_state.get("email")
-
-if email and not st.session_state.get("draft_carregado"):
-    carregar_draft(email)
-    st.session_state.draft_carregado = True
 
 
 # =====================================================
