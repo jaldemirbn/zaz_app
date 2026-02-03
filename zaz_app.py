@@ -15,7 +15,7 @@ from modules.ui_canvas import render_etapa_canvas
 from modules.ui_legenda import render_etapa_legenda
 from modules.ui_postagem import render_etapa_postagem
 from modules.ui_historico import render_etapa_historico
-
+st.error("🔥 TESTE 123 — VERSAO NOVA")
 
 # =====================================================
 # CONFIG
