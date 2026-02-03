@@ -24,6 +24,31 @@ st.set_page_config(page_title="zAz", layout="centered", page_icon="🚀")
 
 
 # =====================================================
+# 🎨 CSS GLOBAL
+# =====================================================
+st.markdown("""
+<style>
+div.stButton > button,
+div.stDownloadButton > button,
+div.stFormSubmitButton > button,
+button[kind="primary"] {
+    background: transparent !important;
+    color: #FF9D28 !important;
+    font-weight: 700 !important;
+    border: 1px solid #FF9D28 !important;
+}
+
+div.stButton > button:hover,
+div.stDownloadButton > button:hover,
+div.stFormSubmitButton > button:hover,
+button[kind="primary"]:hover {
+    background-color: rgba(255,157,40,0.08) !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+# =====================================================
 # SUPABASE
 # =====================================================
 @st.cache_resource
@@ -37,69 +62,13 @@ supabase = conectar()
 
 
 # =====================================================
-# SESSION DEFAULTS
+# SESSION
 # =====================================================
 if "logado" not in st.session_state:
     st.session_state.logado = False
 
 if "etapa" not in st.session_state:
     st.session_state.etapa = 1
-
-if "draft_carregado" not in st.session_state:
-    st.session_state.draft_carregado = False
-
-
-# =====================================================
-# 💾 DRAFT
-# =====================================================
-def salvar_draft(email):
-
-    chaves_permitidas = [
-        "headline_escolhida",
-        "conceito_visual",
-        "descricao_post",
-        "legenda_gerada",
-        "ideias",
-        "ideias_originais",
-        "modo_filtrado"
-    ]
-
-    dados = {
-        k: st.session_state[k]
-        for k in chaves_permitidas
-        if k in st.session_state
-    }
-
-    supabase.table("user_draft").upsert({
-        "email": email,
-        "etapa": st.session_state.etapa,
-        "dados": dados
-    }).execute()
-
-
-def carregar_draft(email):
-
-    resp = (
-        supabase
-        .table("user_draft")
-        .select("*")
-        .eq("email", email)
-        .execute()
-    )
-
-    if not resp.data:
-        return False
-
-    row = resp.data[0]
-
-    st.session_state.etapa = row["etapa"]
-
-    dados = row["dados"] or {}
-
-    for k, v in dados.items():
-        st.session_state[k] = v
-
-    return True
 
 
 # =====================================================
@@ -118,18 +87,6 @@ with st.sidebar:
     if st.button("📚 Histórico", use_container_width=True):
         st.session_state.etapa = 9
         st.rerun()
-
-
-# =====================================================
-# 🔐 LOGIN + CARREGAR DRAFT (APENAS 1x)
-# =====================================================
-email = st.session_state.get("email")
-
-if email and not st.session_state.draft_carregado:
-    if carregar_draft(email):
-        st.session_state.logado = True
-
-    st.session_state.draft_carregado = True
 
 
 # =====================================================
@@ -163,13 +120,6 @@ with col2:
         supabase.auth.sign_out()
         st.session_state.clear()
         st.rerun()
-
-
-# =====================================================
-# 🔥 SALVAR DRAFT (APENAS ETAPAS 1–8)
-# =====================================================
-if email and st.session_state.etapa <= 8:
-    salvar_draft(email)
 
 
 # =====================================================
