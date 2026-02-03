@@ -145,12 +145,11 @@ def render_etapa_canvas():
 
 
     # =================================================
-    # EXPORTAR  🔥 AQUI ESTÁ A CORREÇÃO
+    # EXPORTAR
     # =================================================
     buffer = io.BytesIO()
     preview.convert("RGB").save(buffer, format="PNG")
 
-    # 🔥 SALVA PARA O MÓDULO POSTAGEM
     st.session_state["imagem_final_bytes"] = buffer.getvalue()
 
     st.download_button(
@@ -160,3 +159,23 @@ def render_etapa_canvas():
         "image/png",
         use_container_width=True
     )
+
+
+    # =================================================
+    # 🔥 NAVEGAÇÃO WIZARD (NOVO)
+    # =================================================
+    st.divider()
+
+    col1, col2 = st.columns(2)
+
+    # ⬅ VOLTAR (post)
+    with col1:
+        if st.button("⬅ Voltar", use_container_width=True):
+            st.session_state.etapa = 6
+            st.rerun()
+
+    # ➡ PRÓXIMO (legenda)
+    with col2:
+        if st.button("Próximo ➡", use_container_width=True):
+            st.session_state.etapa = 8
+            st.rerun()
