@@ -73,12 +73,9 @@ def render_etapa_headline():
             key="radio_headline"
         )
 
-        # =================================================
-        # CONFIRMOU → AVANÇA ETAPA (🔥 WIZARD)
-        # =================================================
+        # 🔥 agora só salva, NÃO avança automaticamente
         if escolha and not escolhida:
             st.session_state["headline_escolhida"] = escolha
-            st.session_state.etapa = 3
             st.rerun()
 
 
@@ -88,4 +85,24 @@ def render_etapa_headline():
         if escolhida:
             if st.button("🔁 Escolher outra headline", use_container_width=True):
                 st.session_state["headline_escolhida"] = None
+                st.rerun()
+
+
+        # =================================================
+        # 🔥 NAVEGAÇÃO WIZARD (NOVO)
+        # =================================================
+        st.divider()
+
+        col1, col2 = st.columns(2)
+
+        # ⬅ VOLTAR
+        with col1:
+            if st.button("⬅ Voltar", use_container_width=True):
+                st.session_state.etapa = 1
+                st.rerun()
+
+        # ➡ PRÓXIMO
+        with col2:
+            if st.button("Próximo ➡", use_container_width=True):
+                st.session_state.etapa = 3
                 st.rerun()
