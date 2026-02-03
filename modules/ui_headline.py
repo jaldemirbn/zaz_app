@@ -57,7 +57,7 @@ def render_etapa_headline():
 
 
     # -------------------------------------------------
-    # RADIO (layout original + invisível imediato)
+    # RADIO
     # -------------------------------------------------
     if "headlines" in st.session_state:
 
@@ -73,9 +73,12 @@ def render_etapa_headline():
             key="radio_headline"
         )
 
-        # 🔥 CORREÇÃO PRINCIPAL AQUI
+        # =================================================
+        # CONFIRMOU → AVANÇA ETAPA (🔥 WIZARD)
+        # =================================================
         if escolha and not escolhida:
             st.session_state["headline_escolhida"] = escolha
+            st.session_state.etapa = 3
             st.rerun()
 
 
