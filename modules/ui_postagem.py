@@ -6,6 +6,24 @@ from supabase import create_client
 
 
 # =====================================================
+# 🎨 ESTILO GLOBAL BOTÕES (zAz padrão)
+# =====================================================
+st.markdown("""
+<style>
+div.stButton > button {
+    background-color: #FF9D28;
+    color: black;
+    font-weight: 700;
+    border: none;
+}
+div.stButton > button:hover {
+    filter: brightness(0.95);
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+# =====================================================
 # SUPABASE
 # =====================================================
 
@@ -114,7 +132,7 @@ def render_etapa_postagem():
             )
 
     # =================================================
-    # 🔥 FINALIZAÇÃO PRINCIPAL (BOTÃO GRANDE)
+    # FINALIZAÇÃO
     # =================================================
     if (
         "imagem_final_bytes" in st.session_state
@@ -130,9 +148,8 @@ def render_etapa_postagem():
             salvar_post()
             st.success("Post salvo com sucesso no histórico!")
 
-
     # =================================================
-    # 🔙 VOLTAR (ÚNICA NAVEGAÇÃO)
+    # VOLTAR
     # =================================================
     st.divider()
 
