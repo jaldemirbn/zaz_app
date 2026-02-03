@@ -1,6 +1,6 @@
 # =====================================================
-# zAz — MÓDULO 08
-# ETAPA 08 — LEGENDA
+# zAz — MÓDULO 07
+# ETAPA 07 — LEGENDA
 # =====================================================
 
 import streamlit as st
@@ -38,9 +38,6 @@ Retorne o texto corrido, sem formatação especial.
 
     bruto = gerar_texto(prompt).strip()
 
-    # =================================================
-    # 1️⃣ SEPARAR HASHTAGS
-    # =================================================
     palavras = bruto.split()
     texto_sem_hashtags = []
     hashtags = []
@@ -53,22 +50,15 @@ Retorne o texto corrido, sem formatação especial.
 
     texto = " ".join(texto_sem_hashtags)
 
-    # =================================================
-    # 2️⃣ SEPARAR FRASES (pontuação real)
-    # =================================================
     import re
     frases = re.split(r'(?<=[.!?])\s+', texto)
-
     frases = [f.strip() for f in frases if len(f.strip()) > 0]
 
-    # =================================================
-    # 3️⃣ IDENTIFICAR CTA (heurística simples)
-    # =================================================
     cta = ""
     frases_limpa = []
 
     gatilhos_cta = [
-        "comenta", "clique", "clique", "salve", "compartilhe",
+        "comenta", "clique", "salve", "compartilhe",
         "envie", "manda", "chama", "fale", "confira"
     ]
 
@@ -81,9 +71,6 @@ Retorne o texto corrido, sem formatação especial.
     if not cta and frases_limpa:
         cta = frases_limpa.pop(-1)
 
-    # =================================================
-    # 4️⃣ MONTAR LAYOUT FINAL (PADRÃO OURO)
-    # =================================================
     partes = []
 
     for f in frases_limpa:
@@ -106,43 +93,6 @@ Retorne o texto corrido, sem formatação especial.
     return "\n".join(partes).strip()
 
 
-    # =================================================
-    # FORMATAÇÃO CONTROLADA (SEM PERDER EMOJIS)
-    # =================================================
-
-    linhas = [l.strip() for l in bruto.split("\n") if l.strip()]
-
-    frases = []
-    hashtags = []
-
-    for l in linhas:
-        if l.startswith("#"):
-            hashtags.append(l)
-        else:
-            frases.append(l)
-
-    partes = []
-
-    # frases com respiro
-    for f in frases:
-        partes.append(f)
-        partes.append("")
-
-    # assinatura fixa
-    partes.append("")
-    partes.append("Criado com @zAz_app")
-    partes.append("https://www.instagram.com/j_aldemir/?hl=pt-br")
-    partes.append("")
-    partes.append("")
-
-    if hashtags:
-        partes.append(" ".join(hashtags) + " #zaz_app")
-    else:
-        partes.append("#zaz_app")
-
-    return "\n".join(partes).strip()
-
-
 # =====================================================
 # RENDER
 # =====================================================
@@ -150,22 +100,14 @@ Retorne o texto corrido, sem formatação especial.
 def render_etapa_legenda():
 
     st.markdown(
-        "<h3 style='color:#FF9D28;'>08. Legenda</h3>",
+        "<h3 style='color:#FF9D28;'>07. Legenda</h3>",
         unsafe_allow_html=True
     )
-
-    # -------------------------------------------------
-    # TEXTO LIVRE
-    # -------------------------------------------------
 
     texto_usuario = st.text_area(
         "O que você gostaria de colocar na legenda?",
         height=110
     )
-
-    # -------------------------------------------------
-    # TONS
-    # -------------------------------------------------
 
     st.caption("Escolha o tom da legenda")
 
@@ -204,9 +146,6 @@ def render_etapa_legenda():
             if st.checkbox(tons_lista[i + 10], key=f"tom_{i + 10}"):
                 tons_escolhidos.append(tons_lista[i + 10])
 
-    # -------------------------------------------------
-    # BOTÃO
-    # -------------------------------------------------
 
     if st.button("Criar legenda", use_container_width=True):
 
@@ -222,9 +161,6 @@ def render_etapa_legenda():
                 tons_escolhidos
             )
 
-    # -------------------------------------------------
-    # RESULTADO
-    # -------------------------------------------------
 
     if st.session_state.get("legenda_gerada"):
 
