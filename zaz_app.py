@@ -24,6 +24,31 @@ st.set_page_config(page_title="zAz", layout="centered", page_icon="🚀")
 
 
 # =====================================================
+# 🎨 ESTILO GLOBAL zAz (🔥 AQUI É O LUGAR CERTO)
+# =====================================================
+st.markdown("""
+<style>
+
+/* TODOS os botões */
+div.stButton > button,
+div.stDownloadButton > button {
+    background-color: transparent !important;
+    color: #FF9D28 !important;
+    font-weight: 700 !important;
+    border: 1px solid #FF9D28 !important;
+}
+
+/* hover */
+div.stButton > button:hover,
+div.stDownloadButton > button:hover {
+    background-color: rgba(255,157,40,0.08) !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
+# =====================================================
 # SUPABASE
 # =====================================================
 @st.cache_resource
@@ -49,7 +74,6 @@ render_logo()
 if "logado" not in st.session_state:
     st.session_state.logado = False
 
-# 🔥 controle do wizard
 if "etapa" not in st.session_state:
     st.session_state.etapa = 1
 
@@ -88,7 +112,7 @@ with col2:
 
 
 # =====================================================
-# APP FLOW (WIZARD SEQUENCIAL 🔥)
+# APP FLOW (WIZARD SEQUENCIAL)
 # =====================================================
 etapa = st.session_state.etapa
 
