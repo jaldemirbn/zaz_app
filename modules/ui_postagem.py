@@ -6,19 +6,24 @@ from supabase import create_client
 
 
 # =====================================================
-# 🎨 ESTILO BOTÕES (APENAS TEXTO LARANJA)
+# 🎨 CSS GLOBAL — TODOS OS BOTÕES LARANJA
 # =====================================================
 st.markdown("""
 <style>
-div.stButton > button {
-    background-color: transparent;
-    color: #FF9D28;
+
+div.stButton > button,
+div.stDownloadButton > button {
+    background-color: transparent !important;
+    color: #FF9D28 !important;
     font-weight: 700;
-    border: 1px solid #FF9D28;
+    border: 1px solid #FF9D28 !important;
 }
-div.stButton > button:hover {
-    background-color: rgba(255,157,40,0.08);
+
+div.stButton > button:hover,
+div.stDownloadButton > button:hover {
+    background-color: rgba(255,157,40,0.08) !important;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -26,7 +31,6 @@ div.stButton > button:hover {
 # =====================================================
 # SUPABASE
 # =====================================================
-
 @st.cache_resource
 def conectar():
     return create_client(
@@ -36,9 +40,8 @@ def conectar():
 
 
 # =====================================================
-# SALVAR NO BANCO
+# SALVAR
 # =====================================================
-
 def salvar_post():
 
     if "imagem_final_bytes" not in st.session_state:
@@ -70,7 +73,6 @@ def salvar_post():
 # =====================================================
 # RENDER
 # =====================================================
-
 def render_etapa_postagem():
 
     st.markdown(
@@ -82,13 +84,8 @@ def render_etapa_postagem():
     # IMAGEM
     # -------------------------------------------------
     if "imagem_final_bytes" in st.session_state:
-
-        img = Image.open(
-            io.BytesIO(st.session_state["imagem_final_bytes"])
-        )
-
+        img = Image.open(io.BytesIO(st.session_state["imagem_final_bytes"]))
         st.image(img, use_container_width=True)
-
     else:
         st.info("⚠️ Gere o Canvas para visualizar a imagem final.")
 
@@ -96,13 +93,11 @@ def render_etapa_postagem():
     # LEGENDA
     # -------------------------------------------------
     if "legenda_gerada" in st.session_state:
-
         st.text_area(
             "Legenda final",
             st.session_state["legenda_gerada"],
             height=550
         )
-
     else:
         st.info("⚠️ Gere a legenda para visualizar aqui.")
 
@@ -131,28 +126,23 @@ def render_etapa_postagem():
                 use_container_width=True
             )
 
-    # =================================================
-    # FINALIZAÇÃO
-    # =================================================
+    # -------------------------------------------------
+    # FINALIZAR
+    # -------------------------------------------------
     if (
         "imagem_final_bytes" in st.session_state
         and "legenda_gerada" in st.session_state
     ):
-
         st.divider()
 
-        if st.button(
-            "✅ Finalizar e salvar no histórico",
-            use_container_width=True
-        ):
+        if st.button("✅ Finalizar e salvar no histórico", use_container_width=True):
             salvar_post()
             st.success("Post salvo com sucesso no histórico!")
 
-    # =================================================
-    # VOLTAR
-    # =================================================
+    # -------------------------------------------------
+    # VOLTAR (simples)
+    # -------------------------------------------------
     st.divider()
 
     if st.button("⬅ Voltar", use_container_width=True):
-        st.session_state.etapa = 8
         st.rerun()
