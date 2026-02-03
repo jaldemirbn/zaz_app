@@ -1,143 +1,90 @@
 # =====================================================
-# zAz — MÓDULO 01
-# ETAPA IDEIAS
+#         Etapa 03 - Headline
 # =====================================================
 
 import streamlit as st
-from modules.ia_engine import gerar_ideias
+from modules.ia_engine import gerar_texto
 
 
-def render_etapa_ideias():
+# -------------------------------------------------
+# IA
+# -------------------------------------------------
+def _gerar_headlines(tema, ideias):
+
+    prompt = f"""
+Você é um copywriter sênior.
+
+Tema:
+{tema}
+
+Ideias:
+{ideias}
+
+Crie 5 headlines curtas e fortes em português.
+Retorne uma por linha.
+"""
+
+    resposta = gerar_texto(prompt)
+    return [h.strip() for h in resposta.split("\n") if h.strip()]
+
+
+# -------------------------------------------------
+# RENDER
+# -------------------------------------------------
+def render_etapa_headline():
+
+    if not st.session_state.get("modo_filtrado"):
+        return
 
     st.markdown(
-        """
-        <h3 style='color:#ff9d28; text-align:left; margin-bottom:8px;'>
-        01. O que você deseja postar hoje?
-        </h3>
-        """,
+        "<h3 style='color:#FF9D28;'>03. Headline</h3>",
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        """
-        <style>
-        div.stButton button p {
-            color: #ff9d28 !important;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+    tema = st.session_state.get("tema")
+    ideias = st.session_state.get("ideias")
 
 
     # -------------------------------------------------
-    # STATE
+    # GERAR
     # -------------------------------------------------
-    if "ideias" not in st.session_state:
-        st.session_state.ideias = []
+    if st.button("✨ Gerar headline", use_container_width=True):
 
-    if "ideias_originais" not in st.session_state:
-        st.session_state.ideias_originais = []
-
-    if "modo_filtrado" not in st.session_state:
-        st.session_state.modo_filtrado = False
+        with st.spinner("Gerando headlines..."):
+            st.session_state["headlines"] = _gerar_headlines(tema, ideias)
+            st.session_state["headline_escolhida"] = None
 
 
     # -------------------------------------------------
-    # INPUT + FORM
+    # LISTA
     # -------------------------------------------------
-    with st.form("form_gerar_ideias", clear_on_submit=False):
+    if "headlines" in st.session_state:
 
-        col_input, col_btn = st.columns([7, 2], gap="small")
+        headlines = st.session_state["headlines"]
+        escolhida = st.session_state.get("headline_escolhida")
 
-        with col_input:
-            tema = st.text_input(
-                "",
-                placeholder="Sem ideia? Digita uma palavra. A gente cria o post.",
-                label_visibility="collapsed"
-            )
-
-        with col_btn:
-            gerar = st.form_submit_button(
-                "Gerar ideias",
-                use_container_width=True
-            )
-
-        if gerar and tema:
-
-            with st.spinner("Gerando ideias..."):
-                resposta = gerar_ideias(tema)
-
-            ideias = [i.strip() for i in resposta.split("\n") if i.strip()]
-
-            st.session_state.ideias = ideias
-            st.session_state.ideias_originais = ideias.copy()
-            st.session_state.modo_filtrado = False
-
-
-    # -------------------------------------------------
-    # LIMPAR
-    # -------------------------------------------------
-    col_space, col_reset = st.columns([7, 2], gap="small")
-
-    with col_reset:
-        if st.button("Limpar", use_container_width=True):
-            st.session_state.clear()
-            st.rerun()
-
-
-    # -------------------------------------------------
-    # ETAPA 02 (SELEÇÃO)
-    # -------------------------------------------------
-    if st.session_state.ideias:
-
-        st.markdown(
-            """
-            <h3 style='color:#ff9d28; text-align:left; margin-top:20px;'>
-            02. Ideias para serem postadas
-            </h3>
-            """,
-            unsafe_allow_html=True
+        escolha = st.radio(
+            "Escolha a headline:",
+            headlines,
+            index=headlines.index(escolhida) if escolhida in headlines else 0
         )
 
-        selecionadas = []
-
-        for ideia in st.session_state.ideias:
-            marcado = st.checkbox(ideia, key=f"ideia_{ideia}")
-            if marcado:
-                selecionadas.append(ideia)
+        st.session_state["headline_escolhida"] = escolha
 
 
         # =================================================
-        # CONFIRMOU → AVANÇA PRO HEADLINE (🔥 WIZARD)
+        # BOTÕES NAVEGAÇÃO (🔥 NOVO PADRÃO UX)
         # =================================================
-        if st.button("Ideias escolhidas"):
-            if selecionadas:
-                st.session_state.ideias = selecionadas
-                st.session_state.modo_filtrado = True
-                st.session_state.etapa = 2   # 🔥 AVANÇA PRA HEADLINE
+        col1, col2 = st.columns(2)
+
+        # ⬅ VOLTAR
+        with col1:
+            if st.button("⬅ Voltar", use_container_width=True):
+                st.session_state.etapa = 1
                 st.rerun()
 
-
-        # -------------------------------------------------
-        # MOSTRAR TODAS
-        # -------------------------------------------------
-        if st.session_state.ideias != st.session_state.ideias_originais:
-            if st.button("Mostrar ideias"):
-                st.session_state.ideias = st.session_state.ideias_originais.copy()
-                for ideia in st.session_state.ideias_originais:
-                    st.session_state.pop(f"ideia_{ideia}", None)
-                st.session_state.modo_filtrado = False
+        # ➡ PRÓXIMO
+        with col2:
+            if st.button("Próximo ➡", use_container_width=True):
+                st.session_state.etapa = 3
                 st.rerun()
-
-
-# -------------------------------------------------
-# ETAPA 03 (LÓGICA SOMENTE)
-# -------------------------------------------------
-def preparar_etapa_imagens():
-
-    if "descricoes_imagem" not in st.session_state:
-        st.session_state.descricoes_imagem = {}
-
-    if "descricao_escolhida" not in st.session_state:
-        st.session_state.descricao_escolhida = {}
