@@ -1,30 +1,6 @@
 # =====================================================
 # 🔒 ARQUITETURA SEQUENCIAL — REGRA GLOBAL DO zAz
 # =====================================================
-# Este módulo é o PONTO DE ENTRADA do sistema.
-#
-# Filosofia do fluxo:
-# 01 Ideias      → raiz (sempre aparece)
-# 02 Conceito    → depende das ideias confirmadas
-# 03 Imagens     → depende do conceito
-# 04/05 Headline → depende da imagem escolhida
-# 06 Post        → depende da headline
-# 07 Legenda     → depende do post
-#
-# Dentro deste módulo:
-# - Etapa 01 → gerar ideias (livre)
-# - Etapa 02 → só aparece após gerar ideias
-# - Etapa 03 → apenas prepara estados internos
-#
-# Somente quando:
-#     st.session_state.modo_filtrado == True
-# os próximos módulos são liberados.
-#
-# ⚠️ IMPORTANTE:
-# Este é o único módulo independente do app.
-# NÃO criar dependência anterior aqui.
-# =====================================================
-
 
 # =====================================================
 # zAz — MÓDULO 01
@@ -72,7 +48,7 @@ def render_etapa_ideias():
 
 
     # -------------------------------------------------
-    # INPUT + BOTÃO (AGORA COM FORM → ENTER FUNCIONA)
+    # INPUT + BOTÃO
     # -------------------------------------------------
     with st.form("form_gerar_ideias", clear_on_submit=False):
 
@@ -91,10 +67,6 @@ def render_etapa_ideias():
                 use_container_width=True
             )
 
-
-        # -------------------------------------------------
-        # GERAR (fica dentro do form)
-        # -------------------------------------------------
         if gerar and tema:
 
             with st.spinner("Gerando ideias..."):
@@ -107,9 +79,8 @@ def render_etapa_ideias():
             st.session_state.modo_filtrado = False
 
 
-	
     # -------------------------------------------------
-    # LIMPAR (NOVO)
+    # LIMPAR
     # -------------------------------------------------
     col_space, col_reset = st.columns([7, 2], gap="small")
 
@@ -154,21 +125,22 @@ def render_etapa_ideias():
                 st.session_state.modo_filtrado = False
                 st.rerun()
 
-# =================================================
-# NAVEGAÇÃO WIZARD (🔥 apenas acrescentado)
-# =================================================
-st.divider()
+        # =================================================
+        # 🔥 PROSSEGUIR (AGORA NO LUGAR CERTO)
+        # =================================================
+        st.divider()
 
-if st.button("Prosseguir ➡", use_container_width=True):
+        if st.button("Prosseguir ➡", use_container_width=True):
 
-    if not st.session_state.get("modo_filtrado"):
-        st.warning("Escolha pelo menos uma ideia primeiro.")
-    else:
-        st.session_state.etapa = 2
-        st.rerun()
+            if not st.session_state.get("modo_filtrado"):
+                st.warning("Escolha pelo menos uma ideia primeiro.")
+            else:
+                st.session_state.etapa = 2
+                st.rerun()
+
 
 # -------------------------------------------------
-# ETAPA 03 (LÓGICA SOMENTE - NÃO RENDERIZA)
+# ETAPA 03 (LÓGICA)
 # -------------------------------------------------
 def preparar_etapa_imagens():
 
@@ -177,4 +149,3 @@ def preparar_etapa_imagens():
 
     if "descricao_escolhida" not in st.session_state:
         st.session_state.descricao_escolhida = {}
-
