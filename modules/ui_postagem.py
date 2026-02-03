@@ -80,18 +80,12 @@ def render_etapa_postagem():
         unsafe_allow_html=True
     )
 
-    # -------------------------------------------------
-    # IMAGEM
-    # -------------------------------------------------
     if "imagem_final_bytes" in st.session_state:
         img = Image.open(io.BytesIO(st.session_state["imagem_final_bytes"]))
         st.image(img, use_container_width=True)
     else:
         st.info("⚠️ Gere o Canvas para visualizar a imagem final.")
 
-    # -------------------------------------------------
-    # LEGENDA
-    # -------------------------------------------------
     if "legenda_gerada" in st.session_state:
         st.text_area(
             "Legenda final",
@@ -101,9 +95,6 @@ def render_etapa_postagem():
     else:
         st.info("⚠️ Gere a legenda para visualizar aqui.")
 
-    # -------------------------------------------------
-    # DOWNLOADS
-    # -------------------------------------------------
     col1, col2 = st.columns(2)
 
     with col1:
@@ -126,9 +117,6 @@ def render_etapa_postagem():
                 use_container_width=True
             )
 
-    # -------------------------------------------------
-    # BOTÕES DE AÇÃO
-    # -------------------------------------------------
     if (
         "imagem_final_bytes" in st.session_state
         and "legenda_gerada" in st.session_state
@@ -137,23 +125,19 @@ def render_etapa_postagem():
 
         colA, colB = st.columns(2)
 
-        # 💾 NOVO BOTÃO SALVAR (ADICIONADO)
         with colA:
             if st.button("💾 Salvar no histórico", use_container_width=True):
                 salvar_post()
                 st.success("Post salvo no histórico!")
 
-        # mantém o finalizar antigo (sem mexer)
         with colB:
             if st.button("✅ Finalizar e salvar no histórico", use_container_width=True):
                 salvar_post()
                 st.success("Post salvo com sucesso no histórico!")
 
-    # -------------------------------------------------
-    # VOLTAR
-    # -------------------------------------------------
     st.divider()
 
+    # 🔥 CORREÇÃO AQUI
     if st.button("⬅ Voltar", use_container_width=True):
-        st.session_state.etapa = 8
+        st.session_state.etapa = 7
         st.rerun()
