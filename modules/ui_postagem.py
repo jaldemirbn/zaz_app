@@ -6,18 +6,18 @@ from supabase import create_client
 
 
 # =====================================================
-# 🎨 ESTILO GLOBAL BOTÕES (zAz padrão)
+# 🎨 ESTILO BOTÕES (APENAS TEXTO LARANJA)
 # =====================================================
 st.markdown("""
 <style>
 div.stButton > button {
-    background-color: #FF9D28;
-    color: black;
+    background-color: transparent;
+    color: #FF9D28;
     font-weight: 700;
-    border: none;
+    border: 1px solid #FF9D28;
 }
 div.stButton > button:hover {
-    filter: brightness(0.95);
+    background-color: rgba(255,157,40,0.08);
 }
 </style>
 """, unsafe_allow_html=True)
