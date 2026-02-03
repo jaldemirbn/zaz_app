@@ -24,7 +24,7 @@ st.set_page_config(page_title="zAz", layout="centered", page_icon="🚀")
 
 
 # =====================================================
-# 🎨 ESTILO GLOBAL zAz (CORRIGIDO)
+# 🎨 ESTILO GLOBAL zAz
 # =====================================================
 st.markdown("""
 <style>
@@ -77,9 +77,21 @@ supabase = conectar()
 
 
 # =====================================================
-# LOGO GLOBAL (sempre aparece)
+# LOGO GLOBAL
 # =====================================================
 render_logo()
+
+
+# =====================================================
+# 🔥 SIDEBAR GLOBAL (NOVO)
+# =====================================================
+with st.sidebar:
+
+    st.markdown("### zAz app")
+
+    if st.button("📚 Histórico", use_container_width=True):
+        st.session_state.etapa = 9
+        st.rerun()
 
 
 # =====================================================
