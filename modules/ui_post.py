@@ -37,11 +37,6 @@ posição, fonte, tamanho, cor, contraste e estilo.
 
 def render_etapa_post():
 
-    # 🔥 garante estado
-    if "mostrar_canvas" not in st.session_state:
-        st.session_state["mostrar_canvas"] = False
-
-
     st.markdown(
         "<h3 style='color:#FF9D28;'>06. Criação do post</h3>",
         unsafe_allow_html=True
@@ -75,14 +70,31 @@ def render_etapa_post():
             height=300
         )
 
-        # 🔥 BOTÃO CRÍTICO
-        if st.button("Criar post", use_container_width=True):
-            st.session_state["mostrar_canvas"] = True
-            st.rerun()
+
+        # =================================================
+        # 🔥 ABRIR CANVAS IA (NOVA ABA)
+        # =================================================
+        st.markdown(
+            """
+            <a href="https://canvas.google.com/" target="_blank"
+               style="
+               display:block;
+               text-align:center;
+               padding:12px 0;
+               border-radius:10px;
+               font-weight:600;
+               text-decoration:none;
+               background:#FF9D28;
+               color:black;">
+               🎨 Criar post no Canvas IA
+            </a>
+            """,
+            unsafe_allow_html=True
+        )
 
 
         # =================================================
-        # 🔥 NAVEGAÇÃO WIZARD (NOVO)
+        # 🔥 NAVEGAÇÃO WIZARD
         # =================================================
         st.divider()
 
@@ -94,12 +106,8 @@ def render_etapa_post():
                 st.session_state.etapa = 4
                 st.rerun()
 
-        # ➡ PRÓXIMO (canvas)
+        # ➡ PRÓXIMO (canvas interno ou próxima etapa)
         with col2:
             if st.button("Próximo ➡", use_container_width=True):
-
-                if not st.session_state.get("mostrar_canvas"):
-                    st.warning("Clique em 'Criar post' primeiro.")
-                else:
-                    st.session_state.etapa = 6
-                    st.rerun()
+                st.session_state.etapa = 6
+                st.rerun()
