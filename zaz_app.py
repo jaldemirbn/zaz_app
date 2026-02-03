@@ -1,5 +1,6 @@
 import streamlit as st
 from supabase import create_client
+import base64
 
 from modules.ui_login import render_login
 from modules.ui_cadastro import render_cadastro
@@ -29,31 +30,22 @@ st.set_page_config(page_title="zAz", layout="centered", page_icon="🚀")
 st.markdown("""
 <style>
 
-/* ===== TODOS OS TIPOS DE BOTÃO ===== */
 div.stButton > button,
 div.stDownloadButton > button,
 div.stFormSubmitButton > button,
 button[kind="primary"] {
-
     background: transparent !important;
     background-color: transparent !important;
-
     color: #FF9D28 !important;
-
     font-weight: 700 !important;
-
     border: 1px solid #FF9D28 !important;
-
     box-shadow: none !important;
 }
 
-
-/* ===== HOVER ===== */
 div.stButton > button:hover,
 div.stDownloadButton > button:hover,
 div.stFormSubmitButton > button:hover,
 button[kind="primary"]:hover {
-
     background-color: rgba(255,157,40,0.08) !important;
     box-shadow: none !important;
 }
@@ -77,13 +69,62 @@ supabase = conectar()
 
 
 # =====================================================
+# 💾 DRAFT (NOVO — persistência total)
+# =====================================================
+def salvar_draft(email):
+
+    dados = {}
+
+    for k, v in st.session_state.items():
+
+        if isinstance(v, (str, int, float, bool)):
+            dados[k] = v
+
+        elif isinstance(v, bytes):
+            dados[k] = base64.b64encode(v).decode()
+
+    supabase.table("user_draft").upsert({
+        "email": email,
+        "etapa": st.session_state.etapa,
+        "dados": dados
+    }).execute()
+
+
+def carregar_draft(email):
+
+    resp = (
+        supabase
+        .table("user_draft")
+        .select("*")
+        .eq("email", email)
+        .execute()
+    )
+
+    if not resp.data:
+        return
+
+    row = resp.data[0]
+
+    st.session_state.etapa = row["etapa"]
+
+    dados = row["dados"] or {}
+
+    for k, v in dados.items():
+
+        try:
+            st.session_state[k] = base64.b64decode(v)
+        except:
+            st.session_state[k] = v
+
+
+# =====================================================
 # LOGO GLOBAL
 # =====================================================
 render_logo()
 
 
 # =====================================================
-# 🔥 SIDEBAR GLOBAL (NOVO)
+# 🔥 SIDEBAR GLOBAL
 # =====================================================
 with st.sidebar:
 
@@ -126,6 +167,16 @@ if not st.session_state.logado:
 
 
 # =====================================================
+# 🔥 CARREGAR DRAFT AO LOGAR (NOVO)
+# =====================================================
+email = st.session_state.get("email")
+
+if email and not st.session_state.get("draft_carregado"):
+    carregar_draft(email)
+    st.session_state.draft_carregado = True
+
+
+# =====================================================
 # LOGOUT
 # =====================================================
 col1, col2 = st.columns([8, 1])
@@ -135,6 +186,13 @@ with col2:
         supabase.auth.sign_out()
         st.session_state.clear()
         st.rerun()
+
+
+# =====================================================
+# 🔥 SALVAR DRAFT AUTOMÁTICO (NOVO)
+# =====================================================
+if email:
+    salvar_draft(email)
 
 
 # =====================================================
