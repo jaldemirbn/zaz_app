@@ -29,12 +29,19 @@ def salvar_post():
     if "legenda_gerada" not in st.session_state:
         return
 
+    user = conectar().auth.get_user()
+
+    if not user or not user.user:
+        return
+
+    email = user.user.email
+
     imagem_b64 = base64.b64encode(
         st.session_state["imagem_final_bytes"]
     ).decode()
 
     dados = {
-        "email": st.session_state.get("email"),
+        "email": email,  # ← agora vem do JWT (100% confiável)
         "headline": st.session_state.get("headline_escolhida", ""),
         "conceito": st.session_state.get("conceito_visual", ""),
         "legenda": st.session_state.get("legenda_gerada", ""),
@@ -42,6 +49,7 @@ def salvar_post():
     }
 
     conectar().table("posts").insert(dados).execute()
+
 
 
 # =====================================================
@@ -124,3 +132,4 @@ def render_etapa_postagem():
         if st.button("💾 Salvar no histórico", use_container_width=True):
             salvar_post()
             st.success("Post salvo no histórico!")
+
