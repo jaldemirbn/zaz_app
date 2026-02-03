@@ -100,8 +100,7 @@ def render_etapa_postagem():
                 st.session_state["imagem_final_bytes"],
                 "post_final.png",
                 "image/png",
-                use_container_width=True,
-                key="baixar_img_post"
+                use_container_width=True
             )
 
     with col2:
@@ -111,27 +110,32 @@ def render_etapa_postagem():
                 st.session_state["legenda_gerada"],
                 "legenda.txt",
                 "text/plain",
-                use_container_width=True,
-                key="baixar_leg_post"
+                use_container_width=True
             )
 
-    # -------------------------------------------------
-    # SALVAR
-    # -------------------------------------------------
+    # =================================================
+    # 🔥 FINALIZAÇÃO PRINCIPAL (BOTÃO GRANDE)
+    # =================================================
     if (
         "imagem_final_bytes" in st.session_state
         and "legenda_gerada" in st.session_state
     ):
-        if st.button("💾 Salvar no histórico", use_container_width=True):
+
+        st.divider()
+
+        if st.button(
+            "✅ Finalizar e salvar no histórico",
+            use_container_width=True
+        ):
             salvar_post()
-            st.success("Post salvo no histórico!")
+            st.success("Post salvo com sucesso no histórico!")
 
 
     # =================================================
-    # 🔥 NAVEGAÇÃO WIZARD (ÚLTIMA ETAPA → SÓ VOLTAR)
+    # 🔙 VOLTAR (ÚNICA NAVEGAÇÃO)
     # =================================================
     st.divider()
 
     if st.button("⬅ Voltar", use_container_width=True):
-        st.session_state.etapa = 8  # legenda
+        st.session_state.etapa = 8
         st.rerun()
