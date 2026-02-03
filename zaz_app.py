@@ -45,6 +45,9 @@ if "logado" not in st.session_state:
 if "etapa" not in st.session_state:
     st.session_state.etapa = 1
 
+if "draft_carregado" not in st.session_state:
+    st.session_state.draft_carregado = False
+
 
 # =====================================================
 # 💾 DRAFT
@@ -118,13 +121,15 @@ with st.sidebar:
 
 
 # =====================================================
-# LOGIN VIA DRAFT
+# 🔐 LOGIN + CARREGAR DRAFT (APENAS 1x)
 # =====================================================
 email = st.session_state.get("email")
 
-if email:
+if email and not st.session_state.draft_carregado:
     if carregar_draft(email):
         st.session_state.logado = True
+
+    st.session_state.draft_carregado = True
 
 
 # =====================================================
@@ -161,7 +166,7 @@ with col2:
 
 
 # =====================================================
-# 🔥 SALVAR DRAFT (APENAS ATÉ ETAPA 8)
+# 🔥 SALVAR DRAFT (APENAS ETAPAS 1–8)
 # =====================================================
 if email and st.session_state.etapa <= 8:
     salvar_draft(email)
