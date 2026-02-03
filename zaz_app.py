@@ -29,7 +29,6 @@ st.set_page_config(page_title="zAz", layout="centered", page_icon="🚀")
 # =====================================================
 st.markdown("""
 <style>
-
 div.stButton > button,
 div.stDownloadButton > button,
 div.stFormSubmitButton > button,
@@ -41,7 +40,6 @@ button[kind="primary"] {
     border: 1px solid #FF9D28 !important;
     box-shadow: none !important;
 }
-
 div.stButton > button:hover,
 div.stDownloadButton > button:hover,
 div.stFormSubmitButton > button:hover,
@@ -49,7 +47,6 @@ button[kind="primary"]:hover {
     background-color: rgba(255,157,40,0.08) !important;
     box-shadow: none !important;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -69,7 +66,19 @@ supabase = conectar()
 
 
 # =====================================================
-# 💾 DRAFT (NOVO — persistência total)
+# 🔐 LOGIN PERSISTENTE (NOVO — AQUI ESTÁ A MÁGICA)
+# =====================================================
+sessao = supabase.auth.get_session()
+
+if sessao and sessao.session:
+    st.session_state.logado = True
+    st.session_state.email = sessao.session.user.email
+else:
+    st.session_state.logado = False
+
+
+# =====================================================
+# 💾 DRAFT (mantido como estava)
 # =====================================================
 def salvar_draft(email):
 
@@ -79,9 +88,6 @@ def salvar_draft(email):
 
         if isinstance(v, (str, int, float, bool)):
             dados[k] = v
-
-        elif isinstance(v, bytes):
-            dados[k] = base64.b64encode(v).decode()
 
     supabase.table("user_draft").upsert({
         "email": email,
@@ -110,11 +116,7 @@ def carregar_draft(email):
     dados = row["dados"] or {}
 
     for k, v in dados.items():
-
-        try:
-            st.session_state[k] = base64.b64decode(v)
-        except:
-            st.session_state[k] = v
+        st.session_state[k] = v
 
 
 # =====================================================
@@ -124,7 +126,7 @@ render_logo()
 
 
 # =====================================================
-# 🔥 SIDEBAR GLOBAL
+# SIDEBAR
 # =====================================================
 with st.sidebar:
 
@@ -136,11 +138,8 @@ with st.sidebar:
 
 
 # =====================================================
-# SESSION
+# SESSION DEFAULTS
 # =====================================================
-if "logado" not in st.session_state:
-    st.session_state.logado = False
-
 if "etapa" not in st.session_state:
     st.session_state.etapa = 1
 
@@ -167,7 +166,7 @@ if not st.session_state.logado:
 
 
 # =====================================================
-# 🔥 CARREGAR DRAFT AO LOGAR (NOVO)
+# CARREGAR DRAFT
 # =====================================================
 email = st.session_state.get("email")
 
@@ -189,17 +188,16 @@ with col2:
 
 
 # =====================================================
-# 🔥 SALVAR DRAFT AUTOMÁTICO (NOVO)
+# SALVAR DRAFT
 # =====================================================
 if email:
     salvar_draft(email)
 
 
 # =====================================================
-# APP FLOW (WIZARD SEQUENCIAL)
+# WIZARD
 # =====================================================
 etapa = st.session_state.etapa
-
 
 if etapa == 1:
     render_etapa_ideias()
