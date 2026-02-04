@@ -37,7 +37,7 @@ def render_etapa_post():
 
 
     # -------------------------------------------------
-    # 🔥 ESCOLHA DO TIPO (novo, simples)
+    # TIPO DE POST
     # -------------------------------------------------
     tipo = st.radio(
         "Tipo de post:",
@@ -57,14 +57,13 @@ def render_etapa_post():
 
 
     # -------------------------------------------------
-    # MOSTRA DESCRIÇÃO
+    # MOSTRA DESCRIÇÃO (COM BOTÃO COPIAR AUTOMÁTICO)
     # -------------------------------------------------
     if st.session_state.get("descricao_post"):
 
-        st.text_area(
-            "Descrição do post",
+        st.code(
             st.session_state["descricao_post"],
-            height=300
+            language="text"
         )
 
 
