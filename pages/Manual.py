@@ -5,6 +5,10 @@ st.set_page_config(
     layout="centered"
 )
 
+st.title("Manual do usuário — zAz")
+
+st.markdown("""
+
 Manual de Uso — zAz
 Guia completo, simples e detalhado para qualquer pessoa usar o sistema passo a passo.
 
