@@ -14,12 +14,14 @@ from modules.post.post_animado import gerar_prompt_post_animado
 # IA
 # =====================================================
 
-def _gerar_descricao_post(tipo):
+def _gerar_descricao_post(tipo, contexto):
 
     if tipo == "Animado":
-        prompt = gerar_prompt_post_animado()
+        base_prompt = gerar_prompt_post_animado()
     else:
-        prompt = gerar_prompt_post_simples()
+        base_prompt = gerar_prompt_post_simples()
+
+    prompt = contexto + "\n\n" + base_prompt
 
     return gerar_texto(prompt).strip()
 
@@ -36,9 +38,6 @@ def render_etapa_post():
     )
 
 
-    # -------------------------------------------------
-    # TIPO DE POST
-    # -------------------------------------------------
     tipo = st.radio(
         "Tipo de post:",
         ["Simples", "Animado"],
@@ -52,12 +51,29 @@ def render_etapa_post():
     # -------------------------------------------------
     if st.button("Criar descrição do post", use_container_width=True):
 
+        contexto = f"""
+Ideia:
+{st.session_state.get("ideia_escolhida")}
+
+Conceito visual:
+{st.session_state.get("conceito_visual")}
+
+Headline:
+{st.session_state.get("headline_escolhida")}
+
+Texto base:
+{st.session_state.get("texto_escolhido")}
+"""
+
         with st.spinner("Criando descrição..."):
-            st.session_state["descricao_post"] = _gerar_descricao_post(tipo)
+            st.session_state["descricao_post"] = _gerar_descricao_post(
+                tipo,
+                contexto
+            )
 
 
     # -------------------------------------------------
-    # MOSTRA DESCRIÇÃO (COM BOTÃO COPIAR AUTOMÁTICO)
+    # MOSTRA DESCRIÇÃO
     # -------------------------------------------------
     if st.session_state.get("descricao_post"):
 
@@ -75,7 +91,7 @@ def render_etapa_post():
 
 
         # -------------------------------------------------
-        # NAVEGAÇÃO (intacto)
+        # NAVEGAÇÃO
         # -------------------------------------------------
         st.divider()
 
@@ -83,6 +99,8 @@ def render_etapa_post():
 
         with col1:
             if st.button("⬅ Voltar", use_container_width=True):
+                st.session_state.pop("descricao_post", None)
+                st.session_state.pop("tipo_post", None)
                 st.session_state.etapa = 4
                 st.rerun()
 
