@@ -1,5 +1,5 @@
 # =====================================================
-# zAz — MÓDULO 07
+# zAz — MÓDULO 08
 # ETAPA 08 — LEGENDA
 # =====================================================
 
@@ -10,7 +10,6 @@ from modules.ia_engine import gerar_texto
 # =====================================================
 # IA
 # =====================================================
-
 def _gerar_legenda(contexto, texto_usuario, tons):
 
     tons_txt = ", ".join(tons)
@@ -37,19 +36,12 @@ Formato: texto corrido normal.
 
     bruto = gerar_texto(prompt).strip()
 
-    palavras = bruto.split()
-    texto_sem_hashtags = []
-    hashtags = []
-
-    for p in palavras:
-        if p.startswith("#"):
-            hashtags.append(p)
-        else:
-            texto_sem_hashtags.append(p)
-
-    texto = " ".join(texto_sem_hashtags)
-
     import re
+
+    # separa hashtags de forma mais segura
+    hashtags = re.findall(r"#\w+", bruto)
+    texto = re.sub(r"#\w+", "", bruto).strip()
+
     frases = re.split(r'(?<=[.!?])\s+', texto)
     frases = [f.strip() for f in frases if f.strip()]
 
@@ -62,7 +54,7 @@ Formato: texto corrido normal.
     ]
 
     for f in frases:
-        if any(g in f.lower() for g in gatilhos_cta) and not cta:
+        if not cta and any(g in f.lower() for g in gatilhos_cta):
             cta = f
         else:
             frases_limpa.append(f)
@@ -90,8 +82,6 @@ Formato: texto corrido normal.
         partes.append("#zaz_app")
 
     texto_final = "\n".join(partes).strip()
-
-    # 🔥 estabilidade extra
     texto_final = texto_final[:2200]
 
     return texto_final
@@ -100,7 +90,6 @@ Formato: texto corrido normal.
 # =====================================================
 # RENDER
 # =====================================================
-
 def render_etapa_legenda():
 
     st.markdown(
@@ -121,7 +110,6 @@ def render_etapa_legenda():
         "Irônico/Sarcástico",
         "Resiliente/Perrengue",
         "Acolhedor/Comunitário",
-        "Sarcasmo",
         "Educativo/Didático",
         "Inspiracional/Motivacional",
         "Vulnerável/Autêntico",
@@ -139,17 +127,21 @@ def render_etapa_legenda():
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            if st.checkbox(tons_lista[i], key=f"tom_{i}"):
-                tons_escolhidos.append(tons_lista[i])
+            if i < len(tons_lista):
+                if st.checkbox(tons_lista[i], key=f"tom_{i}"):
+                    tons_escolhidos.append(tons_lista[i])
 
         with col2:
-            if st.checkbox(tons_lista[i + 5], key=f"tom_{i + 5}"):
-                tons_escolhidos.append(tons_lista[i + 5])
+            idx = i + 5
+            if idx < len(tons_lista):
+                if st.checkbox(tons_lista[idx], key=f"tom_{idx}"):
+                    tons_escolhidos.append(tons_lista[idx])
 
         with col3:
-            if st.checkbox(tons_lista[i + 10], key=f"tom_{i + 10}"):
-                tons_escolhidos.append(tons_lista[i + 10])
-
+            idx = i + 10
+            if idx < len(tons_lista):
+                if st.checkbox(tons_lista[idx], key=f"tom_{idx}"):
+                    tons_escolhidos.append(tons_lista[idx])
 
     # =================================================
     # GERAR
@@ -168,39 +160,33 @@ def render_etapa_legenda():
                 tons_escolhidos
             )
 
-
     # =================================================
     # RESULTADO
     # =================================================
     if st.session_state.get("legenda_gerada"):
-
-        # botão copiar automático
         st.code(
             st.session_state["legenda_gerada"],
             language="text"
         )
 
-
     # =================================================
     # NAVEGAÇÃO (CORRIGIDA)
     # =================================================
     st.divider()
-
     col1, col2 = st.columns(2)
 
-    # ⬅ VOLTAR (agora limpa estado corretamente)
+    # ⬅ VOLTAR → ETAPA 07
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
             st.session_state.pop("legenda_gerada", None)
-            st.session_state.etapa = 6
+            st.session_state.etapa = 7
             st.rerun()
 
-    # ➡ PROSSEGUIR
+    # ➡ PROSSEGUIR → ETAPA 09
     with col2:
         if st.button("Prosseguir ➡", use_container_width=True):
-
             if not st.session_state.get("legenda_gerada"):
                 st.warning("Crie a legenda antes de continuar.")
             else:
-                st.session_state.etapa = 8
+                st.session_state.etapa = 9
                 st.rerun()
