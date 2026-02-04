@@ -28,15 +28,45 @@ def render_etapa_legenda():
     if "legenda_final" not in st.session_state:
         st.session_state.legenda_final = ""
 
+    if "legenda_base" not in st.session_state:
+        st.session_state.legenda_base = ""
+
     # -------------------------------------------------
-    # CAMPO FINAL DE LEGENDA (ÚNICO)
+    # TEXTO BASE (VINDO DA ETAPA 06, SE EXISTIR)
+    # -------------------------------------------------
+    texto_base = st.session_state.get("descricao_post", "")
+
+    if texto_base:
+        st.caption("Texto base sugerido (editável)")
+        st.text_area(
+            "Base da legenda",
+            value=texto_base,
+            height=140,
+            key="legenda_base"
+        )
+
+    # -------------------------------------------------
+    # CAMPO FINAL DE LEGENDA
     # -------------------------------------------------
     st.text_area(
-        "Legenda",
+        "Legenda final",
         value=st.session_state.legenda_final,
-        height=300,
+        height=260,
         key="legenda_final"
     )
+
+    # -------------------------------------------------
+    # AÇÕES
+    # -------------------------------------------------
+    col_a, col_b = st.columns(2)
+
+    with col_a:
+        if st.button("Usar texto base", use_container_width=True):
+            st.session_state.legenda_final = texto_base
+
+    with col_b:
+        if st.button("Limpar legenda", use_container_width=True):
+            st.session_state.legenda_final = ""
 
     # -------------------------------------------------
     # PREVIEW (SÓ TEXTO)
@@ -49,7 +79,7 @@ def render_etapa_legenda():
         )
 
     # -------------------------------------------------
-    # NAVEGAÇÃO (CORRETA)
+    # NAVEGAÇÃO
     # -------------------------------------------------
     st.divider()
     col1, col2 = st.columns(2)
