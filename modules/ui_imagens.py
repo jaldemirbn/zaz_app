@@ -1,107 +1,137 @@
 # =====================================================
-# zAz — MÓDULO MÍDIA
-# ETAPA 04 — UPLOAD IMAGEM OU VÍDEO
+# zAz — MÓDULO 05
+# ETAPA 05 — IMAGENS
 # =====================================================
 
 import streamlit as st
-from PIL import Image
+from PIL import Image, ImageDraw
 import io
 
 
 # =====================================================
-# RENDER PRINCIPAL
+# MOCK — gera imagens placeholder locais
+# (até integrar IA real depois)
 # =====================================================
-def render_etapa_imagens():
+def _gerar_mock_imagens(texto):
 
-    st.markdown(
-        "<h3 style='color:#FF9D28; margin-top:0;'>05. Enviar mídia</h3>",
-        unsafe_allow_html=True
-    )
+    imagens = []
 
-    st.caption("Envie uma imagem ou vídeo do seu computador.")
+    for i in range(4):
 
+        img = Image.new("RGB", (1024, 1024), (20, 20, 20))
+        draw = ImageDraw.Draw(img)
 
-    # -------------------------------------------------
-    # UPLOADER (🔥 SUPORTE A VÍDEO)
-    # -------------------------------------------------
-    arquivo = st.file_uploader(
-        "Selecione ou arraste a mídia",
-        type=["png", "jpg", "jpeg", "mp4", "mov", "webm"],
-        label_visibility="collapsed"
-    )
+        frase = f"Imagem {i+1}\n\n{texto[:120]}"
 
-
-    # =================================================
-    # SEM ARQUIVO → NÃO SOME A TELA
-    # =================================================
-    if not arquivo:
-        st.info("Faça upload de uma imagem ou vídeo para continuar.")
-        return
-
-
-    tipo = arquivo.type
-
-
-    # =================================================
-    # IMAGEM
-    # =================================================
-    if tipo.startswith("image"):
-
-        img = Image.open(arquivo)
+        draw.text((60, 480), frase, fill=(255, 157, 40))
 
         buffer = io.BytesIO()
         img.save(buffer, format="PNG")
 
-        st.session_state["imagem_bytes"] = buffer.getvalue()
-        st.session_state.pop("video_bytes", None)
+        imagens.append(buffer.getvalue())
 
-        st.image(img, use_container_width=True)
+    return imagens
+
+
+# =====================================================
+# RENDER
+# =====================================================
+def render_etapa_imagens():
+
+    # =================================================
+    # GATE → só entra se houver conceito
+    # =================================================
+    if not st.session_state.get("conceito_visual"):
+        return
+
+
+    # -----------------------------
+    # STATE
+    # -----------------------------
+    if "imagens_geradas" not in st.session_state:
+        st.session_state.imagens_geradas = []
+
+    if "imagem_escolhida" not in st.session_state:
+        st.session_state.imagem_escolhida = None
+
+
+    # -----------------------------
+    # TÍTULO
+    # -----------------------------
+    st.markdown(
+        "<h3 style='color:#FF9D28;'>05. Escolha a imagem</h3>",
+        unsafe_allow_html=True
+    )
+
+
+    conceito = st.session_state["conceito_visual"]
 
 
     # =================================================
-    # VÍDEO
+    # GERAR IMAGENS
     # =================================================
-    elif tipo.startswith("video"):
+    if not st.session_state.imagens_geradas:
 
-        video_bytes = arquivo.read()
+        if st.button("✨ Gerar imagens", use_container_width=True):
 
-        st.session_state["video_bytes"] = video_bytes
-        st.session_state.pop("imagem_bytes", None)
+            with st.spinner("Gerando variações visuais..."):
+                st.session_state.imagens_geradas = _gerar_mock_imagens(conceito)
+                st.session_state.imagem_escolhida = None
 
-        st.video(video_bytes)
+            st.rerun()
 
 
-    # -------------------------------------------------
-    # DOWNLOAD (somente para imagem)
-    # -------------------------------------------------
-    if "imagem_bytes" in st.session_state:
+    # =================================================
+    # GRID DE IMAGENS
+    # =================================================
+    if not st.session_state.imagens_geradas:
+        return
 
-        st.download_button(
-            label="⬇️ Baixar imagem",
-            data=st.session_state["imagem_bytes"],
-            file_name="post.png",
-            mime="image/png",
-            use_container_width=True
-        )
+
+    st.caption("Escolha uma opção:")
+
+    cols = st.columns(2)
+
+    for idx, img_bytes in enumerate(st.session_state.imagens_geradas):
+
+        with cols[idx % 2]:
+
+            st.image(img_bytes, use_container_width=True)
+
+            if st.button(
+                f"Selecionar {idx+1}",
+                key=f"img_{idx}",
+                use_container_width=True
+            ):
+                st.session_state.imagem_escolhida = img_bytes
+                st.rerun()
 
 
     # =================================================
     # NAVEGAÇÃO
     # =================================================
     st.divider()
+
     col1, col2 = st.columns(2)
 
 
-    # VOLTAR (conceito)
+    # ⬅ VOLTAR → etapa -1
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
-            st.session_state.etapa = 3
+
+            st.session_state.pop("imagens_geradas", None)
+            st.session_state.pop("imagem_escolhida", None)
+
+            st.session_state.etapa -= 1
             st.rerun()
 
 
-    # SEGUIR
+    # ➡ SEGUIR → etapa +1
     with col2:
-        if st.button("Seguir ➡", use_container_width=True):
-            st.session_state.etapa = 5
+        if st.button(
+            "Seguir ➜",
+            use_container_width=True,
+            disabled=not st.session_state.imagem_escolhida
+        ):
+            st.session_state.etapa += 1
             st.rerun()
-
