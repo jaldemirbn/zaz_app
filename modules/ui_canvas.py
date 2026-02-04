@@ -3,7 +3,6 @@
 # ETAPA 07 — CANVAS DO POST
 # =====================================================
 
-
 # =====================================================
 # IMPORTS
 # =====================================================
@@ -53,28 +52,23 @@ def render_etapa_canvas():
     )
 
     # =================================================
-    # STATE DA IMAGEM BASE
+    # STATE ÚNICO — IMAGEM DO UPLOAD
     # =================================================
-    if "imagem_base" not in st.session_state:
-        st.session_state.imagem_base = None
+    if "imagem_upload" not in st.session_state:
+        st.session_state.imagem_upload = None
 
     # =================================================
-    # UPLOAD DO POST PRONTO (SUBSTITUI IMAGEM BASE)
+    # UPLOAD DO POST PRONTO (ÚNICA FONTE DE IMAGEM)
     # =================================================
-    st.markdown("### 📤 Upload do post pronto")
-
     arquivo = st.file_uploader(
-        "Envie o post criado fora do zAz (Canva, CapCut, Adobe, etc)",
+        "Envie o post pronto (Canva, CapCut, Adobe, etc)",
         type=["png", "jpg", "jpeg"]
     )
 
     if arquivo is not None:
-        st.session_state.imagem_base = arquivo.read()
+        st.session_state.imagem_upload = arquivo.read()
 
-    # =================================================
-    # ABERTURA SEGURA DA IMAGEM
-    # =================================================
-    base_img = abrir_imagem_segura(st.session_state.imagem_base)
+    base_img = abrir_imagem_segura(st.session_state.imagem_upload)
 
     if base_img is None:
         st.info("Faça upload de um post pronto para continuar.")
@@ -137,7 +131,7 @@ def render_etapa_canvas():
             b = int(cor_fundo[5:7], 16)
 
             draw.rectangle(
-                (bbox[0] - padding, bbox[1] - padding, bbox[2] + padding, bbox[3] + padding),
+                (bbox[0]-padding, bbox[1]-padding, bbox[2]+padding, bbox[3]+padding),
                 fill=(r, g, b, alpha)
             )
 
