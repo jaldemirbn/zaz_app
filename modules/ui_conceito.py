@@ -1,5 +1,5 @@
 # =====================================================
-#             Etapa 04 - Conceito (VERSÃO PREMIUM)
+#             Etapa 04 - Conceito (VERSÃO ESTÁVEL FINAL)
 # =====================================================
 
 import streamlit as st
@@ -12,7 +12,7 @@ from modules.state_manager import (
 
 
 # =====================================================
-# 🤖 PROMPT CINEMATOGRÁFICO PROFISSIONAL (COMPLETO)
+# 🤖 PROMPT FOTOGRÁFICO CINEMATOGRÁFICO COMPLETO
 # =====================================================
 PROMPT_BASE_FOTOGRAFICO = """
 Gere uma fotografia profissional, não ilustração, não arte digital.
@@ -46,7 +46,6 @@ Iluminação:
 – direção consistente
 – sombras suaves ou dramáticas conforme a emoção
 – contraste equilibrado
-– nada artificial
 – textura real de pele, tecido e ambiente
 
 Cor e tratamento:
@@ -62,7 +61,6 @@ Qualidade técnica:
 – nitidez alta
 – microtexturas visíveis
 – exposição correta
-– sem ruído excessivo
 – proporções reais
 – ultra realista
 
@@ -73,7 +71,7 @@ Acabamento:
 – estética documental ou cinematográfica
 
 Resultado final:
-uma fotografia autêntica, sofisticada e profissional.
+uma fotografia autêntica, sofisticada, profissional.
 """
 
 
@@ -99,8 +97,16 @@ def render_etapa_conceito():
     if not st.session_state.get("headline_escolhida"):
         return
 
+
+    # -------------------------------------------------
+    # STATES
+    # -------------------------------------------------
     if "conceito_visual" not in st.session_state:
         st.session_state.conceito_visual = None
+
+    # 🔥 IMPORTANTE → etapa de imagens depende disso
+    if "etapa_4_liberada" not in st.session_state:
+        st.session_state.etapa_4_liberada = False
 
 
     st.markdown(
@@ -109,7 +115,9 @@ def render_etapa_conceito():
     )
 
 
-    # GERAR
+    # =================================================
+    # GERAR CONCEITO
+    # =================================================
     if not st.session_state.conceito_visual:
 
         if st.button("✨ Gerar conceito", use_container_width=True):
@@ -125,7 +133,9 @@ def render_etapa_conceito():
         return
 
 
-    # MOSTRAR
+    # =================================================
+    # MOSTRAR CONCEITO
+    # =================================================
     st.text_area(
         "Prompt fotográfico gerado",
         st.session_state.conceito_visual,
@@ -135,20 +145,32 @@ def render_etapa_conceito():
 
     col1, col2, col3 = st.columns(3)
 
+
+    # NOVO
     with col1:
         if st.button("🔁 Novo conceito", use_container_width=True):
             st.session_state.conceito_visual = None
             st.rerun()
 
+
+    # LINK
     with col2:
         st.markdown("[🎨 Criar imagem](https://labs.google/fx/tools/image-fx)")
 
+
+    # =================================================
+    # CONTINUAR (🔥 RESTAURADO O VÍNCULO COM ETAPA 4)
+    # =================================================
     with col3:
         if st.button("Continuar ➡", use_container_width=True):
+            st.session_state.etapa_4_liberada = True  # 🔥 ESSENCIAL
             st.session_state.etapa = 4
             st.rerun()
 
 
+    # =================================================
+    # VOLTAR
+    # =================================================
     st.divider()
 
     if st.button("⬅ Voltar", use_container_width=True):
@@ -158,5 +180,6 @@ def render_etapa_conceito():
         limpar_texto()
         limpar_postagem()
 
+        st.session_state.etapa_4_liberada = False
         st.session_state.etapa = 2
         st.rerun()
