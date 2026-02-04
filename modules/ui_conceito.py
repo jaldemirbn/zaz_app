@@ -202,7 +202,7 @@ def render_etapa_conceito():
     # SEGUIR
     with col3:
         if st.button("Seguir ➡", use_container_width=True):
-            st.session_state.etapa = 4
+            st.session_state.etapa = 5
             st.rerun()
 
 
@@ -217,3 +217,4 @@ def render_etapa_conceito():
         st.session_state.etapa_4_liberada = False
         st.session_state.etapa = 2
         st.rerun()
+
