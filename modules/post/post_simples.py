@@ -1,23 +1,21 @@
 # ========================================
-# POST SIMPLES — PROMPT SÊNIOR DETALHADO
+# POST SIMPLES — PROMPT CRIATIVO PROFISSIONAL
 # ========================================
 
 def gerar_prompt_post_simples():
 
     prompt = """
-Aja como diretor de arte e designer gráfico sênior especializado em posts de alta conversão.
+Aja como diretor de arte, designer gráfico e copywriter sênior de agência de publicidade.
 
-Com base no contexto fornecido (ideia, conceito visual, headline e texto), crie a descrição técnica completa de um post estático profissional.
+Use o contexto fornecido (ideia, conceito visual, headline e texto) para criar um post estático profissional, criativo, visualmente marcante e persuasivo.
 
-Defina com precisão: composição, enquadramento, foco visual, hierarquia, grid, posição dos elementos, tipografia (peso, tamanho, contraste), paleta de cores, uso de luz/sombra, espaçamento, respiro, equilíbrio, legibilidade mobile e destaque de CTA.
+Primeiro defina um conceito criativo forte e a emoção que o post deve transmitir; depois descreva a execução visual com precisão: composição, ponto focal, hierarquia, grid, enquadramento, tipografia (peso, escala, contraste), paleta estratégica, luz/sombra, profundidade, respiro, equilíbrio e posicionamento do CTA.
 
-O design deve ser limpo, moderno, premium, persuasivo e direcionar o olhar do usuário do título ao CTA.
+O design deve parecer peça de campanha premium, moderno, elegante, legível no mobile e conduzir o olhar do usuário até a ação.
 
-Evite explicações ou teoria.
+Seja criativo, específico e direto, evitando explicações.
 
-Entregue somente a descrição final.
-
-Formato obrigatório: um único parágrafo contínuo, sem quebras de linha, máximo 1200 caracteres.
+Formato obrigatório: entregar somente a descrição final em um único parágrafo contínuo, sem quebras de linha, máximo 1200 caracteres.
 """
 
     return prompt
