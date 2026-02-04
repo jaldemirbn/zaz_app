@@ -1,5 +1,5 @@
 # =====================================================
-#             Etapa 04 - Conceito (VERSÃO ESTÁVEL FINAL)
+#             Etapa 04 - Conceito (VERSÃO FINAL ESTÁVEL)
 # =====================================================
 
 import streamlit as st
@@ -42,36 +42,27 @@ Lente e câmera:
 – leve bokeh orgânico
 
 Iluminação:
-– luz natural ou prática realista
-– direção consistente
-– sombras suaves ou dramáticas conforme a emoção
+– luz natural realista
 – contraste equilibrado
-– textura real de pele, tecido e ambiente
+– textura real
 
 Cor e tratamento:
-– paleta coerente
-– tons de pele naturais
+– tons naturais
 – color grading cinematográfico sutil
-– sem oversaturation
-– sem HDR exagerado
 – sem aparência digital
 
 Qualidade técnica:
-– foco perfeito no sujeito
+– foco perfeito
 – nitidez alta
-– microtexturas visíveis
-– exposição correta
 – proporções reais
 – ultra realista
 
 Acabamento:
 – leve grão de filme
-– contraste orgânico
-– aparência de foto premiada de revista ou editorial
-– estética documental ou cinematográfica
+– estética editorial/documental
 
 Resultado final:
-uma fotografia autêntica, sofisticada, profissional.
+uma fotografia autêntica, sofisticada e profissional.
 """
 
 
@@ -98,13 +89,10 @@ def render_etapa_conceito():
         return
 
 
-    # -------------------------------------------------
     # STATES
-    # -------------------------------------------------
     if "conceito_visual" not in st.session_state:
         st.session_state.conceito_visual = None
 
-    # 🔥 IMPORTANTE → etapa de imagens depende disso
     if "etapa_4_liberada" not in st.session_state:
         st.session_state.etapa_4_liberada = False
 
@@ -116,7 +104,7 @@ def render_etapa_conceito():
 
 
     # =================================================
-    # GERAR CONCEITO
+    # GERAR
     # =================================================
     if not st.session_state.conceito_visual:
 
@@ -134,7 +122,7 @@ def render_etapa_conceito():
 
 
     # =================================================
-    # MOSTRAR CONCEITO
+    # MOSTRAR
     # =================================================
     st.text_area(
         "Prompt fotográfico gerado",
@@ -146,40 +134,30 @@ def render_etapa_conceito():
     col1, col2, col3 = st.columns(3)
 
 
-    # NOVO
+    # 🔁 Novo conceito
     with col1:
         if st.button("🔁 Novo conceito", use_container_width=True):
             st.session_state.conceito_visual = None
             st.rerun()
 
 
-    # LINK
+    # 🎨 Criar imagem (🔥 BOTÃO REAL AGORA)
     with col2:
-        st.markdown("[🎨 Criar imagem](https://labs.google/fx/tools/image-fx)")
+        st.link_button(
+            "🎨 Criar imagem",
+            "https://labs.google/fx/tools/image-fx",
+            use_container_width=True
+        )
 
 
-    # =================================================
-    # CONTINUAR (🔥 RESTAURADO O VÍNCULO COM ETAPA 4)
-    # =================================================
+    # ➡ Continuar
     with col3:
         if st.button("Continuar ➡", use_container_width=True):
-            st.session_state.etapa_4_liberada = True  # 🔥 ESSENCIAL
+            st.session_state.etapa_4_liberada = True
             st.session_state.etapa = 4
             st.rerun()
 
 
     # =================================================
     # VOLTAR
-    # =================================================
-    st.divider()
-
-    if st.button("⬅ Voltar", use_container_width=True):
-
-        limpar_conceito()
-        limpar_imagens()
-        limpar_texto()
-        limpar_postagem()
-
-        st.session_state.etapa_4_liberada = False
-        st.session_state.etapa = 2
-        st.rerun()
+    # =========
