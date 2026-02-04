@@ -1,6 +1,8 @@
 # =====================================================
-# zAz — MÓDULO 06
-# ETAPA 07 — CANVAS DO POST
+# zAz — MÓDULO 07
+# ETAPA 07 — CANVAS (MONTAGEM FINAL DO POST)
+# Responsabilidade: layout + composição visual
+# NÃO cria texto
 # =====================================================
 
 
@@ -13,7 +15,7 @@ import io
 
 
 # =====================================================
-# FUNÇÕES AUXILIARES
+# HELPERS
 # =====================================================
 def crop_aspect(img, ratio):
     w, h = img.size
@@ -30,7 +32,7 @@ def crop_aspect(img, ratio):
 
 
 # =====================================================
-# RENDER PRINCIPAL
+# RENDER
 # =====================================================
 def render_etapa_canvas():
 
@@ -44,36 +46,40 @@ def render_etapa_canvas():
 
 
     # =================================================
-    # VALIDAÇÃO — SEM IMAGEM
+    # VALIDAÇÕES
     # =================================================
     if "imagem_bytes" not in st.session_state:
+        st.info("Envie uma imagem na etapa anterior.")
 
-        st.info("Envie uma imagem na etapa anterior para continuar.")
+        if st.button("⬅ Voltar", use_container_width=True):
+            st.session_state.etapa = 5
+            st.rerun()
 
-        st.divider()
-        col1, col2 = st.columns(2)
+        return
 
-        # -------------------------------------------------
-        # BOTÃO — VOLTAR
-        # -------------------------------------------------
-        with col1:
-            if st.button("⬅ Voltar", use_container_width=True):
-                st.session_state.etapa = 5
-                st.rerun()
+
+    if "descricao_post" not in st.session_state:
+        st.info("Gere o texto do post na etapa anterior.")
+
+        if st.button("⬅ Voltar", use_container_width=True):
+            st.session_state.etapa = 6
+            st.rerun()
 
         return
 
 
     # =================================================
-    # PREPARAR IMAGEM BASE
+    # BASE
     # =================================================
     base_img = Image.open(
         io.BytesIO(st.session_state["imagem_bytes"])
     ).convert("RGBA")
 
+    texto = st.session_state["descricao_post"]  # 🔥 texto vem do copy
+
 
     # =================================================
-    # CONTROLES
+    # CONTROLES VISUAIS
     # =================================================
     formato = st.selectbox(
         "Formato",
@@ -81,7 +87,7 @@ def render_etapa_canvas():
     )
 
     ratios = {
-        "1:1": 1/1,
+        "1:1": 1,
         "4:5": 4/5,
         "9:16": 9/16,
         "16:9": 16/9,
@@ -91,32 +97,19 @@ def render_etapa_canvas():
     img = crop_aspect(base_img, ratios[formato]) if formato != "Original" else base_img.copy()
 
 
-    texto = st.text_area(
-        "Texto (use Enter para quebrar linha)",
-        st.session_state.get("headline_escolhida", ""),
-        height=120
-    )
+    col1, col2, col3, col4 = st.columns(4)
 
-
-    c1, c2, c3, c4, c5 = st.columns(5)
-
-    with c1:
+    with col1:
         x = st.slider("X", 0, img.width, 40)
 
-    with c2:
+    with col2:
         y = st.slider("Y", 0, img.height, 40)
 
-    with c3:
+    with col3:
         tamanho = st.slider("Tamanho", 20, 200, 80)
 
-    with c4:
+    with col4:
         cor_texto = st.color_picker("Cor texto", "#FFFFFF")
-
-    with c5:
-        fonte_nome = st.selectbox(
-            "Fonte",
-            ["Sans", "Sans Bold", "Serif", "Serif Bold", "Mono", "Mono Bold"]
-        )
 
 
     usar_fundo = st.checkbox("Fundo atrás do texto", True)
@@ -127,16 +120,7 @@ def render_etapa_canvas():
     # =================================================
     # DESENHO
     # =================================================
-    fontes = {
-        "Sans": "DejaVuSans.ttf",
-        "Sans Bold": "DejaVuSans-Bold.ttf",
-        "Serif": "DejaVuSerif.ttf",
-        "Serif Bold": "DejaVuSerif-Bold.ttf",
-        "Mono": "DejaVuSansMono.ttf",
-        "Mono Bold": "DejaVuSansMono-Bold.ttf"
-    }
-
-    font = ImageFont.truetype(fontes[fonte_nome], tamanho)
+    font = ImageFont.truetype("DejaVuSans-Bold.ttf", tamanho)
 
     preview = img.copy()
     overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
@@ -161,12 +145,13 @@ def render_etapa_canvas():
 
 
     # =================================================
-    # PREVIEW + DOWNLOAD
+    # PREVIEW
     # =================================================
     st.image(preview, use_container_width=True)
 
     buffer = io.BytesIO()
     preview.convert("RGB").save(buffer, format="PNG")
+
     st.session_state["imagem_final_bytes"] = buffer.getvalue()
 
     st.download_button(
@@ -179,25 +164,17 @@ def render_etapa_canvas():
 
 
     # =================================================
-    # BOTÕES
+    # NAVEGAÇÃO (PADRÃO zAz)
     # =================================================
     st.divider()
     col1, col2 = st.columns(2)
 
-
-    # -------------------------------------------------
-    # BOTÃO — VOLTAR
-    # -------------------------------------------------
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
-            st.session_state.etapa = 5
+            st.session_state.etapa = 6
             st.rerun()
 
-
-    # -------------------------------------------------
-    # BOTÃO — PRÓXIMO
-    # -------------------------------------------------
     with col2:
-        if st.button("Próximo ➡", use_container_width=True):
-            st.session_state.etapa = 7
+        if st.button("Próximo ➜", use_container_width=True):
+            st.session_state.etapa = 8   # 🔥 corrigido
             st.rerun()
