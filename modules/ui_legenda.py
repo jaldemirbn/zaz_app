@@ -96,29 +96,32 @@ def render_etapa_legenda():
         unsafe_allow_html=True
     )
 
-    st.text_area(
+    texto_usuario = st.text_area(
         "O que você gostaria de colocar na legenda?",
         height=110
     )
 
-    # TEXTO COM MESMA COR / ESTILO PADRÃO
     st.markdown("Escolha o tom da legenda")
 
+    # =================================================
+    # LISTA DE TONS (SUBSTITUÍDA)
+    # =================================================
     tons_lista = [
-        "Humorístico/Zueira",
-        "Informal/Coloquial",
-        "Irônico/Sarcástico",
-        "Resiliente/Perrengue",
-        "Acolhedor/Comunitário",
-        "Educativo/Didático",
-        "Inspiracional/Motivacional",
-        "Vulnerável/Autêntico",
-        "Visual/Emoji-heavy",
-        "Comercial/Promocional",
-        "Opinião/Polêmico",
-        "Profissional/Formal",
-        "Nostálgico",
-        "Regional/Cultural"
+        "Casual",
+        "Autêntico",
+        "Memético",
+        "Minimalista",
+        "Argumentativo",
+        "Sarcástico",
+        "Educacional",
+        "Provocativo",
+        "Narrativo",
+        "Dramático",
+        "Motivacional",
+        "Comercial",
+        "Poético",
+        "Persuasivo",
+        "Regional"
     ]
 
     tons_escolhidos = []
@@ -127,9 +130,10 @@ def render_etapa_legenda():
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            if i < len(tons_lista):
-                if st.checkbox(tons_lista[i], key=f"tom_{i}"):
-                    tons_escolhidos.append(tons_lista[i])
+            idx = i
+            if idx < len(tons_lista):
+                if st.checkbox(tons_lista[idx], key=f"tom_{idx}"):
+                    tons_escolhidos.append(tons_lista[idx])
 
         with col2:
             idx = i + 5
@@ -143,6 +147,9 @@ def render_etapa_legenda():
                 if st.checkbox(tons_lista[idx], key=f"tom_{idx}"):
                     tons_escolhidos.append(tons_lista[idx])
 
+    # =================================================
+    # GERAR
+    # =================================================
     if st.button("Criar legenda", use_container_width=True):
 
         contexto = {
@@ -153,16 +160,22 @@ def render_etapa_legenda():
         with st.spinner("Escrevendo legenda..."):
             st.session_state["legenda_gerada"] = _gerar_legenda(
                 contexto,
-                st.session_state.get("texto_usuario", ""),
+                texto_usuario,
                 tons_escolhidos
             )
 
+    # =================================================
+    # RESULTADO
+    # =================================================
     if st.session_state.get("legenda_gerada"):
         st.code(
             st.session_state["legenda_gerada"],
             language="text"
         )
 
+    # =================================================
+    # NAVEGAÇÃO
+    # =================================================
     st.divider()
     col1, col2 = st.columns(2)
 
