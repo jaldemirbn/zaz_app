@@ -167,14 +167,14 @@ def render_etapa_conceito():
 
     else:
 
-        # -------------------------------------------------
-        # MOSTRAR PROMPT
-        # -------------------------------------------------
-        st.text_area(
-            "Prompt fotográfico gerado",
+        # =================================================
+        # 🔥 PROMPT COM BOTÃO COPIAR AUTOMÁTICO
+        # =================================================
+        st.code(
             st.session_state.conceito_visual,
-            height=380
+            language="text"
         )
+
 
     # =================================================
     # BOTÕES
@@ -183,16 +183,14 @@ def render_etapa_conceito():
     col1, col2, col3 = st.columns(3)
 
 
-    # BOTÃO — NOVO CONCEITO
+    # NOVO CONCEITO
     with col1:
-        st.button(
-            "🔁 Novo conceito",
-            key="btn_novo_conceito",
-            use_container_width=True
-        )
+        if st.button("🔁 Novo conceito", use_container_width=True):
+            st.session_state.conceito_visual = None
+            st.rerun()
 
 
-    # BOTÃO — CRIAR IMAGEM
+    # CRIAR IMAGEM
     with col2:
         st.link_button(
             "🎨 Criar imagem",
@@ -201,21 +199,15 @@ def render_etapa_conceito():
         )
 
 
-    # BOTÃO — CONTINUAR
+    # SEGUIR
     with col3:
-        st.button(
-            "Continuar ➡",
-            key="btn_continuar",
-            use_container_width=True
-        )
+        if st.button("Seguir ➡", use_container_width=True):
+            st.session_state.etapa = 4
+            st.rerun()
 
 
-    # BOTÃO — VOLTAR
-    if st.button(
-        "⬅ Voltar",
-        key="btn_voltar",
-        use_container_width=True
-    ):
+    # VOLTAR
+    if st.button("⬅ Voltar", use_container_width=True):
 
         limpar_conceito()
         limpar_imagens()
@@ -225,4 +217,3 @@ def render_etapa_conceito():
         st.session_state.etapa_4_liberada = False
         st.session_state.etapa = 2
         st.rerun()
-
