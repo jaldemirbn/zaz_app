@@ -1,3 +1,10 @@
+import streamlit as st
+
+st.set_page_config(
+    page_title="Manual do usuário",
+    layout="centered"
+)
+
 Manual de Uso — zAz
 Guia completo, simples e detalhado para qualquer pessoa usar o sistema passo a passo.
 
