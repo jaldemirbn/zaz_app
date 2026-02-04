@@ -38,6 +38,9 @@ def render_etapa_post():
     )
 
 
+    # -------------------------------------------------
+    # TIPO
+    # -------------------------------------------------
     tipo = st.radio(
         "Tipo de post:",
         ["Simples", "Animado"],
@@ -47,7 +50,7 @@ def render_etapa_post():
 
 
     # -------------------------------------------------
-    # GERAR DESCRIÇÃO
+    # GERAR
     # -------------------------------------------------
     if st.button("Criar descrição do post", use_container_width=True):
 
@@ -73,13 +76,23 @@ Texto base:
 
 
     # -------------------------------------------------
-    # MOSTRA DESCRIÇÃO
+    # RESULTADO
     # -------------------------------------------------
     if st.session_state.get("descricao_post"):
 
+        # botão copiar automático
         st.code(
             st.session_state["descricao_post"],
             language="text"
+        )
+
+        # garantia 100%
+        st.download_button(
+            "📥 Baixar texto completo (.txt)",
+            st.session_state["descricao_post"],
+            file_name="descricao_post.txt",
+            mime="text/plain",
+            use_container_width=True
         )
 
 
