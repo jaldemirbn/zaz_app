@@ -9,6 +9,7 @@
 
 import streamlit as st
 from modules.ia_engine import gerar_ideias
+from modules.state_manager import limpar_fluxo_completo  # 🔥 NOVO
 
 
 def render_etapa_ideias():
@@ -80,13 +81,13 @@ def render_etapa_ideias():
 
 
     # -------------------------------------------------
-    # LIMPAR
+    # LIMPAR (🔥 CORREÇÃO AQUI)
     # -------------------------------------------------
     col_space, col_reset = st.columns([7, 2], gap="small")
 
     with col_reset:
         if st.button("Limpar", use_container_width=True):
-            st.session_state.clear()
+            limpar_fluxo_completo()  # 🔥 NÃO USA CLEAR()
             st.rerun()
 
 
@@ -126,7 +127,7 @@ def render_etapa_ideias():
                 st.rerun()
 
         # =================================================
-        # 🔥 PROSSEGUIR (AGORA NO LUGAR CERTO)
+        # 🔥 PROSSEGUIR
         # =================================================
         st.divider()
 
