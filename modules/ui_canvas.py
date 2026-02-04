@@ -1,6 +1,6 @@
 # =====================================================
-# zAz — MÓDULO 07
-# ETAPA 07 — CANVAS DO POST
+# zAz — MÓDULO 06
+# ETAPA 06 — CRIAÇÃO DO POST
 # =====================================================
 
 
@@ -8,196 +8,219 @@
 # IMPORTS
 # =====================================================
 import streamlit as st
-from PIL import Image, ImageDraw, ImageFont
-import io
+from modules.ia_engine import gerar_texto
 
 
 # =====================================================
-# FUNÇÕES AUXILIARES
+# PROMPT — POST SIMPLES (COMPLETO PROFISSIONAL)
 # =====================================================
-def crop_aspect(img, ratio):
-    w, h = img.size
-    current = w / h
+def _gerar_post_simples(conceito, headline):
 
-    if current > ratio:
-        new_w = int(h * ratio)
-        offset = (w - new_w) // 2
-        return img.crop((offset, 0, offset + new_w, h))
-    else:
-        new_h = int(w / ratio)
-        offset = (h - new_h) // 2
-        return img.crop((0, offset, w, new_h + offset))
+    prompt = f"""
+Aja como um diretor de arte e designer gráfico sênior.
+
+Sua função é criar a descrição técnica completa de um post estático profissional para redes sociais.
+
+Formato padrão: vertical 1:1 ou 4:5.
+Foco em impacto visual imediato, clareza e conversão.
+
+Tema:
+{conceito}
+
+Headline:
+{headline}
+
+Analise:
+– tema
+– objetivo do post
+– público-alvo
+– emoção desejada
+
+Gere:
+
+1. Conceito criativo
+– ideia central forte
+– metáfora visual simples
+– mensagem direta
+
+2. Direção de design
+– paleta de cores coerente
+– tipografia profissional
+– hierarquia clara
+– layout limpo
+– estética moderna e premium
+
+3. Composição visual
+– posição do texto
+– margens e respiro
+– equilíbrio visual
+– uso de contraste
+– foco principal
+– leitura rápida
+
+4. Especificações técnicas
+– proporção ideal
+– tamanho recomendado
+– nitidez
+– contraste
+– exportação otimizada para redes sociais
+
+Regras:
+– design limpo
+– poucos elementos
+– sem poluição visual
+– aparência premium
+– nada amador
+
+Saída em formato de briefing técnico estruturado, pronto para execução no Canva ou Photoshop.
+"""
+    return gerar_texto(prompt).strip()
 
 
 # =====================================================
-# RENDER PRINCIPAL
+# PROMPT — POST ANIMADO (🔥 SEU TEXTO INTACTO)
 # =====================================================
-def render_etapa_canvas():
+def _gerar_post_animado(conceito, headline):
 
-    # -------------------------------------------------
-    # TÍTULO
-    # -------------------------------------------------
+    prompt = f"""
+Aja como um diretor de arte, designer gráfico e motion designer sênior.
+
+Sua função é criar a descrição técnica completa de um post animado profissional para redes sociais.
+
+Tema:
+{conceito}
+
+Headline:
+{headline}
+
+Duração obrigatória e fixa: 8 segundos.
+Formato padrão: vertical 9:16 (Reels/Stories).
+Não alterar o tempo.
+
+Pense como um especialista em publicidade digital, focado em impacto rápido, clareza e conversão.
+
+Analise:
+– tema
+– objetivo do post
+– público-alvo
+– emoção desejada
+
+Gere:
+
+1. Conceito criativo
+– ideia central forte
+– metáfora visual simples
+– mensagem direta
+
+2. Direção de design
+– paleta de cores coerente
+– tipografia profissional
+– hierarquia clara
+– layout limpo
+– estética moderna e premium
+
+3. Roteiro de animação (obrigatório com tempo cronometrado)
+
+Estrutura fixa:
+
+Cena 1 – 0s a 2s (HOOK)
+– impacto visual imediato
+– entrada rápida (zoom, slide ou fade dinâmico)
+
+Cena 2 – 2s a 6s (MENSAGEM)
+– texto principal ou benefício
+– movimento suave e profissional
+– leitura clara
+
+Cena 3 – 6s a 8s (CTA)
+– oferta ou chamada para ação forte
+– destaque máximo
+– animação de reforço (pulse, scale, brilho leve)
+
+4. Especificações técnicas
+– 1080x1920
+– 30fps
+– loop suave
+– otimizado para redes sociais
+– exportação leve e nítida
+
+Regras:
+– design limpo
+– poucos elementos por cena
+– sem poluição visual
+– movimento elegante
+– aparência profissional
+– nada amador ou exagerado
+
+Saída em formato de briefing estruturado, pronto para execução no After Effects, Canva ou CapCut.
+"""
+    return gerar_texto(prompt).strip()
+
+
+# =====================================================
+# LIMPEZA
+# =====================================================
+def _limpar_post():
+    st.session_state.pop("descricao_post", None)
+    st.session_state.pop("tipo_post", None)
+
+
+# =====================================================
+# RENDER
+# =====================================================
+def render_etapa_post():
+
     st.markdown(
-        "<h3 style='color:#FF9D28;'>07. Canvas do post</h3>",
+        "<h3 style='color:#FF9D28;'>06. Criação do post</h3>",
         unsafe_allow_html=True
     )
 
 
-    # =================================================
-    # VALIDAÇÃO — SEM IMAGEM
-    # =================================================
-    if "imagem_bytes" not in st.session_state:
-
-        st.info("Envie uma imagem na etapa anterior para continuar.")
-
-        st.divider()
-        col1, col2 = st.columns(2)
-
-        # -------------------------------------------------
-        # BOTÃO — VOLTAR
-        # -------------------------------------------------
-        with col1:
-            if st.button("⬅ Voltar", use_container_width=True):
-                st.session_state.etapa = 5
-                st.rerun()
-
-        return
-
-
-    # =================================================
-    # PREPARAR IMAGEM BASE
-    # =================================================
-    base_img = Image.open(
-        io.BytesIO(st.session_state["imagem_bytes"])
-    ).convert("RGBA")
-
-
-    # =================================================
-    # CONTROLES
-    # =================================================
-    formato = st.selectbox(
-        "Formato",
-        ["Original", "1:1", "4:5", "9:16", "16:9", "3:4"]
-    )
-
-    ratios = {
-        "1:1": 1/1,
-        "4:5": 4/5,
-        "9:16": 9/16,
-        "16:9": 16/9,
-        "3:4": 3/4
-    }
-
-    img = crop_aspect(base_img, ratios[formato]) if formato != "Original" else base_img.copy()
-
-
-    texto = st.text_area(
-        "Texto (use Enter para quebrar linha)",
-        st.session_state.get("headline_escolhida", ""),
-        height=120
+    tipo = st.radio(
+        "Tipo de post:",
+        ["Simples", "Com animação"],
+        horizontal=True
     )
 
 
-    c1, c2, c3, c4, c5 = st.columns(5)
+    if st.button("✨ Criar descrição do post", use_container_width=True):
 
-    with c1:
-        x = st.slider("X", 0, img.width, 40)
+        conceito = st.session_state.get("conceito_visual")
+        headline = st.session_state.get("headline_escolhida")
 
-    with c2:
-        y = st.slider("Y", 0, img.height, 40)
+        if conceito and headline:
 
-    with c3:
-        tamanho = st.slider("Tamanho", 20, 200, 80)
+            with st.spinner("IA planejando o post..."):
 
-    with c4:
-        cor_texto = st.color_picker("Cor texto", "#FFFFFF")
+                if tipo == "Simples":
+                    texto = _gerar_post_simples(conceito, headline)
+                else:
+                    texto = _gerar_post_animado(conceito, headline)
 
-    with c5:
-        fonte_nome = st.selectbox(
-            "Fonte",
-            ["Sans", "Sans Bold", "Serif", "Serif Bold", "Mono", "Mono Bold"]
+                st.session_state["descricao_post"] = texto
+
+
+    if st.session_state.get("descricao_post"):
+
+        st.code(st.session_state["descricao_post"], language="text")
+
+        st.link_button(
+            "🎨 Criar no Canva",
+            "https://www.canva.com/ai",
+            use_container_width=True
         )
 
 
-    usar_fundo = st.checkbox("Fundo atrás do texto", True)
-    cor_fundo = st.color_picker("Cor fundo", "#000000")
-    alpha = st.slider("Transparência", 0, 255, 140)
-
-
-    # =================================================
-    # DESENHO
-    # =================================================
-    fontes = {
-        "Sans": "DejaVuSans.ttf",
-        "Sans Bold": "DejaVuSans-Bold.ttf",
-        "Serif": "DejaVuSerif.ttf",
-        "Serif Bold": "DejaVuSerif-Bold.ttf",
-        "Mono": "DejaVuSansMono.ttf",
-        "Mono Bold": "DejaVuSansMono-Bold.ttf"
-    }
-
-    font = ImageFont.truetype(fontes[fonte_nome], tamanho)
-
-    preview = img.copy()
-    overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
-    draw = ImageDraw.Draw(overlay)
-
-    bbox = draw.multiline_textbbox((x, y), texto, font=font, spacing=6)
-    padding = 20
-
-    if usar_fundo:
-        r = int(cor_fundo[1:3], 16)
-        g = int(cor_fundo[3:5], 16)
-        b = int(cor_fundo[5:7], 16)
-
-        draw.rectangle(
-            (bbox[0]-padding, bbox[1]-padding, bbox[2]+padding, bbox[3]+padding),
-            fill=(r, g, b, alpha)
-        )
-
-    draw.multiline_text((x, y), texto, font=font, fill=cor_texto, spacing=6)
-
-    preview = Image.alpha_composite(preview, overlay)
-
-
-    # =================================================
-    # PREVIEW + DOWNLOAD
-    # =================================================
-    st.image(preview, use_container_width=True)
-
-    buffer = io.BytesIO()
-    preview.convert("RGB").save(buffer, format="PNG")
-    st.session_state["imagem_final_bytes"] = buffer.getvalue()
-
-    st.download_button(
-        "⬇️ Baixar post final",
-        buffer.getvalue(),
-        "post_final.png",
-        "image/png",
-        use_container_width=True
-    )
-
-
-    # =================================================
-    # BOTÕES
-    # =================================================
     st.divider()
     col1, col2 = st.columns(2)
 
-
-    # -------------------------------------------------
-    # BOTÃO — VOLTAR
-    # -------------------------------------------------
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
-            st.session_state.etapa = 5
+            _limpar_post()
+            st.session_state.etapa = 4
             st.rerun()
 
-
-    # -------------------------------------------------
-    # BOTÃO — PRÓXIMO
-    # -------------------------------------------------
     with col2:
         if st.button("Próximo ➡", use_container_width=True):
-            st.session_state.etapa = 7
+            st.session_state.etapa = 6
             st.rerun()
