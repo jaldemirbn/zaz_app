@@ -4,6 +4,14 @@
 import streamlit as st
 from modules.ia_engine import gerar_texto
 
+# 🔥 NOVO
+from modules.state_manager import (
+    limpar_conceito,
+    limpar_imagens,
+    limpar_texto,
+    limpar_postagem
+)
+
 
 # -------------------------------------------------
 # IA — GERAR CONCEITO
@@ -97,30 +105,3 @@ def render_etapa_conceito():
             <a href="https://labs.google/fx/tools/image-fx" target="_blank"
                style="display:block;text-align:center;padding:10px 0;
                border:1px solid #333;border-radius:8px;
-               text-decoration:none;font-weight:600;color:#FF9D28;">
-               🎨 Criar imagem
-            </a>
-            """,
-            unsafe_allow_html=True
-        )
-
-
-    # -------------------------------------------------
-    # COLAR IMAGEM → AVANÇA AUTOMÁTICO
-    # -------------------------------------------------
-    with col3:
-        if st.button("Colar imagem", use_container_width=True):
-
-            st.session_state.etapa_4_liberada = True
-            st.session_state.etapa = 4
-            st.rerun()
-
-
-    # =================================================
-    # 🔥 APENAS VOLTAR (NOVO)
-    # =================================================
-    st.divider()
-
-    if st.button("⬅ Voltar", use_container_width=True):
-        st.session_state.etapa = 2
-        st.rerun()
