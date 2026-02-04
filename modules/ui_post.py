@@ -23,7 +23,12 @@ def _gerar_descricao_post(tipo, contexto):
 
     prompt = contexto + "\n\n" + base_prompt
 
-    return gerar_texto(prompt).strip()
+    texto = gerar_texto(prompt).strip()
+
+    # 🔥 GARANTIA: força 1 único parágrafo (remove quebras)
+    texto = " ".join(texto.split())
+
+    return texto
 
 
 # =====================================================
@@ -73,7 +78,6 @@ Texto base: {st.session_state.get("texto_escolhido")}
     # -------------------------------------------------
     if st.session_state.get("descricao_post"):
 
-        # botão copiar automático
         st.code(
             st.session_state["descricao_post"],
             language="text"
@@ -94,7 +98,7 @@ Texto base: {st.session_state.get("texto_escolhido")}
 
         col1, col2 = st.columns(2)
 
-        # ⬅ VOLTAR (limpa cache do módulo)
+        # ⬅ VOLTAR
         with col1:
             if st.button("⬅ Voltar", use_container_width=True):
                 st.session_state.pop("descricao_post", None)
