@@ -1,15 +1,17 @@
 import streamlit as st
 from supabase import create_client
 
+
+# =====================================================
+# MÓDULOS UI
+# =====================================================
 from modules.ui_login import render_login
 from modules.ui_cadastro import render_cadastro
 from modules.ui_senha import render_trocar_senha
 from modules.ui_logo import render_logo
 
-# NOVOS MÓDULOS (Tema + Seleção)
 from modules.ui_tema import render_etapa_tema
 from modules.ui_selecao_ideias import render_etapa_selecao_ideias
-
 from modules.ui_headline import render_etapa_headline
 from modules.ui_conceito import render_etapa_conceito
 from modules.ui_imagens import render_etapa_imagens
@@ -23,11 +25,15 @@ from modules.ui_historico import render_etapa_historico
 # =====================================================
 # CONFIG
 # =====================================================
-st.set_page_config(page_title="zAz", layout="centered", page_icon="🚀")
+st.set_page_config(
+    page_title="zAz",
+    layout="centered",
+    page_icon="🚀"
+)
 
 
 # =====================================================
-# 🎨 CSS GLOBAL
+# CSS GLOBAL
 # =====================================================
 st.markdown("""
 <style>
@@ -60,6 +66,7 @@ def conectar():
         st.secrets["SUPABASE_URL"],
         st.secrets["SUPABASE_KEY"]
     )
+
 
 supabase = conectar()
 
@@ -126,36 +133,47 @@ with col2:
 
 
 # =====================================================
-# WIZARD (FLUXO OFICIAL)
+# WIZARD (ORDEM OFICIAL DO PIPELINE)
 # =====================================================
 etapa = st.session_state.etapa
 
+
+# 01 — Tema
 if etapa == 1:
     render_etapa_tema()
 
+# 02 — Seleção de Ideias
 elif etapa == 2:
     render_etapa_selecao_ideias()
 
+# 03 — Headline
 elif etapa == 3:
     render_etapa_headline()
 
+# 04 — Conceito
 elif etapa == 4:
     render_etapa_conceito()
 
+# 05 — Imagens
 elif etapa == 5:
     render_etapa_imagens()
 
+# 06 — Post
 elif etapa == 6:
     render_etapa_post()
 
+# 07 — Canvas
 elif etapa == 7:
     render_etapa_canvas()
 
+# 08 — Legenda
 elif etapa == 8:
     render_etapa_legenda()
 
+# 09 — Postagem
 elif etapa == 9:
     render_etapa_postagem()
 
+# 10 — Histórico
 elif etapa == 10:
     render_etapa_historico()
