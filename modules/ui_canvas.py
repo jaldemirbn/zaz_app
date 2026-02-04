@@ -14,20 +14,6 @@ from PIL import Image, ImageDraw, ImageFont
 # =====================================================
 # HELPERS / LÓGICA PURA
 # =====================================================
-def crop_aspect(img, ratio):
-    w, h = img.size
-    current = w / h
-
-    if current > ratio:
-        new_w = int(h * ratio)
-        offset = (w - new_w) // 2
-        return img.crop((offset, 0, offset + new_w, h))
-    else:
-        new_h = int(w * ratio)
-        offset = (h - new_h) // 2
-        return img.crop((0, offset, w, new_h + offset))
-
-
 def carregar_fonte(nome, tamanho):
     fontes = {
         "Sans": "DejaVuSans.ttf",
@@ -44,24 +30,46 @@ def carregar_fonte(nome, tamanho):
 
 
 def desenhar_grade_tercos(imagem, cor=(255, 255, 255, 120), largura=2):
-    """
-    Desenha a grade 3x3 (regra dos terços):
-    2 linhas verticais + 2 horizontais
-    """
     w, h = imagem.size
     draw = ImageDraw.Draw(imagem)
-
-    x1 = w / 3
-    x2 = 2 * w / 3
-    y1 = h / 3
-    y2 = 2 * h / 3
-
+    x1, x2 = w / 3, 2 * w / 3
+    y1, y2 = h / 3, 2 * h / 3
     draw.line((x1, 0, x1, h), fill=cor, width=largura)
     draw.line((x2, 0, x2, h), fill=cor, width=largura)
     draw.line((0, y1, w, y1), fill=cor, width=largura)
     draw.line((0, y2, w, y2), fill=cor, width=largura)
-
     return imagem
+
+
+def recortar_com_offset(img, ratio, offset_x, offset_y):
+    """
+    Recorta mantendo o ratio, mas permite deslocar a janela de recorte
+    com offsets normalizados (-1.0 a 1.0).
+    """
+    W, H = img.size
+    current = W / H
+
+    if current > ratio:
+        # imagem larga → recorte vertical
+        crop_h = H
+        crop_w = int(H * ratio)
+        max_dx = (W - crop_w) // 2
+        dx = int(offset_x * max_dx)
+        left = (W - crop_w) // 2 + dx
+        top = 0
+    else:
+        # imagem alta → recorte horizontal
+        crop_w = W
+        crop_h = int(W / ratio)
+        max_dy = (H - crop_h) // 2
+        dy = int(offset_y * max_dy)
+        left = 0
+        top = (H - crop_h) // 2 + dy
+
+    left = max(0, min(left, W - crop_w))
+    top = max(0, min(top, H - crop_h))
+
+    return img.crop((left, top, left + crop_w, top + crop_h))
 
 
 # =====================================================
@@ -78,7 +86,7 @@ def render_etapa_canvas():
     )
 
     # -------------------------------------------------
-    # 2. CONFIGURAÇÕES DO CANVAS (ANTES DO UPLOAD)
+    # 2. CONFIGURAÇÕES
     # -------------------------------------------------
     formato = st.selectbox(
         "Formato",
@@ -119,7 +127,17 @@ def render_etapa_canvas():
     alpha = st.slider("Transparência", 0, 255, 140)
 
     # -------------------------------------------------
-    # 3. UPLOAD (IMAGEM OU VÍDEO)
+    # 3. AJUSTE MANUAL (REGRA DOS TERÇOS)
+    # -------------------------------------------------
+    if formato != "Original":
+        st.markdown("**Ajuste manual do enquadramento (regra dos terços)**")
+        offset_x = st.slider("Deslocamento horizontal", -1.0, 1.0, 0.0, 0.01)
+        offset_y = st.slider("Deslocamento vertical", -1.0, 1.0, 0.0, 0.01)
+    else:
+        offset_x = offset_y = 0.0
+
+    # -------------------------------------------------
+    # 4. UPLOAD
     # -------------------------------------------------
     arquivo = st.file_uploader(
         "Envie o post (imagem ou vídeo)",
@@ -127,6 +145,7 @@ def render_etapa_canvas():
     )
 
     if arquivo is not None:
+
         # -----------------------------
         # IMAGEM
         # -----------------------------
@@ -134,7 +153,9 @@ def render_etapa_canvas():
             base_img = Image.open(arquivo).convert("RGBA")
 
             if formato != "Original":
-                base_img = crop_aspect(base_img, ratios[formato])
+                base_img = recortar_com_offset(
+                    base_img, ratios[formato], offset_x, offset_y
+                )
 
             font = carregar_fonte(fonte_nome, tamanho)
 
@@ -150,7 +171,6 @@ def render_etapa_canvas():
                     r = int(cor_fundo[1:3], 16)
                     g = int(cor_fundo[3:5], 16)
                     b = int(cor_fundo[5:7], 16)
-
                     draw.rectangle(
                         (bbox[0]-padding, bbox[1]-padding, bbox[2]+padding, bbox[3]+padding),
                         fill=(r, g, b, alpha)
@@ -160,7 +180,6 @@ def render_etapa_canvas():
 
             preview = Image.alpha_composite(preview, overlay)
 
-            # -------- GRADE 3x3 (APENAS SE NÃO FOR ORIGINAL) --------
             if formato != "Original":
                 preview = desenhar_grade_tercos(preview)
 
@@ -168,7 +187,6 @@ def render_etapa_canvas():
 
             buffer = io.BytesIO()
             preview.convert("RGB").save(buffer, format="PNG")
-
             st.session_state["midia_final_bytes"] = buffer.getvalue()
             st.session_state["midia_tipo"] = "imagem"
 
@@ -189,7 +207,7 @@ def render_etapa_canvas():
             st.session_state["midia_tipo"] = "video"
 
     # -------------------------------------------------
-    # 4. NAVEGAÇÃO
+    # 5. NAVEGAÇÃO
     # -------------------------------------------------
     st.divider()
     col1, col2 = st.columns(2)
