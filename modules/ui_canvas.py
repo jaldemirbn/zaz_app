@@ -7,8 +7,7 @@
 # IMPORTS
 # =====================================================
 import streamlit as st
-from PIL import Image, ImageDraw, ImageFont, UnidentifiedImageError
-import io
+
 
 
 # =====================================================
