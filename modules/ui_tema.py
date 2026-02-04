@@ -1,6 +1,7 @@
 # =====================================================
 # zAz — MÓDULO 01
 # ETAPA 01 — Tema
+# STATUS: CONGELADO
 # =====================================================
 
 
@@ -9,6 +10,7 @@
 # =====================================================
 import streamlit as st
 from modules.ia_engine import gerar_ideias
+from modules.state_manager import limpar_fluxo_completo
 
 
 # =====================================================
@@ -63,7 +65,17 @@ def render_etapa_tema():
 
 
     # -----------------------------
-    # NAVEGAÇÃO (SEMPRE POR ÚLTIMO)
+    # UTILITÁRIOS (LIMPAR)
+    # -----------------------------
+    if st.session_state.ideias_originais:
+
+        if st.button("Limpar fluxo"):
+            limpar_fluxo_completo()
+            st.rerun()
+
+
+    # -----------------------------
+    # NAVEGAÇÃO (SEMPRE ÚLTIMO)
     # -----------------------------
     if st.session_state.ideias_originais:
 
