@@ -62,7 +62,7 @@ def render_etapa_headline():
 
 
     # =================================================
-    # BOTÃO — GERAR
+    # GERAR
     # =================================================
     if st.button("✨ Gerar headline", use_container_width=True):
 
@@ -112,9 +112,14 @@ def render_etapa_headline():
                 st.rerun()
 
 
-    # ⬅ VOLTAR → etapa 2
+    # ⬅ VOLTAR → limpa etapa 03 inteira
     with col2:
         if st.button("⬅ Voltar", use_container_width=True):
+
+            st.session_state.pop("headlines", None)
+            st.session_state.pop("headline_escolhida", None)
+            st.session_state.pop("radio_headline", None)
+
             st.session_state.etapa = 2
             st.rerun()
 
