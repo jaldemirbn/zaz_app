@@ -48,7 +48,7 @@ def render_etapa_tema():
 
 
     # -----------------------------
-    # INPUT + BOTÃO GERAR
+    # FORM GERAR IDEIAS
     # -----------------------------
     with st.form("form_tema"):
 
@@ -58,10 +58,7 @@ def render_etapa_tema():
             label_visibility="collapsed"
         )
 
-        gerar = st.form_submit_button(
-            "Gerar ideias",
-            use_container_width=True
-        )
+        gerar = st.form_submit_button("Gerar ideias", use_container_width=True)
 
         if gerar and tema:
 
@@ -72,6 +69,17 @@ def render_etapa_tema():
 
             st.session_state.ideias_originais = ideias
 
+            # 🔥 ESSENCIAL → força redesenhar a tela
+            st.rerun()
+
 
     # -----------------------------
-    # NAVEGAÇÃO
+    # BOTÃO SEGUIR (só aparece após gerar)
+    # -----------------------------
+    if st.session_state.ideias_originais:
+
+        st.divider()
+
+        if st.button("Seguir ➡", use_container_width=True):
+            st.session_state.etapa = 2
+            st.rerun()
