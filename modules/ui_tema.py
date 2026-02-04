@@ -64,21 +64,17 @@ def render_etapa_tema():
         st.success("Ideias prontas. Pode seguir ➜")
 
 
-    # -----------------------------
-    # UTILITÁRIOS (LIMPAR)
-    # -----------------------------
-    if st.session_state.ideias_originais:
-
+        # -----------------------------
+        # UTILITÁRIO (LIMPAR FLUXO)
+        # -----------------------------
         if st.button("Limpar fluxo"):
             limpar_fluxo_completo()
             st.rerun()
 
 
-    # -----------------------------
-    # NAVEGAÇÃO (SEMPRE ÚLTIMO)
-    # -----------------------------
-    if st.session_state.ideias_originais:
-
+        # -----------------------------
+        # NAVEGAÇÃO (ÚLTIMO)
+        # -----------------------------
         st.divider()
 
         if st.button("Seguir ➜", use_container_width=True):
