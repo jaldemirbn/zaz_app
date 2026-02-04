@@ -21,12 +21,20 @@ def _gerar_descricao_post(tipo, contexto):
     else:
         base_prompt = gerar_prompt_post_simples()
 
-    prompt = contexto + "\n\n" + base_prompt
+    prompt = (
+        contexto
+        + "\n\n"
+        + base_prompt
+        + "\n\nFormato da resposta: texto único, sem quebras de linha, máximo 1200 caracteres."
+    )
 
     texto = gerar_texto(prompt).strip()
 
-    # 🔥 GARANTIA: força 1 único parágrafo (remove quebras)
+    # 🔥 força 1 parágrafo
     texto = " ".join(texto.split())
+
+    # 🔥 limite absoluto de tamanho
+    texto = texto[:1200]
 
     return texto
 
@@ -44,7 +52,7 @@ def render_etapa_post():
 
 
     # -------------------------------------------------
-    # TIPO DE POST
+    # TIPO
     # -------------------------------------------------
     tipo = st.radio(
         "Tipo de post:",
@@ -55,7 +63,7 @@ def render_etapa_post():
 
 
     # -------------------------------------------------
-    # GERAR DESCRIÇÃO
+    # GERAR
     # -------------------------------------------------
     if st.button("Criar descrição do post", use_container_width=True):
 
@@ -74,13 +82,22 @@ Texto base: {st.session_state.get("texto_escolhido")}
 
 
     # -------------------------------------------------
-    # RESULTADO
+    # RESULTADO (textarea = copiar 100% confiável)
     # -------------------------------------------------
     if st.session_state.get("descricao_post"):
 
-        st.code(
+        st.text_area(
+            "Descrição do post",
             st.session_state["descricao_post"],
-            language="text"
+            height=320
+        )
+
+        st.download_button(
+            "📥 Baixar (.txt)",
+            st.session_state["descricao_post"],
+            file_name="descricao_post.txt",
+            mime="text/plain",
+            use_container_width=True
         )
 
 
@@ -98,7 +115,6 @@ Texto base: {st.session_state.get("texto_escolhido")}
 
         col1, col2 = st.columns(2)
 
-        # ⬅ VOLTAR
         with col1:
             if st.button("⬅ Voltar", use_container_width=True):
                 st.session_state.pop("descricao_post", None)
@@ -106,7 +122,6 @@ Texto base: {st.session_state.get("texto_escolhido")}
                 st.session_state.etapa = 4
                 st.rerun()
 
-        # ➡ PRÓXIMO
         with col2:
             if st.button("Próximo ➡", use_container_width=True):
                 st.session_state.etapa = 6
