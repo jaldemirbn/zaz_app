@@ -1,6 +1,6 @@
 # =====================================================
-# zAz — MÓDULO IMAGEM
-# ETAPA 05 — COLAR/UPLOAD IMAGEM
+# zAz — MÓDULO MÍDIA
+# ETAPA 05 — UPLOAD IMAGEM OU VÍDEO
 # =====================================================
 
 import streamlit as st
@@ -14,58 +14,75 @@ import io
 def render_etapa_imagens():
 
     st.markdown(
-        "<h3 style='color:#FF9D28; margin-top:0;'>05. Colar imagem</h3>",
+        "<h3 style='color:#FF9D28; margin-top:0;'>05. Enviar mídia</h3>",
         unsafe_allow_html=True
     )
 
-    st.caption("Cole ou selecione a imagem do seu computador.")
+    st.caption("Envie uma imagem ou vídeo do seu computador.")
 
 
     # -------------------------------------------------
-    # UPLOAD
+    # UPLOADER (🔥 SUPORTE A VÍDEO)
     # -------------------------------------------------
     arquivo = st.file_uploader(
-        "Selecione ou arraste a imagem",
-        type=["png", "jpg", "jpeg"],
+        "Selecione ou arraste a mídia",
+        type=["png", "jpg", "jpeg", "mp4", "mov", "webm"],
         label_visibility="collapsed"
     )
 
 
     # =================================================
-    # SEM IMAGEM → MOSTRA SÓ A TELA (NÃO SOME)
+    # SEM ARQUIVO → NÃO SOME A TELA
     # =================================================
     if not arquivo:
-        st.info("Faça upload de uma imagem para continuar.")
+        st.info("Faça upload de uma imagem ou vídeo para continuar.")
         return
 
 
+    tipo = arquivo.type
+
+
     # =================================================
-    # PROCESSAR IMAGEM
+    # IMAGEM
     # =================================================
-    img = Image.open(arquivo)
+    if tipo.startswith("image"):
 
-    buffer = io.BytesIO()
-    img.save(buffer, format="PNG")
+        img = Image.open(arquivo)
 
-    st.session_state["imagem_bytes"] = buffer.getvalue()
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+
+        st.session_state["imagem_bytes"] = buffer.getvalue()
+        st.session_state.pop("video_bytes", None)
+
+        st.image(img, use_container_width=True)
+
+
+    # =================================================
+    # VÍDEO
+    # =================================================
+    elif tipo.startswith("video"):
+
+        video_bytes = arquivo.read()
+
+        st.session_state["video_bytes"] = video_bytes
+        st.session_state.pop("imagem_bytes", None)
+
+        st.video(video_bytes)
 
 
     # -------------------------------------------------
-    # PREVIEW
+    # DOWNLOAD (somente para imagem)
     # -------------------------------------------------
-    st.image(img, use_container_width=True)
+    if "imagem_bytes" in st.session_state:
 
-
-    # -------------------------------------------------
-    # DOWNLOAD
-    # -------------------------------------------------
-    st.download_button(
-        label="⬇️ Baixar imagem",
-        data=buffer.getvalue(),
-        file_name="post.png",
-        mime="image/png",
-        use_container_width=True
-    )
+        st.download_button(
+            label="⬇️ Baixar imagem",
+            data=st.session_state["imagem_bytes"],
+            file_name="post.png",
+            mime="image/png",
+            use_container_width=True
+        )
 
 
     # =================================================
@@ -82,9 +99,8 @@ def render_etapa_imagens():
             st.rerun()
 
 
-    # SEGUIR (post)
+    # SEGUIR
     with col2:
         if st.button("Seguir ➡", use_container_width=True):
             st.session_state.etapa = 5
             st.rerun()
-
