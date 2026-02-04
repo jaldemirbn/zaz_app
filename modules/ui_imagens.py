@@ -1,6 +1,6 @@
 # =====================================================
-# zAz — MÓDULO 05
-# ETAPA 05 — IMAGEM (UPLOAD)
+# zAz — MÓDULO MÍDIA
+# ETAPA 05 — UPLOAD IMAGEM OU VÍDEO
 # =====================================================
 
 import streamlit as st
@@ -9,26 +9,21 @@ import io
 
 
 # =====================================================
-# RENDER
+# RENDER PRINCIPAL
 # =====================================================
 def render_etapa_imagens():
 
-    # =================================================
-    # TÍTULO
-    # =================================================
     st.markdown(
-        "<h3 style='color:#FF9D28;'>05. Enviar imagem ou vídeo</h3>",
+        "<h3 style='color:#FF9D28; margin-top:0;'>05. Enviar mídia</h3>",
         unsafe_allow_html=True
     )
 
-    st.caption(
-        "Envie a imagem criada no ImageFX ou qualquer mídia salva no seu dispositivo."
-    )
+    st.caption("Envie uma imagem ou vídeo do seu computador.")
 
 
-    # =================================================
-    # UPLOAD
-    # =================================================
+    # -------------------------------------------------
+    # UPLOADER
+    # -------------------------------------------------
     arquivo = st.file_uploader(
         "Selecione ou arraste a mídia",
         type=["png", "jpg", "jpeg", "mp4", "mov", "webm"],
@@ -37,48 +32,61 @@ def render_etapa_imagens():
 
 
     # =================================================
-    # PREVIEW + SALVAR
+    # SEM ARQUIVO → mantém tela
     # =================================================
-    if arquivo:
-
-        tipo = arquivo.type
-
-
-        # -------------------------
-        # IMAGEM
-        # -------------------------
-        if tipo.startswith("image"):
-
-            img = Image.open(arquivo)
-
-            buffer = io.BytesIO()
-            img.save(buffer, format="PNG")
-
-            st.session_state["imagem_escolhida"] = buffer.getvalue()
-            st.session_state.pop("video_escolhido", None)
-
-            st.image(img, use_container_width=True)
+    if not arquivo:
+        st.info("Faça upload de uma imagem ou vídeo para continuar.")
+        return
 
 
-        # -------------------------
-        # VÍDEO
-        # -------------------------
-        elif tipo.startswith("video"):
-
-            video_bytes = arquivo.read()
-
-            st.session_state["video_escolhido"] = video_bytes
-            st.session_state.pop("imagem_escolhida", None)
-
-            st.video(video_bytes)
-
-
-    else:
-        st.info("Faça upload para continuar.")
+    tipo = arquivo.type
 
 
     # =================================================
-    # NAVEGAÇÃO (PADRÃO ±1)
+    # IMAGEM
+    # =================================================
+    if tipo.startswith("image"):
+
+        img = Image.open(arquivo)
+
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+
+        st.session_state["imagem_bytes"] = buffer.getvalue()
+        st.session_state.pop("video_bytes", None)
+
+        st.image(img, use_container_width=True)
+
+
+    # =================================================
+    # VÍDEO
+    # =================================================
+    elif tipo.startswith("video"):
+
+        video_bytes = arquivo.read()
+
+        st.session_state["video_bytes"] = video_bytes
+        st.session_state.pop("imagem_bytes", None)
+
+        st.video(video_bytes)
+
+
+    # =================================================
+    # DOWNLOAD (imagem)
+    # =================================================
+    if "imagem_bytes" in st.session_state:
+
+        st.download_button(
+            label="⬇️ Baixar imagem",
+            data=st.session_state["imagem_bytes"],
+            file_name="post.png",
+            mime="image/png",
+            use_container_width=True
+        )
+
+
+    # =================================================
+    # NAVEGAÇÃO (padrão wizard)
     # =================================================
     st.divider()
     col1, col2 = st.columns(2)
@@ -93,13 +101,6 @@ def render_etapa_imagens():
 
     # ➡ SEGUIR
     with col2:
-        if st.button(
-            "Seguir ➜",
-            use_container_width=True,
-            disabled=not (
-                st.session_state.get("imagem_escolhida")
-                or st.session_state.get("video_escolhido")
-            )
-        ):
+        if st.button("Seguir ➜", use_container_width=True):
             st.session_state.etapa += 1
             st.rerun()
