@@ -27,13 +27,7 @@ def crop_aspect(img, ratio):
         return img.crop((0, offset, w, new_h + offset))
 
 
-def abrir_imagem_segura(imagem_bytes):
-    if not imagem_bytes or not isinstance(imagem_bytes, (bytes, bytearray)):
-        return None
-    try:
-        return Image.open(io.BytesIO(imagem_bytes)).convert("RGBA")
-    except (UnidentifiedImageError, Exception):
-        return None
+
 
 
 def carregar_fonte(nome, tamanho):
