@@ -19,7 +19,7 @@ from modules.state_manager import limpar_fluxo_completo
 def render_etapa_tema():
 
     # -----------------------------
-    # STATE
+    # STATES
     # -----------------------------
     if "ideias_originais" not in st.session_state:
         st.session_state.ideias_originais = []
@@ -38,20 +38,21 @@ def render_etapa_tema():
 
 
     # -----------------------------
-    # INPUT (PERSISTENTE)
+    # INPUT (PERSISTÊNCIA MANUAL)
     # -----------------------------
-    st.text_input(
+    tema = st.text_input(
         "",
         placeholder="Sem ideia? Digita uma palavra. A gente cria o post.",
         label_visibility="collapsed",
-        key="tema"
+        value=st.session_state.tema
     )
 
-    tema = st.session_state.tema
+    # salva manualmente (garante persistência)
+    st.session_state.tema = tema
 
 
     # -----------------------------
-    # GERAR
+    # BOTÃO PRINCIPAL (GERAR)
     # -----------------------------
     if st.button("Gerar ideias", use_container_width=True):
 
@@ -64,7 +65,7 @@ def render_etapa_tema():
 
 
     # -----------------------------
-    # RESULTADO
+    # RESULTADO + AÇÕES
     # -----------------------------
     if st.session_state.ideias_originais:
 
@@ -72,16 +73,16 @@ def render_etapa_tema():
 
 
         # -----------------------------
-        # LIMPAR FLUXO (zera tudo)
+        # UTILITÁRIO (LIMPAR)
         # -----------------------------
         if st.button("Limpar fluxo"):
             limpar_fluxo_completo()
-            st.session_state.tema = ""   # 🔥 limpa texto também
+            st.session_state.tema = ""   # 🔥 só aqui apaga texto
             st.rerun()
 
 
         # -----------------------------
-        # NAVEGAÇÃO
+        # NAVEGAÇÃO (SEMPRE ÚLTIMO)
         # -----------------------------
         st.divider()
 
