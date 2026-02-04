@@ -86,10 +86,17 @@ Formato: texto corrido normal.
     partes.append("")
     partes.append("")
 
+    # =================================================
+    # HASHTAGS EM LISTA
+    # =================================================
     if hashtags:
-        partes.append(" ".join(hashtags) + " #zaz_app")
+        partes.append("Hashtags:")
+        for h in hashtags:
+            partes.append(f"- {h}")
+        partes.append("- #zaz_app")
     else:
-        partes.append("#zaz_app")
+        partes.append("Hashtags:")
+        partes.append("- #zaz_app")
 
     texto_final = "\n".join(partes).strip()
     texto_final = texto_final[:2200]
