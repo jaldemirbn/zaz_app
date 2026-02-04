@@ -29,43 +29,14 @@ def render_etapa_legenda():
         st.session_state.legenda_final = ""
 
     # -------------------------------------------------
-    # TEXTO BASE (VINDO DA ETAPA 06, SE EXISTIR)
-    # -------------------------------------------------
-    texto_base = st.session_state.get("descricao_post", "")
-
-    if texto_base:
-        st.caption("Texto base sugerido (editável)")
-        st.text_area(
-            "Base da legenda",
-            value=texto_base,
-            height=140,
-            key="legenda_base",
-        )
-    else:
-        st.caption("Escreva sua legenda manualmente")
-
-    # -------------------------------------------------
-    # CAMPO FINAL DE LEGENDA (EDITÁVEL)
+    # CAMPO FINAL DE LEGENDA (ÚNICO)
     # -------------------------------------------------
     st.text_area(
-        "Legenda final",
+        "Legenda",
         value=st.session_state.legenda_final,
-        height=260,
+        height=300,
         key="legenda_final"
     )
-
-    # -------------------------------------------------
-    # AÇÕES
-    # -------------------------------------------------
-    col_a, col_b = st.columns(2)
-
-    with col_a:
-        if st.button("Usar texto base", use_container_width=True):
-            st.session_state.legenda_final = texto_base
-
-    with col_b:
-        if st.button("Limpar legenda", use_container_width=True):
-            st.session_state.legenda_final = ""
 
     # -------------------------------------------------
     # PREVIEW (SÓ TEXTO)
