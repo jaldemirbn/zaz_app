@@ -24,6 +24,11 @@ Regras:
 - incluir CTA clara
 - incluir hashtags reais
 - linguagem brasileira natural
+- usar emojis de forma estratégica e moderada
+- no máximo 1 emoji por frase
+- emojis devem reforçar emoção ou CTA
+- evitar emojis decorativos ou repetitivos
+- priorizar emoji na frase de CTA quando fizer sentido
 
 Contexto:
 Headline: {contexto.get("headline")}
@@ -104,7 +109,7 @@ def render_etapa_legenda():
     st.markdown("Escolha o tom da legenda")
 
     # =================================================
-    # LISTA DE TONS (SUBSTITUÍDA)
+    # LISTA DE TONS
     # =================================================
     tons_lista = [
         "Casual",
