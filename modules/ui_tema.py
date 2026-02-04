@@ -24,21 +24,6 @@ def render_etapa_tema():
 
 
     # -----------------------------
-    # CSS
-    # -----------------------------
-    st.markdown(
-        """
-        <style>
-        div.stButton button p {
-            color: #ff9d28 !important;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-    # -----------------------------
     # TÍTULO
     # -----------------------------
     st.markdown(
@@ -58,7 +43,7 @@ def render_etapa_tema():
 
 
     # -----------------------------
-    # BOTÃO GERAR (SEM FORM)
+    # BOTÃO PRINCIPAL (GERAR)
     # -----------------------------
     if st.button("Gerar ideias", use_container_width=True):
 
@@ -67,17 +52,23 @@ def render_etapa_tema():
                 resposta = gerar_ideias(tema)
 
             ideias = [i.strip() for i in resposta.split("\n") if i.strip()]
-
             st.session_state.ideias_originais = ideias
 
 
     # -----------------------------
-    # BOTÃO SEGUIR (APARECE NA HORA)
+    # RESULTADO
+    # -----------------------------
+    if st.session_state.ideias_originais:
+        st.success("Ideias prontas. Pode seguir ➜")
+
+
+    # -----------------------------
+    # NAVEGAÇÃO (SEMPRE POR ÚLTIMO)
     # -----------------------------
     if st.session_state.ideias_originais:
 
         st.divider()
 
-        if st.button("Seguir ➡", use_container_width=True):
+        if st.button("Seguir ➜", use_container_width=True):
             st.session_state.etapa = 2
             st.rerun()
