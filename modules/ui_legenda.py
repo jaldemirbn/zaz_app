@@ -3,6 +3,9 @@
 # ETAPA 08 — LEGENDA
 # =====================================================
 
+# =====================================================
+# IMPORTS
+# =====================================================
 import streamlit as st
 from modules.ia_engine import gerar_texto
 
@@ -22,13 +25,16 @@ Escreva uma legenda humana, natural, envolvente e persuasiva.
 Regras:
 - 3 a 7 frases curtas
 - incluir CTA clara
-- incluir hashtags reais
 - linguagem brasileira natural
 - usar emojis de forma estratégica e moderada
 - no máximo 1 emoji por frase
 - emojis devem reforçar emoção ou CTA
 - evitar emojis decorativos ou repetitivos
 - priorizar emoji na frase de CTA quando fizer sentido
+- hashtags devem ser reais, existentes e usadas de verdade no Instagram
+- NÃO criar hashtags inventadas, genéricas ou sem sentido
+- usar apenas hashtags diretamente relacionadas ao conteúdo e ao nicho
+- preferir poucas hashtags relevantes em vez de muitas irrelevantes
 
 Contexto:
 Headline: {contexto.get("headline")}
@@ -109,7 +115,7 @@ def render_etapa_legenda():
     st.markdown("Escolha o tom da legenda")
 
     # =================================================
-    # LISTA DE TONS
+    # TONS (CONFORME SOLICITADO)
     # =================================================
     tons_lista = [
         "Casual",
