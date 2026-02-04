@@ -1,6 +1,6 @@
 # =====================================================
-# zAz — MÓDULO 07
-# ETAPA 07 — LEGENDA
+# zAz — MÓDULO 08
+# ETAPA 08 — LEGENDA
 # =====================================================
 
 import streamlit as st
@@ -186,7 +186,7 @@ def render_etapa_legenda():
 
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
-            st.session_state.etapa = 6
+            st.session_state.etapa = 7
             st.rerun()
 
     with col2:
@@ -195,5 +195,5 @@ def render_etapa_legenda():
             if not st.session_state.get("legenda_gerada"):
                 st.warning("Crie a legenda antes de continuar.")
             else:
-                st.session_state.etapa = 8
+                st.session_state.etapa = 9
                 st.rerun()
