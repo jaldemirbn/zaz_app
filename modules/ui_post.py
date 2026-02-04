@@ -82,6 +82,7 @@ Tipo: {tipo}
                 st.rerun()
 
         with col2:
-            if st.button("Próximo ➜", use_container_width=True):
+            if st.button("Seguir ➜", use_container_width=True):
                 st.session_state.etapa += 1
                 st.rerun()
+
