@@ -17,7 +17,7 @@ from modules.ia_engine import gerar_ideias
 def render_etapa_tema():
 
     # -----------------------------
-    # STATES
+    # STATE
     # -----------------------------
     if "ideias_originais" not in st.session_state:
         st.session_state.ideias_originais = []
@@ -48,20 +48,21 @@ def render_etapa_tema():
 
 
     # -----------------------------
-    # FORM GERAR IDEIAS
+    # INPUT
     # -----------------------------
-    with st.form("form_tema"):
+    tema = st.text_input(
+        "",
+        placeholder="Sem ideia? Digita uma palavra. A gente cria o post.",
+        label_visibility="collapsed"
+    )
 
-        tema = st.text_input(
-            "",
-            placeholder="Sem ideia? Digita uma palavra. A gente cria o post.",
-            label_visibility="collapsed"
-        )
 
-        gerar = st.form_submit_button("Gerar ideias", use_container_width=True)
+    # -----------------------------
+    # BOTÃO GERAR (SEM FORM)
+    # -----------------------------
+    if st.button("Gerar ideias", use_container_width=True):
 
-        if gerar and tema:
-
+        if tema:
             with st.spinner("Gerando ideias..."):
                 resposta = gerar_ideias(tema)
 
@@ -69,12 +70,9 @@ def render_etapa_tema():
 
             st.session_state.ideias_originais = ideias
 
-            # 🔥 ESSENCIAL → força redesenhar a tela
-            st.rerun()
-
 
     # -----------------------------
-    # BOTÃO SEGUIR (só aparece após gerar)
+    # BOTÃO SEGUIR (APARECE NA HORA)
     # -----------------------------
     if st.session_state.ideias_originais:
 
