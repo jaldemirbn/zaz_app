@@ -37,9 +37,9 @@ def render_etapa_selecao_ideias():
     )
 
 
-    # -----------------------------
-    # CHECKBOXES
-    # -----------------------------
+    # =====================================================
+    # CHECKBOXES (lista de ideias)
+    # =====================================================
     selecionadas = []
 
     for ideia in st.session_state.ideias_visiveis:
@@ -54,9 +54,9 @@ def render_etapa_selecao_ideias():
             selecionadas.append(ideia)
 
 
-    # -----------------------------
-    # CONFIRMAR
-    # -----------------------------
+    # =====================================================
+    # BOTÃO CONFIRMAR → filtra visualmente as ideias
+    # =====================================================
     if st.button("Confirmar ideias", use_container_width=True):
 
         if selecionadas:
@@ -68,34 +68,36 @@ def render_etapa_selecao_ideias():
             st.warning("Selecione pelo menos uma ideia.")
 
 
-    # -----------------------------
-    # MOSTRAR TODAS (mantém checks)
-    # -----------------------------
+    # =====================================================
+    # BOTÃO MOSTRAR IDEIAS → restaura lista completa
+    # =====================================================
     if st.session_state.ideias_visiveis != st.session_state.ideias_originais:
 
         if st.button("Mostrar ideias"):
-
             st.session_state.ideias_visiveis = st.session_state.ideias_originais.copy()
-
-            # 🔥 restaura checks
-            for ideia in st.session_state.ideias_filtradas:
-                st.session_state[f"ideia_{ideia}"] = True
-
             st.rerun()
 
 
-    # -----------------------------
-    # NAVEGAÇÃO
-    # -----------------------------
+    # =====================================================
+    # NAVEGAÇÃO (SEMPRE POR ÚLTIMO)
+    # =====================================================
     st.divider()
 
     col1, col2 = st.columns(2)
 
+
+    # =====================================================
+    # BOTÃO VOLTAR → retorna para etapa 1 (tema)
+    # =====================================================
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
             st.session_state.etapa = 1
             st.rerun()
 
+
+    # =====================================================
+    # BOTÃO SEGUIR → avança para etapa 3 (headline)
+    # =====================================================
     with col2:
         if st.button(
             "Seguir ➜",
