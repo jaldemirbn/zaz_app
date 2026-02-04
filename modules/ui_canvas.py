@@ -8,7 +8,7 @@
 # IMPORTS
 # =====================================================
 import streamlit as st
-from PIL import Image, ImageDraw, ImageFont, UnidentifiedImageError
+from PIL import Image, ImageDraw, ImageFont
 import io
 
 
@@ -27,15 +27,6 @@ def crop_aspect(img, ratio):
         new_h = int(w * ratio)
         offset = (h - new_h) // 2
         return img.crop((0, offset, w, new_h + offset))
-
-
-def abrir_imagem_segura(imagem_bytes):
-    if not imagem_bytes or not isinstance(imagem_bytes, (bytes, bytearray)):
-        return None
-    try:
-        return Image.open(io.BytesIO(imagem_bytes)).convert("RGBA")
-    except (UnidentifiedImageError, Exception):
-        return None
 
 
 def carregar_fonte(nome, tamanho):
@@ -67,51 +58,29 @@ def render_etapa_canvas():
     )
 
     # =================================================
-    # STATE BASE DA IMAGEM
+    # BASE DO CANVAS (SEM IMAGEM)
     # =================================================
-    if "imagem_base" not in st.session_state:
-        st.session_state.imagem_base = None
+    formato = st.selectbox(
+        "Formato",
+        ["1:1", "4:5", "9:16", "16:9", "3:4"]
+    )
 
-    # Compatibilidade com fluxo antigo
-    if st.session_state.imagem_base is None and "imagem_bytes" in st.session_state:
-        st.session_state.imagem_base = st.session_state["imagem_bytes"]
+    tamanhos = {
+        "1:1": (1080, 1080),
+        "4:5": (1080, 1350),
+        "9:16": (1080, 1920),
+        "16:9": (1920, 1080),
+        "3:4": (1080, 1440)
+    }
 
-    # =================================================
-    # ABERTURA SEGURA DA IMAGEM
-    # =================================================
-    base_img = abrir_imagem_segura(st.session_state.imagem_base)
+    largura, altura = tamanhos[formato]
 
-    if base_img is None:
-        st.info("Nenhuma imagem válida disponível para o Canvas.")
-
-        st.divider()
-        col1, _ = st.columns(2)
-
-        with col1:
-            if st.button("⬅ Voltar", use_container_width=True):
-                st.session_state.etapa = 6
-                st.rerun()
-
-        return
+    # Canvas transparente
+    img = Image.new("RGBA", (largura, altura), (0, 0, 0, 0))
 
     # =================================================
     # CONTROLES
     # =================================================
-    formato = st.selectbox(
-        "Formato",
-        ["Original", "1:1", "4:5", "9:16", "16:9", "3:4"]
-    )
-
-    ratios = {
-        "1:1": 1 / 1,
-        "4:5": 4 / 5,
-        "9:16": 9 / 16,
-        "16:9": 16 / 9,
-        "3:4": 3 / 4
-    }
-
-    img = crop_aspect(base_img, ratios[formato]) if formato != "Original" else base_img.copy()
-
     texto = st.text_area(
         "Texto (use Enter para quebrar linha)",
         st.session_state.get("headline_escolhida", ""),
@@ -121,9 +90,9 @@ def render_etapa_canvas():
     c1, c2, c3, c4, c5 = st.columns(5)
 
     with c1:
-        x = st.slider("X", 0, img.width, 40)
+        x = st.slider("X", 0, largura, 40)
     with c2:
-        y = st.slider("Y", 0, img.height, 40)
+        y = st.slider("Y", 0, altura, 40)
     with c3:
         tamanho = st.slider("Tamanho", 20, 200, 80)
     with c4:
@@ -143,8 +112,7 @@ def render_etapa_canvas():
     # =================================================
     font = carregar_fonte(fonte_nome, tamanho)
 
-    preview = img.copy()
-    overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
+    overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
 
     if texto.strip():
@@ -163,7 +131,7 @@ def render_etapa_canvas():
 
         draw.multiline_text((x, y), texto, font=font, fill=cor_texto, spacing=6)
 
-    preview = Image.alpha_composite(preview, overlay)
+    preview = Image.alpha_composite(img, overlay)
 
     # =================================================
     # PREVIEW + DOWNLOAD
