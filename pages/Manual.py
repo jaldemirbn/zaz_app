@@ -18,18 +18,21 @@ Como usar:
 2. Clique em 'Gerar ideias'.
 3. Marque as ideias que você gostou.
 Dica: escreva poucas palavras. Não faça texto grande.
+
 ETAPA 2 — Conceito
 O que é: decidir o sentimento do post.
 Como usar:
 1. Pense: 'o que eu quero que a pessoa sinta?'
 2. Escolha algo como: vender, inspirar, ensinar, chamar atenção.
 Resultado: agora o post tem direção emocional.
+
 ETAPA 3 — Imagem (matéria-prima)
 O que é: escolher a foto base do post.
 Como usar:
 1. Faça upload da imagem.
 2. Apenas selecione. Ainda não edite nada.
 Dica: prefira fotos claras e com pouco texto.
+
 ETAPA 4 — Copy (texto base)
 O que é: o texto principal do post.
 Como usar:
@@ -37,6 +40,7 @@ Como usar:
 2. Leia as opções.
 3. Escolha a mais clara.
 Dica: clareza vende mais do que texto complicado.
+
 ETAPA 5 — Canvas (visual)
 O que é: montar o visual do post.
 Como usar:
@@ -45,6 +49,7 @@ Como usar:
 3. Posicione o texto.
 4. Baixe a imagem final.
 Aqui não existe IA. É você organizando como quiser.
+
 ETAPA 6 — Legenda
 O que é: o texto que vai no Instagram junto com a imagem.
 Como usar:
@@ -52,6 +57,7 @@ Como usar:
 2. Escolha a melhor.
 3. Copie o texto.
 Ela já vem com CTA e hashtags prontas.
+
 ETAPA 7 — Postagem
 O que é: finalizar o trabalho.
 Como usar:
@@ -60,6 +66,7 @@ Como usar:
 3. Baixe os arquivos.
 4. Clique em salvar no histórico.
 Agora é só publicar no Instagram.
+
 ETAPA 8 — Histórico
 O que é: lugar onde seus posts ficam guardados.
 Regras:
