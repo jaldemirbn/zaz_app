@@ -38,7 +38,6 @@ Formato: texto corrido normal.
 
     import re
 
-    # separa hashtags de forma mais segura
     hashtags = re.findall(r"#\w+", bruto)
     texto = re.sub(r"#\w+", "", bruto).strip()
 
@@ -97,12 +96,13 @@ def render_etapa_legenda():
         unsafe_allow_html=True
     )
 
-    texto_usuario = st.text_area(
+    st.text_area(
         "O que você gostaria de colocar na legenda?",
         height=110
     )
 
-    st.caption("Escolha o tom da legenda")
+    # TEXTO COM MESMA COR / ESTILO PADRÃO
+    st.markdown("Escolha o tom da legenda")
 
     tons_lista = [
         "Humorístico/Zueira",
@@ -143,9 +143,6 @@ def render_etapa_legenda():
                 if st.checkbox(tons_lista[idx], key=f"tom_{idx}"):
                     tons_escolhidos.append(tons_lista[idx])
 
-    # =================================================
-    # GERAR
-    # =================================================
     if st.button("Criar legenda", use_container_width=True):
 
         contexto = {
@@ -156,33 +153,25 @@ def render_etapa_legenda():
         with st.spinner("Escrevendo legenda..."):
             st.session_state["legenda_gerada"] = _gerar_legenda(
                 contexto,
-                texto_usuario,
+                st.session_state.get("texto_usuario", ""),
                 tons_escolhidos
             )
 
-    # =================================================
-    # RESULTADO
-    # =================================================
     if st.session_state.get("legenda_gerada"):
         st.code(
             st.session_state["legenda_gerada"],
             language="text"
         )
 
-    # =================================================
-    # NAVEGAÇÃO (CORRIGIDA)
-    # =================================================
     st.divider()
     col1, col2 = st.columns(2)
 
-    # ⬅ VOLTAR → ETAPA 07
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
             st.session_state.pop("legenda_gerada", None)
             st.session_state.etapa = 7
             st.rerun()
 
-    # ➡ PROSSEGUIR → ETAPA 09
     with col2:
         if st.button("Prosseguir ➡", use_container_width=True):
             if not st.session_state.get("legenda_gerada"):
