@@ -1,5 +1,5 @@
 # =====================================================
-#             Etapa 04 - Conceito (VERSÃO FINAL ESTÁVEL)
+#             Etapa 04 - Conceito (FINAL OFICIAL)
 # =====================================================
 
 import streamlit as st
@@ -9,6 +9,34 @@ from modules.state_manager import (
     limpar_texto,
     limpar_postagem
 )
+
+
+# =====================================================
+# 🎨 CSS GLOBAL (inclui link_button corretamente)
+# =====================================================
+st.markdown("""
+<style>
+
+div.stButton > button,
+div.stDownloadButton > button,
+div[data-testid="stLinkButton"] > button {
+
+    background-color: transparent !important;
+    color: #FF9D28 !important;
+    font-weight: 700 !important;
+    border: 1px solid #FF9D28 !important;
+    border-radius: 8px !important;
+}
+
+div.stButton > button:hover,
+div.stDownloadButton > button:hover,
+div[data-testid="stLinkButton"] > button:hover {
+
+    background-color: rgba(255,157,40,0.08) !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 
 # =====================================================
@@ -43,12 +71,15 @@ Lente e câmera:
 
 Iluminação:
 – luz natural realista
+– sombras coerentes
 – contraste equilibrado
-– textura real
+– textura real de pele, tecido e ambiente
 
 Cor e tratamento:
 – tons naturais
 – color grading cinematográfico sutil
+– sem oversaturation
+– sem HDR exagerado
 – sem aparência digital
 
 Qualidade técnica:
@@ -60,6 +91,7 @@ Qualidade técnica:
 Acabamento:
 – leve grão de filme
 – estética editorial/documental
+– aparência profissional
 
 Resultado final:
 uma fotografia autêntica, sofisticada e profissional.
@@ -141,7 +173,7 @@ def render_etapa_conceito():
             st.rerun()
 
 
-    # 🎨 Criar imagem (🔥 BOTÃO REAL AGORA)
+    # 🎨 Criar imagem (BOTÃO LARANJA AGORA)
     with col2:
         st.link_button(
             "🎨 Criar imagem",
@@ -160,4 +192,16 @@ def render_etapa_conceito():
 
     # =================================================
     # VOLTAR
-    # =========
+    # =================================================
+    st.divider()
+
+    if st.button("⬅ Voltar", use_container_width=True):
+
+        limpar_conceito()
+        limpar_imagens()
+        limpar_texto()
+        limpar_postagem()
+
+        st.session_state.etapa_4_liberada = False
+        st.session_state.etapa = 2
+        st.rerun()
