@@ -12,7 +12,7 @@ from modules.ia_engine import gerar_texto
 
 
 # =====================================================
-# PROMPT — POST SIMPLES (COMPLETO PROFISSIONAL)
+# PROMPT — POST SIMPLES (COMPLETO, SEM RESUMO)
 # =====================================================
 def _gerar_post_simples(conceito, headline):
 
@@ -78,7 +78,7 @@ Saída em formato de briefing técnico estruturado, pronto para execução no Ca
 
 
 # =====================================================
-# PROMPT — POST ANIMADO (🔥 SEU TEXTO INTACTO)
+# PROMPT — POST ANIMADO (SEU TEXTO INTACTO)
 # =====================================================
 def _gerar_post_animado(conceito, headline):
 
@@ -162,7 +162,6 @@ Saída em formato de briefing estruturado, pronto para execução no After Effec
 # =====================================================
 def _limpar_post():
     st.session_state.pop("descricao_post", None)
-    st.session_state.pop("tipo_post", None)
 
 
 # =====================================================
@@ -170,12 +169,18 @@ def _limpar_post():
 # =====================================================
 def render_etapa_post():
 
+    # -------------------------------------------------
+    # TÍTULO
+    # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28;'>06. Criação do post</h3>",
         unsafe_allow_html=True
     )
 
 
+    # =================================================
+    # ESCOLHA DO TIPO
+    # =================================================
     tipo = st.radio(
         "Tipo de post:",
         ["Simples", "Com animação"],
@@ -183,6 +188,9 @@ def render_etapa_post():
     )
 
 
+    # =================================================
+    # BOTÃO — GERAR
+    # =================================================
     if st.button("✨ Criar descrição do post", use_container_width=True):
 
         conceito = st.session_state.get("conceito_visual")
@@ -200,10 +208,14 @@ def render_etapa_post():
                 st.session_state["descricao_post"] = texto
 
 
+    # =================================================
+    # RESULTADO
+    # =================================================
     if st.session_state.get("descricao_post"):
 
         st.code(st.session_state["descricao_post"], language="text")
 
+        # BOTÃO — CRIAR NO CANVA
         st.link_button(
             "🎨 Criar no Canva",
             "https://www.canva.com/ai",
@@ -211,15 +223,22 @@ def render_etapa_post():
         )
 
 
+    # =================================================
+    # BOTÕES
+    # =================================================
     st.divider()
     col1, col2 = st.columns(2)
 
+
+    # BOTÃO — VOLTAR
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
             _limpar_post()
             st.session_state.etapa = 4
             st.rerun()
 
+
+    # BOTÃO — PRÓXIMO
     with col2:
         if st.button("Próximo ➡", use_container_width=True):
             st.session_state.etapa = 6
