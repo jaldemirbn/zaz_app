@@ -48,7 +48,7 @@ def render_etapa_tema():
 
 
     # -----------------------------
-    # INPUT + BOTÃO PRINCIPAL
+    # INPUT + BOTÃO GERAR
     # -----------------------------
     with st.form("form_tema"):
 
@@ -74,21 +74,4 @@ def render_etapa_tema():
 
 
     # -----------------------------
-    # RESULTADO
-    # -----------------------------
-    if st.session_state.ideias_originais:
-        st.success(f"{len(st.session_state.ideias_originais)} ideias geradas ✔")
-
-
-    # -----------------------------
-    # NAVEGAÇÃO (SEMPRE POR ÚLTIMO)
-    # -----------------------------
-    st.divider()
-
-    if st.button("Seguir ➡", use_container_width=True):
-
-        if not st.session_state.ideias_originais:
-            st.warning("Gere as ideias primeiro.")
-        else:
-            st.session_state.etapa = 2
-            st.rerun()
+    # NAVEGAÇÃO
