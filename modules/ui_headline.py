@@ -38,9 +38,7 @@ Retorne uma por linha.
 # =====================================================
 def render_etapa_headline():
 
-    # -------------------------------------------------
-    # REGRA DE EXIBIÇÃO
-    # -------------------------------------------------
+    # só aparece após ideias
     if not st.session_state.get("modo_filtrado"):
         return
 
@@ -74,7 +72,7 @@ def render_etapa_headline():
 
 
     # =================================================
-    # LISTA DE HEADLINES
+    # LISTA
     # =================================================
     if "headlines" not in st.session_state:
         return
@@ -97,13 +95,14 @@ def render_etapa_headline():
 
 
     # =================================================
-    # BOTÕES INFERIORES (todos juntos)
+    # BOTÕES INFERIORES CENTRALIZADOS
     # =================================================
-      st.divider()
+    st.divider()
 
     espaco, centro = st.columns([1, 2])
 
     with centro:
+
         col_voltar, col_prox = st.columns(2)
 
         with col_voltar:
@@ -115,31 +114,3 @@ def render_etapa_headline():
             if st.button("Próximo ➡", use_container_width=True):
                 st.session_state.etapa = 3
                 st.rerun()
-
-
-    with col_prox:
-        if st.button("Próximo ➡", use_container_width=True):
-            st.session_state.etapa = 3
-            st.rerun()
-
-
-    # TROCAR
-    with col1:
-        if escolhida:
-            if st.button("🔁 Trocar", use_container_width=True):
-                st.session_state["headline_escolhida"] = None
-                st.rerun()
-
-
-    # VOLTAR
-    with col2:
-        if st.button("⬅ Voltar", use_container_width=True):
-            st.session_state.etapa = 1
-            st.rerun()
-
-
-    # PRÓXIMO
-    with col3:
-        if st.button("Próximo ➡", use_container_width=True):
-            st.session_state.etapa = 3
-            st.rerun()
