@@ -1,5 +1,5 @@
 # =====================================================
-# zAz — MÓDULO 02
+# zAz — MÓDULO 03
 # ETAPA 03 — HEADLINE
 # =====================================================
 
@@ -38,8 +38,10 @@ Retorne uma por linha.
 # =====================================================
 def render_etapa_headline():
 
-    # só aparece após ideias
-    if not st.session_state.get("modo_filtrado"):
+    # =================================================
+    # GATE → só entra se houver ideias selecionadas
+    # =================================================
+    if not st.session_state.get("ideias_filtradas"):
         return
 
 
@@ -56,11 +58,11 @@ def render_etapa_headline():
     # STATES
     # -------------------------------------------------
     tema = st.session_state.get("tema")
-    ideias = st.session_state.get("ideias")
+    ideias = st.session_state.get("ideias_filtradas")
 
 
     # =================================================
-    # BOTÃO — GERAR (permanece em cima)
+    # BOTÃO — GERAR
     # =================================================
     if st.button("✨ Gerar headline", use_container_width=True):
 
@@ -94,36 +96,35 @@ def render_etapa_headline():
         st.rerun()
 
 
-      # =================================================
-    # BOTÕES INFERIORES (CENTRALIZADOS)
+    # =================================================
+    # NAVEGAÇÃO
     # =================================================
     st.divider()
 
-    espaco_esq, centro, espaco_dir = st.columns([1, 3, 1])
-
-    with centro:
-
-        col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3)
 
 
-        # TROCAR
-        with col1:
-            if escolhida:
-                if st.button("🔁 Trocar", use_container_width=True):
-                    st.session_state["headline_escolhida"] = None
-                    st.rerun()
-
-
-        # VOLTAR
-        with col2:
-            if st.button("⬅ Voltar", use_container_width=True):
-                st.session_state.etapa = 1
+    # 🔁 TROCAR
+    with col1:
+        if escolhida:
+            if st.button("🔁 Trocar", use_container_width=True):
+                st.session_state["headline_escolhida"] = None
                 st.rerun()
 
 
-        # SEGUIR
-        with col3:
-            if st.button("Seguir ➡", use_container_width=True):
-                st.session_state.etapa = 3
-                st.rerun()
+    # ⬅ VOLTAR → etapa 2
+    with col2:
+        if st.button("⬅ Voltar", use_container_width=True):
+            st.session_state.etapa = 2
+            st.rerun()
 
+
+    # ➡ SEGUIR → etapa 4
+    with col3:
+        if st.button(
+            "Seguir ➡",
+            use_container_width=True,
+            disabled=not escolhida
+        ):
+            st.session_state.etapa = 4
+            st.rerun()
