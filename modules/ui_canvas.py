@@ -43,6 +43,27 @@ def carregar_fonte(nome, tamanho):
         return ImageFont.load_default()
 
 
+def desenhar_grade_tercos(imagem, cor=(255, 255, 255, 120), largura=2):
+    """
+    Desenha a grade 3x3 (regra dos terços):
+    2 linhas verticais + 2 horizontais
+    """
+    w, h = imagem.size
+    draw = ImageDraw.Draw(imagem)
+
+    x1 = w / 3
+    x2 = 2 * w / 3
+    y1 = h / 3
+    y2 = 2 * h / 3
+
+    draw.line((x1, 0, x1, h), fill=cor, width=largura)
+    draw.line((x2, 0, x2, h), fill=cor, width=largura)
+    draw.line((0, y1, w, y1), fill=cor, width=largura)
+    draw.line((0, y2, w, y2), fill=cor, width=largura)
+
+    return imagem
+
+
 # =====================================================
 # RENDER
 # =====================================================
@@ -57,7 +78,7 @@ def render_etapa_canvas():
     )
 
     # -------------------------------------------------
-    # 2. CANVAS MANUAL (ANTES DO UPLOAD)
+    # 2. CONFIGURAÇÕES DO CANVAS (ANTES DO UPLOAD)
     # -------------------------------------------------
     formato = st.selectbox(
         "Formato",
@@ -106,8 +127,12 @@ def render_etapa_canvas():
     )
 
     if arquivo is not None:
+        # -----------------------------
+        # IMAGEM
+        # -----------------------------
         if arquivo.type.startswith("image"):
             base_img = Image.open(arquivo).convert("RGBA")
+
             if formato != "Original":
                 base_img = crop_aspect(base_img, ratios[formato])
 
@@ -135,6 +160,10 @@ def render_etapa_canvas():
 
             preview = Image.alpha_composite(preview, overlay)
 
+            # -------- GRADE 3x3 (APENAS SE NÃO FOR ORIGINAL) --------
+            if formato != "Original":
+                preview = desenhar_grade_tercos(preview)
+
             st.image(preview, use_container_width=True)
 
             buffer = io.BytesIO()
@@ -151,6 +180,9 @@ def render_etapa_canvas():
                 use_container_width=True
             )
 
+        # -----------------------------
+        # VÍDEO
+        # -----------------------------
         else:
             st.video(arquivo)
             st.session_state["midia_final_bytes"] = arquivo.read()
