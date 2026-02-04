@@ -164,14 +164,15 @@ def render_etapa_ideias():
 
 
         # =================================================
-        # BOTÃO — PROSSEGUIR
+        # BOTÃO — SEGUIR
         # =================================================
         st.divider()
 
-        if st.button("Prosseguir ➡", use_container_width=True):
+        if st.button("Seguir ➡", use_container_width=True):
 
             if not st.session_state.get("modo_filtrado"):
                 st.warning("Escolha pelo menos uma ideia primeiro.")
             else:
                 st.session_state.etapa = 2
                 st.rerun()
+
