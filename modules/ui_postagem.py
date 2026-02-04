@@ -40,6 +40,25 @@ def conectar():
 
 
 # =====================================================
+# LIMPEZA DE ESTADO (🔥 NOVO)
+# =====================================================
+def limpar_fluxo_postagem():
+
+    campos = [
+        "imagem_final_bytes",
+        "legenda_gerada",
+        "headline_escolhida",
+        "conceito_visual",
+        "layout_final"
+    ]
+
+    for c in campos:
+        st.session_state.pop(c, None)
+
+    st.cache_data.clear()
+
+
+# =====================================================
 # SALVAR
 # =====================================================
 def salvar_post():
@@ -68,6 +87,18 @@ def salvar_post():
     }
 
     conectar().table("posts").insert(dados).execute()
+
+
+# =====================================================
+# FINALIZAR (🔥 NOVO — SALVA + LIMPA + VOLTA)
+# =====================================================
+def finalizar_postagem():
+
+    salvar_post()
+    limpar_fluxo_postagem()
+
+    st.session_state.etapa = 1  # volta pro início
+    st.rerun()
 
 
 # =====================================================
@@ -117,27 +148,24 @@ def render_etapa_postagem():
                 use_container_width=True
             )
 
+    # =====================================================
+    # BOTÃO ÚNICO (🔥 SIMPLES E PROFISSIONAL)
+    # =====================================================
     if (
         "imagem_final_bytes" in st.session_state
         and "legenda_gerada" in st.session_state
     ):
         st.divider()
 
-        colA, colB = st.columns(2)
-
-        with colA:
-            if st.button("💾 Salvar no histórico", use_container_width=True):
-                salvar_post()
-                st.success("Post salvo no histórico!")
-
-        with colB:
-            if st.button("✅ Finalizar e salvar no histórico", use_container_width=True):
-                salvar_post()
-                st.success("Post salvo com sucesso no histórico!")
+        if st.button("✅ Salvar e finalizar", use_container_width=True):
+            finalizar_postagem()
 
     st.divider()
 
-    # 🔥 CORREÇÃO AQUI
+    # =====================================================
+    # VOLTAR (limpa só a etapa atual)
+    # =====================================================
     if st.button("⬅ Voltar", use_container_width=True):
+        limpar_fluxo_postagem()
         st.session_state.etapa = 7
         st.rerun()
