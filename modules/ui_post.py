@@ -103,10 +103,11 @@ Texto base: {st.session_state.get("texto_escolhido")}
             if st.button("⬅ Voltar", use_container_width=True):
                 st.session_state.pop("descricao_post", None)
                 st.session_state.pop("tipo_post", None)
-                st.session_state.etapa = 4
+                st.session_state.etapa = 5
                 st.rerun()
 
         with col2:
             if st.button("Próximo ➡", use_container_width=True):
-                st.session_state.etapa = 6
+                st.session_state.etapa = 7
                 st.rerun()
+
