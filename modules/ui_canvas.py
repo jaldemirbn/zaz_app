@@ -3,6 +3,7 @@
 # ETAPA 07 — CANVAS DO POST
 # =====================================================
 
+
 # =====================================================
 # IMPORTS
 # =====================================================
@@ -12,8 +13,22 @@ import io
 
 
 # =====================================================
-# FUNÇÕES AUXILIARES (LÓGICA PURA)
+# HELPERS / LÓGICA PURA
 # =====================================================
+def crop_aspect(img, ratio):
+    w, h = img.size
+    current = w / h
+
+    if current > ratio:
+        new_w = int(h * ratio)
+        offset = (w - new_w) // 2
+        return img.crop((offset, 0, offset + new_w, h))
+    else:
+        new_h = int(w * ratio)
+        offset = (h - new_h) // 2
+        return img.crop((0, offset, w, new_h + offset))
+
+
 def abrir_imagem_segura(imagem_bytes):
     if not imagem_bytes or not isinstance(imagem_bytes, (bytes, bytearray)):
         return None
@@ -39,29 +54,29 @@ def carregar_fonte(nome, tamanho):
 
 
 # =====================================================
-# RENDER PRINCIPAL
+# RENDER
 # =====================================================
 def render_etapa_canvas():
 
     # -------------------------------------------------
-    # TÍTULO
+    # 1. TÍTULO
     # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28;'>07. Canvas do post</h3>",
         unsafe_allow_html=True
     )
 
-    # =================================================
-    # STATE ÚNICO — IMAGEM DO UPLOAD
-    # =================================================
+    # -------------------------------------------------
+    # 2. STATE
+    # -------------------------------------------------
     if "imagem_upload" not in st.session_state:
         st.session_state.imagem_upload = None
 
-    # =================================================
-    # UPLOAD DO POST PRONTO (ÚNICA FONTE DE IMAGEM)
-    # =================================================
+    # -------------------------------------------------
+    # 3. UPLOAD DO POST PRONTO
+    # -------------------------------------------------
     arquivo = st.file_uploader(
-        "Envie o post pronto (Canva, CapCut, Adobe, etc)",
+        "Envie o post pronto (Canva, CapCut, Adobe etc)",
         type=["png", "jpg", "jpeg"]
     )
 
@@ -71,21 +86,34 @@ def render_etapa_canvas():
     base_img = abrir_imagem_segura(st.session_state.imagem_upload)
 
     if base_img is None:
-        st.info("Faça upload de um post pronto para continuar.")
+        st.info("Faça upload do post pronto para continuar.")
 
         st.divider()
         col1, _ = st.columns(2)
-
         with col1:
             if st.button("⬅ Voltar", use_container_width=True):
                 st.session_state.etapa = 6
                 st.rerun()
-
         return
 
-    # =================================================
-    # CONTROLES
-    # =================================================
+    # -------------------------------------------------
+    # 4. CANVAS MANUAL (INALTERADO)
+    # -------------------------------------------------
+    formato = st.selectbox(
+        "Formato",
+        ["Original", "1:1", "4:5", "9:16", "16:9", "3:4"]
+    )
+
+    ratios = {
+        "1:1": 1 / 1,
+        "4:5": 4 / 5,
+        "9:16": 9 / 16,
+        "16:9": 16 / 9,
+        "3:4": 3 / 4
+    }
+
+    img = crop_aspect(base_img, ratios[formato]) if formato != "Original" else base_img.copy()
+
     texto = st.text_area(
         "Texto (use Enter para quebrar linha)",
         st.session_state.get("headline_escolhida", ""),
@@ -93,11 +121,10 @@ def render_etapa_canvas():
     )
 
     c1, c2, c3, c4, c5 = st.columns(5)
-
     with c1:
-        x = st.slider("X", 0, base_img.width, 40)
+        x = st.slider("X", 0, img.width, 40)
     with c2:
-        y = st.slider("Y", 0, base_img.height, 40)
+        y = st.slider("Y", 0, img.height, 40)
     with c3:
         tamanho = st.slider("Tamanho", 20, 200, 80)
     with c4:
@@ -112,12 +139,9 @@ def render_etapa_canvas():
     cor_fundo = st.color_picker("Cor fundo", "#000000")
     alpha = st.slider("Transparência", 0, 255, 140)
 
-    # =================================================
-    # DESENHO
-    # =================================================
     font = carregar_fonte(fonte_nome, tamanho)
 
-    preview = base_img.copy()
+    preview = img.copy()
     overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
 
@@ -131,7 +155,7 @@ def render_etapa_canvas():
             b = int(cor_fundo[5:7], 16)
 
             draw.rectangle(
-                (bbox[0]-padding, bbox[1]-padding, bbox[2]+padding, bbox[3]+padding),
+                (bbox[0] - padding, bbox[1] - padding, bbox[2] + padding, bbox[3] + padding),
                 fill=(r, g, b, alpha)
             )
 
@@ -139,9 +163,9 @@ def render_etapa_canvas():
 
     preview = Image.alpha_composite(preview, overlay)
 
-    # =================================================
-    # PREVIEW + DOWNLOAD
-    # =================================================
+    # -------------------------------------------------
+    # 5. PREVIEW + DOWNLOAD
+    # -------------------------------------------------
     st.image(preview, use_container_width=True)
 
     buffer = io.BytesIO()
@@ -156,9 +180,9 @@ def render_etapa_canvas():
         use_container_width=True
     )
 
-    # =================================================
-    # NAVEGAÇÃO
-    # =================================================
+    # -------------------------------------------------
+    # 6. NAVEGAÇÃO (SEMPRE POR ÚLTIMO)
+    # -------------------------------------------------
     st.divider()
     col1, col2 = st.columns(2)
 
@@ -168,6 +192,6 @@ def render_etapa_canvas():
             st.rerun()
 
     with col2:
-        if st.button("Próximo ➡", use_container_width=True):
+        if st.button("Seguir ➡", use_container_width=True):
             st.session_state.etapa = 8
             st.rerun()
