@@ -1,14 +1,19 @@
 # =====================================================
-#         Etapa 03 - Headline
+# zAz — MÓDULO 02
+# ETAPA 03 — HEADLINE
 # =====================================================
 
+
+# =====================================================
+# IMPORTS
+# =====================================================
 import streamlit as st
 from modules.ia_engine import gerar_texto
 
 
-# -------------------------------------------------
-# IA
-# -------------------------------------------------
+# =====================================================
+# IA — GERAÇÃO
+# =====================================================
 def _gerar_headlines(tema, ideias):
 
     prompt = f"""
@@ -28,38 +33,40 @@ Retorne uma por linha.
     return [h.strip() for h in resposta.split("\n") if h.strip()]
 
 
-# -------------------------------------------------
-# RENDER
-# -------------------------------------------------
+# =====================================================
+# RENDER PRINCIPAL
+# =====================================================
 def render_etapa_headline():
 
-    # aparece só depois das ideias
+    # -------------------------------------------------
+    # REGRA DE EXIBIÇÃO
+    # -------------------------------------------------
     if not st.session_state.get("modo_filtrado"):
         return
 
+
+    # -------------------------------------------------
+    # TÍTULO
+    # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28;'>03. Headline</h3>",
         unsafe_allow_html=True
     )
 
+
+    # -------------------------------------------------
+    # STATES
+    # -------------------------------------------------
     tema = st.session_state.get("tema")
     ideias = st.session_state.get("ideias")
 
 
-    # -------------------------------------------------
-    # GERAR
-    # -------------------------------------------------
-    if st.button("✨ Gerar headline", use_container_width=True):
-
-        with st.spinner("Gerando headlines..."):
-            st.session_state["headlines"] = _gerar_headlines(tema, ideias)
-            st.session_state["headline_escolhida"] = None
-
-
-    # -------------------------------------------------
-    # RADIO
-    # -------------------------------------------------
-    if "headlines" in st.session_state:
+    # =================================================
+    # LISTA
+    # =================================================
+    if "headlines" not in st.session_state:
+        st.info("Clique em **Gerar headline** para criar opções.")
+    else:
 
         headlines = st.session_state["headlines"]
         escolhida = st.session_state.get("headline_escolhida")
@@ -73,36 +80,44 @@ def render_etapa_headline():
             key="radio_headline"
         )
 
-        # 🔥 agora só salva, NÃO avança automaticamente
         if escolha and not escolhida:
             st.session_state["headline_escolhida"] = escolha
             st.rerun()
 
 
-        # -------------------------------------------------
-        # RESET
-        # -------------------------------------------------
-        if escolhida:
-            if st.button("🔁 Escolher outra headline", use_container_width=True):
+    # =================================================
+    # BOTÕES (🔥 TODOS JUNTOS)
+    # =================================================
+    st.divider()
+    col1, col2, col3, col4 = st.columns(4)
+
+
+    # GERAR
+    with col1:
+        if st.button("✨ Gerar headline", use_container_width=True):
+            with st.spinner("Gerando headlines..."):
+                st.session_state["headlines"] = _gerar_headlines(tema, ideias)
+                st.session_state["headline_escolhida"] = None
+            st.rerun()
+
+
+    # TROCAR
+    with col2:
+        if st.session_state.get("headline_escolhida"):
+            if st.button("🔁 Trocar", use_container_width=True):
                 st.session_state["headline_escolhida"] = None
                 st.rerun()
 
 
-        # =================================================
-        # 🔥 NAVEGAÇÃO WIZARD (NOVO)
-        # =================================================
-        st.divider()
+    # VOLTAR
+    with col3:
+        if st.button("⬅ Voltar", use_container_width=True):
+            st.session_state.etapa = 1
+            st.rerun()
 
-        col1, col2 = st.columns(2)
 
-        # ⬅ VOLTAR
-        with col1:
-            if st.button("⬅ Voltar", use_container_width=True):
-                st.session_state.etapa = 1
-                st.rerun()
-
-        # ➡ PRÓXIMO
-        with col2:
-            if st.button("Próximo ➡", use_container_width=True):
-                st.session_state.etapa = 3
-                st.rerun()
+    # PRÓXIMO
+    with col4:
+        if st.button("Próximo ➡", use_container_width=True):
+            st.session_state.etapa = 3
+            st.rerun()
