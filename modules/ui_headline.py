@@ -62,62 +62,64 @@ def render_etapa_headline():
 
 
     # =================================================
-    # LISTA
+    # BOTÃO — GERAR (permanece em cima)
+    # =================================================
+    if st.button("✨ Gerar headline", use_container_width=True):
+
+        with st.spinner("Gerando headlines..."):
+            st.session_state["headlines"] = _gerar_headlines(tema, ideias)
+            st.session_state["headline_escolhida"] = None
+
+        st.rerun()
+
+
+    # =================================================
+    # LISTA DE HEADLINES
     # =================================================
     if "headlines" not in st.session_state:
-        st.info("Clique em **Gerar headline** para criar opções.")
-    else:
+        return
 
-        headlines = st.session_state["headlines"]
-        escolhida = st.session_state.get("headline_escolhida")
+    headlines = st.session_state["headlines"]
+    escolhida = st.session_state.get("headline_escolhida")
 
-        opcoes = [escolhida] if escolhida else headlines
+    opcoes = [escolhida] if escolhida else headlines
 
-        escolha = st.radio(
-            "Escolha a headline:",
-            opcoes,
-            index=0 if escolhida else None,
-            key="radio_headline"
-        )
+    escolha = st.radio(
+        "Escolha a headline:",
+        opcoes,
+        index=0 if escolhida else None,
+        key="radio_headline"
+    )
 
-        if escolha and not escolhida:
-            st.session_state["headline_escolhida"] = escolha
-            st.rerun()
+    if escolha and not escolhida:
+        st.session_state["headline_escolhida"] = escolha
+        st.rerun()
 
 
     # =================================================
-    # BOTÕES (🔥 TODOS JUNTOS)
+    # BOTÕES INFERIORES (todos juntos)
     # =================================================
     st.divider()
-    col1, col2, col3, col4 = st.columns(4)
-
-
-    # GERAR
-    with col1:
-        if st.button("✨ Gerar headline", use_container_width=True):
-            with st.spinner("Gerando headlines..."):
-                st.session_state["headlines"] = _gerar_headlines(tema, ideias)
-                st.session_state["headline_escolhida"] = None
-            st.rerun()
+    col1, col2, col3 = st.columns(3)
 
 
     # TROCAR
-    with col2:
-        if st.session_state.get("headline_escolhida"):
+    with col1:
+        if escolhida:
             if st.button("🔁 Trocar", use_container_width=True):
                 st.session_state["headline_escolhida"] = None
                 st.rerun()
 
 
     # VOLTAR
-    with col3:
+    with col2:
         if st.button("⬅ Voltar", use_container_width=True):
             st.session_state.etapa = 1
             st.rerun()
 
 
     # PRÓXIMO
-    with col4:
+    with col3:
         if st.button("Próximo ➡", use_container_width=True):
             st.session_state.etapa = 3
             st.rerun()
