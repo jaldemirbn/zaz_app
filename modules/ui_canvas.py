@@ -67,26 +67,28 @@ def render_etapa_canvas():
     )
 
     # -------------------------------------------------
-    # 2. STATE
+    # 2. STATES
     # -------------------------------------------------
-    if "imagem_upload" not in st.session_state:
-        st.session_state.imagem_upload = None
+    if "arquivo_upload" not in st.session_state:
+        st.session_state.arquivo_upload = None
+
+    if "tipo_upload" not in st.session_state:
+        st.session_state.tipo_upload = None  # imagem | video
 
     # -------------------------------------------------
-    # 3. UPLOAD DO POST PRONTO
+    # 3. UPLOAD (IMAGEM OU VÍDEO)
     # -------------------------------------------------
     arquivo = st.file_uploader(
-        "Envie o post pronto (Canva, CapCut, Adobe etc)",
-        type=["png", "jpg", "jpeg"]
+        "Envie o post pronto (imagem ou vídeo)",
+        type=["png", "jpg", "jpeg", "mp4", "mov", "webm"]
     )
 
     if arquivo is not None:
-        st.session_state.imagem_upload = arquivo.read()
+        st.session_state.arquivo_upload = arquivo.read()
+        st.session_state.tipo_upload = "video" if arquivo.type.startswith("video") else "imagem"
 
-    base_img = abrir_imagem_segura(st.session_state.imagem_upload)
-
-    if base_img is None:
-        st.info("Faça upload do post pronto para continuar.")
+    if st.session_state.arquivo_upload is None:
+        st.info("Faça upload de uma imagem ou vídeo para continuar.")
 
         st.divider()
         col1, _ = st.columns(2)
@@ -97,91 +99,105 @@ def render_etapa_canvas():
         return
 
     # -------------------------------------------------
-    # 4. CANVAS MANUAL (INALTERADO)
+    # 4. FLUXO PARA VÍDEO (SEM CANVAS)
     # -------------------------------------------------
-    formato = st.selectbox(
-        "Formato",
-        ["Original", "1:1", "4:5", "9:16", "16:9", "3:4"]
-    )
+    if st.session_state.tipo_upload == "video":
+        st.video(st.session_state.arquivo_upload)
+        st.session_state["midia_final_bytes"] = st.session_state.arquivo_upload
+        st.session_state["midia_tipo"] = "video"
 
-    ratios = {
-        "1:1": 1 / 1,
-        "4:5": 4 / 5,
-        "9:16": 9 / 16,
-        "16:9": 16 / 9,
-        "3:4": 3 / 4
-    }
+    # -------------------------------------------------
+    # 5. FLUXO PARA IMAGEM (CANVAS MANUAL)
+    # -------------------------------------------------
+    else:
+        base_img = abrir_imagem_segura(st.session_state.arquivo_upload)
 
-    img = crop_aspect(base_img, ratios[formato]) if formato != "Original" else base_img.copy()
+        if base_img is None:
+            st.error("Arquivo de imagem inválido.")
+            return
 
-    texto = st.text_area(
-        "Texto (use Enter para quebrar linha)",
-        st.session_state.get("headline_escolhida", ""),
-        height=120
-    )
-
-    c1, c2, c3, c4, c5 = st.columns(5)
-    with c1:
-        x = st.slider("X", 0, img.width, 40)
-    with c2:
-        y = st.slider("Y", 0, img.height, 40)
-    with c3:
-        tamanho = st.slider("Tamanho", 20, 200, 80)
-    with c4:
-        cor_texto = st.color_picker("Cor texto", "#FFFFFF")
-    with c5:
-        fonte_nome = st.selectbox(
-            "Fonte",
-            ["Sans", "Sans Bold", "Serif", "Serif Bold", "Mono", "Mono Bold"]
+        formato = st.selectbox(
+            "Formato",
+            ["Original", "1:1", "4:5", "9:16", "16:9", "3:4"]
         )
 
-    usar_fundo = st.checkbox("Fundo atrás do texto", True)
-    cor_fundo = st.color_picker("Cor fundo", "#000000")
-    alpha = st.slider("Transparência", 0, 255, 140)
+        ratios = {
+            "1:1": 1 / 1,
+            "4:5": 4 / 5,
+            "9:16": 9 / 16,
+            "16:9": 16 / 9,
+            "3:4": 3 / 4
+        }
 
-    font = carregar_fonte(fonte_nome, tamanho)
+        img = crop_aspect(base_img, ratios[formato]) if formato != "Original" else base_img.copy()
 
-    preview = img.copy()
-    overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
-    draw = ImageDraw.Draw(overlay)
+        texto = st.text_area(
+            "Texto (use Enter para quebrar linha)",
+            st.session_state.get("headline_escolhida", ""),
+            height=120
+        )
 
-    if texto.strip():
-        bbox = draw.multiline_textbbox((x, y), texto, font=font, spacing=6)
-        padding = 20
-
-        if usar_fundo:
-            r = int(cor_fundo[1:3], 16)
-            g = int(cor_fundo[3:5], 16)
-            b = int(cor_fundo[5:7], 16)
-
-            draw.rectangle(
-                (bbox[0] - padding, bbox[1] - padding, bbox[2] + padding, bbox[3] + padding),
-                fill=(r, g, b, alpha)
+        c1, c2, c3, c4, c5 = st.columns(5)
+        with c1:
+            x = st.slider("X", 0, img.width, 40)
+        with c2:
+            y = st.slider("Y", 0, img.height, 40)
+        with c3:
+            tamanho = st.slider("Tamanho", 20, 200, 80)
+        with c4:
+            cor_texto = st.color_picker("Cor texto", "#FFFFFF")
+        with c5:
+            fonte_nome = st.selectbox(
+                "Fonte",
+                ["Sans", "Sans Bold", "Serif", "Serif Bold", "Mono", "Mono Bold"]
             )
 
-        draw.multiline_text((x, y), texto, font=font, fill=cor_texto, spacing=6)
+        usar_fundo = st.checkbox("Fundo atrás do texto", True)
+        cor_fundo = st.color_picker("Cor fundo", "#000000")
+        alpha = st.slider("Transparência", 0, 255, 140)
 
-    preview = Image.alpha_composite(preview, overlay)
+        font = carregar_fonte(fonte_nome, tamanho)
+
+        preview = img.copy()
+        overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
+        draw = ImageDraw.Draw(overlay)
+
+        if texto.strip():
+            bbox = draw.multiline_textbbox((x, y), texto, font=font, spacing=6)
+            padding = 20
+
+            if usar_fundo:
+                r = int(cor_fundo[1:3], 16)
+                g = int(cor_fundo[3:5], 16)
+                b = int(cor_fundo[5:7], 16)
+
+                draw.rectangle(
+                    (bbox[0] - padding, bbox[1] - padding, bbox[2] + padding, bbox[3] + padding),
+                    fill=(r, g, b, alpha)
+                )
+
+            draw.multiline_text((x, y), texto, font=font, fill=cor_texto, spacing=6)
+
+        preview = Image.alpha_composite(preview, overlay)
+
+        st.image(preview, use_container_width=True)
+
+        buffer = io.BytesIO()
+        preview.convert("RGB").save(buffer, format="PNG")
+
+        st.session_state["midia_final_bytes"] = buffer.getvalue()
+        st.session_state["midia_tipo"] = "imagem"
+
+        st.download_button(
+            "⬇️ Baixar post final",
+            buffer.getvalue(),
+            "post_final.png",
+            "image/png",
+            use_container_width=True
+        )
 
     # -------------------------------------------------
-    # 5. PREVIEW + DOWNLOAD
-    # -------------------------------------------------
-    st.image(preview, use_container_width=True)
-
-    buffer = io.BytesIO()
-    preview.convert("RGB").save(buffer, format="PNG")
-    st.session_state["imagem_final_bytes"] = buffer.getvalue()
-
-    st.download_button(
-        "⬇️ Baixar post final",
-        buffer.getvalue(),
-        "post_final.png",
-        "image/png",
-        use_container_width=True
-    )
-
-    # -------------------------------------------------
-    # 6. NAVEGAÇÃO (SEMPRE POR ÚLTIMO)
+    # 6. NAVEGAÇÃO
     # -------------------------------------------------
     st.divider()
     col1, col2 = st.columns(2)
@@ -192,6 +208,6 @@ def render_etapa_canvas():
             st.rerun()
 
     with col2:
-        if st.button("Seguir ➡", use_container_width=True):
+        if st.button("Próximo ➡", use_container_width=True):
             st.session_state.etapa = 8
             st.rerun()
