@@ -1,42 +1,24 @@
 # =====================================================
-# zAz — MÓDULO 05
-# ETAPA 06 - Post (ORQUESTRADOR)
+# zAz — MÓDULO 06
+# ETAPA 06 — POST (ORQUESTRADOR)
 # =====================================================
 
+
+# =====================================================
+# IMPORTS
+# =====================================================
 import streamlit as st
-from modules.ia_engine import gerar_texto
-
-from modules.post.post_simples import gerar_prompt_post_simples
-from modules.post.post_animado import gerar_prompt_post_animado
-
-
-# =====================================================
-# IA
-# =====================================================
-
-def _gerar_descricao_post(tipo, contexto):
-
-    if tipo == "Animado":
-        base_prompt = gerar_prompt_post_animado()
-    else:
-        base_prompt = gerar_prompt_post_simples()
-
-    prompt = contexto + "\n\n" + base_prompt
-
-    texto = gerar_texto(prompt).strip()
-
-    texto = " ".join(texto.split())
-    texto = texto[:1200]
-
-    return texto
+from modules.post.copywriter import gerar_copy
 
 
 # =====================================================
 # RENDER
 # =====================================================
-
 def render_etapa_post():
 
+    # -------------------------------------------------
+    # TÍTULO
+    # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28;'>06. Criação do post</h3>",
         unsafe_allow_html=True
@@ -44,7 +26,7 @@ def render_etapa_post():
 
 
     # -------------------------------------------------
-    # RADIO (MANTIDO — INTACTO)
+    # TIPO
     # -------------------------------------------------
     tipo = st.radio(
         "Tipo de post:",
@@ -57,20 +39,17 @@ def render_etapa_post():
     # -------------------------------------------------
     # GERAR
     # -------------------------------------------------
-    if st.button("Criar descrição do post", use_container_width=True):
+    if st.button("✨ Gerar descrição do post", use_container_width=True):
 
         contexto = f"""
-Ideia: {st.session_state.get("ideia_escolhida")}
-Conceito visual: {st.session_state.get("conceito_visual")}
-Headline: {st.session_state.get("headline_escolhida")}
-Texto base: {st.session_state.get("texto_escolhido")}
+Tema: {st.session_state.get("tema")}
+Ideias: {st.session_state.get("ideias_filtradas")}
+Headline base: {st.session_state.get("headline_escolhida")}
+Tipo: {tipo}
 """
 
-        with st.spinner("Criando..."):
-            st.session_state["descricao_post"] = _gerar_descricao_post(
-                tipo,
-                contexto
-            )
+        with st.spinner("Criando copy..."):
+            st.session_state["descricao_post"] = gerar_copy(contexto)
 
 
     # -------------------------------------------------
@@ -78,37 +57,31 @@ Texto base: {st.session_state.get("texto_escolhido")}
     # -------------------------------------------------
     if st.session_state.get("descricao_post"):
 
-        # 🔥 botão copiar automático
         st.code(
             st.session_state["descricao_post"],
             language="text"
         )
 
-
         st.link_button(
-            "🎨 Criar post no Canva IA",
+            "🎨 Abrir no Canva IA",
             "https://www.canva.com/ai",
             use_container_width=True
         )
 
 
         # -------------------------------------------------
-        # NAVEGAÇÃO (INALTERADA)
+        # NAVEGAÇÃO
         # -------------------------------------------------
         st.divider()
-
         col1, col2 = st.columns(2)
 
         with col1:
             if st.button("⬅ Voltar", use_container_width=True):
                 st.session_state.pop("descricao_post", None)
-                st.session_state.pop("tipo_post", None)
-                st.session_state.etapa = 4
+                st.session_state.etapa -= 1
                 st.rerun()
 
         with col2:
-            if st.button("Próximo ➡", use_container_width=True):
-                st.session_state.etapa = 6
+            if st.button("Próximo ➜", use_container_width=True):
+                st.session_state.etapa += 1
                 st.rerun()
-
-
