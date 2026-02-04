@@ -175,7 +175,6 @@ def render_etapa_conceito():
             height=380
         )
 
-
     # =================================================
     # BOTÕES
     # =================================================
@@ -185,9 +184,11 @@ def render_etapa_conceito():
 
     # BOTÃO — NOVO CONCEITO
     with col1:
-        if st.button("🔁 Novo conceito", use_container_width=True):
-            st.session_state.conceito_visual = None
-            st.rerun()
+        st.button(
+            "🔁 Novo conceito",
+            key="btn_novo_conceito",
+            use_container_width=True
+        )
 
 
     # BOTÃO — CRIAR IMAGEM
@@ -201,10 +202,12 @@ def render_etapa_conceito():
 
     # BOTÃO — CONTINUAR
     with col3:
-        if st.button("Continuar ➡", use_container_width=True):
-            st.session_state.etapa_4_liberada = True
-            st.session_state.etapa = 4
-            st.rerun()
+        st.button(
+            "Continuar ➡",
+            key="btn_continuar",
+            use_container_width=True
+        )
+
 
 
     # -------------------------------------------------
@@ -222,3 +225,4 @@ def render_etapa_conceito():
         st.session_state.etapa_4_liberada = False
         st.session_state.etapa = 2
         st.rerun()
+
