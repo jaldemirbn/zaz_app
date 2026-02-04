@@ -1,6 +1,6 @@
 # =====================================================
 # zAz — MÓDULO 06
-# ETAPA 06 - Post
+# ETAPA 06 - Post (ORQUESTRADOR)
 # =====================================================
 
 import streamlit as st
@@ -39,7 +39,7 @@ def render_etapa_post():
 
 
     # -------------------------------------------------
-    # TIPO
+    # TIPO DE POST
     # -------------------------------------------------
     tipo = st.radio(
         "Tipo de post:",
@@ -50,22 +50,15 @@ def render_etapa_post():
 
 
     # -------------------------------------------------
-    # GERAR
+    # GERAR DESCRIÇÃO
     # -------------------------------------------------
     if st.button("Criar descrição do post", use_container_width=True):
 
         contexto = f"""
-Ideia:
-{st.session_state.get("ideia_escolhida")}
-
-Conceito visual:
-{st.session_state.get("conceito_visual")}
-
-Headline:
-{st.session_state.get("headline_escolhida")}
-
-Texto base:
-{st.session_state.get("texto_escolhido")}
+Ideia: {st.session_state.get("ideia_escolhida")}
+Conceito visual: {st.session_state.get("conceito_visual")}
+Headline: {st.session_state.get("headline_escolhida")}
+Texto base: {st.session_state.get("texto_escolhido")}
 """
 
         with st.spinner("Criando descrição..."):
@@ -86,15 +79,6 @@ Texto base:
             language="text"
         )
 
-        # garantia 100%
-        st.download_button(
-            "📥 Baixar texto completo (.txt)",
-            st.session_state["descricao_post"],
-            file_name="descricao_post.txt",
-            mime="text/plain",
-            use_container_width=True
-        )
-
 
         st.link_button(
             "🎨 Criar post no Canva IA",
@@ -110,6 +94,7 @@ Texto base:
 
         col1, col2 = st.columns(2)
 
+        # ⬅ VOLTAR (limpa cache do módulo)
         with col1:
             if st.button("⬅ Voltar", use_container_width=True):
                 st.session_state.pop("descricao_post", None)
@@ -117,6 +102,7 @@ Texto base:
                 st.session_state.etapa = 4
                 st.rerun()
 
+        # ➡ PRÓXIMO
         with col2:
             if st.button("Próximo ➡", use_container_width=True):
                 st.session_state.etapa = 6
