@@ -3,7 +3,6 @@
 # ETAPA 07 — CANVAS DO POST
 # =====================================================
 
-
 # =====================================================
 # IMPORTS
 # =====================================================
@@ -79,7 +78,7 @@ def render_etapa_canvas():
     # 3. UPLOAD (IMAGEM OU VÍDEO)
     # -------------------------------------------------
     arquivo = st.file_uploader(
-        "Envie o post pronto (imagem ou vídeo)",
+        "Envie o post (imagem ou vídeo)",
         type=["png", "jpg", "jpeg", "mp4", "mov", "webm"]
     )
 
@@ -88,7 +87,7 @@ def render_etapa_canvas():
         st.session_state.tipo_upload = "video" if arquivo.type.startswith("video") else "imagem"
 
     if st.session_state.arquivo_upload is None:
-        st.info("Faça upload de uma imagem ou vídeo para continuar.")
+        st.info("Envie um arquivo para continuar.")
 
         st.divider()
         col1, _ = st.columns(2)
@@ -99,7 +98,7 @@ def render_etapa_canvas():
         return
 
     # -------------------------------------------------
-    # 4. FLUXO PARA VÍDEO (SEM CANVAS)
+    # 4. FLUXO PARA VÍDEO
     # -------------------------------------------------
     if st.session_state.tipo_upload == "video":
         st.video(st.session_state.arquivo_upload)
@@ -113,7 +112,7 @@ def render_etapa_canvas():
         base_img = abrir_imagem_segura(st.session_state.arquivo_upload)
 
         if base_img is None:
-            st.error("Arquivo de imagem inválido.")
+            st.error("Arquivo inválido.")
             return
 
         formato = st.selectbox(
