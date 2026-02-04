@@ -6,17 +6,20 @@
 import streamlit as st
 from modules.ia_engine import gerar_texto
 
-# 👇 só terceiriza o prompt
 from modules.post.post_simples import gerar_prompt_post_simples
+from modules.post.post_animado import gerar_prompt_post_animado
 
 
 # =====================================================
 # IA
 # =====================================================
 
-def _gerar_descricao_post(conceito, headline):
+def _gerar_descricao_post(tipo):
 
-    prompt = gerar_prompt_post_simples()
+    if tipo == "Animado":
+        prompt = gerar_prompt_post_animado()
+    else:
+        prompt = gerar_prompt_post_simples()
 
     return gerar_texto(prompt).strip()
 
@@ -34,19 +37,23 @@ def render_etapa_post():
 
 
     # -------------------------------------------------
-    # GERAR DESCRIÇÃO (EXATAMENTE COMO ERA)
+    # 🔥 ESCOLHA DO TIPO (novo, simples)
+    # -------------------------------------------------
+    tipo = st.radio(
+        "Tipo de post:",
+        ["Simples", "Animado"],
+        horizontal=True,
+        key="tipo_post"
+    )
+
+
+    # -------------------------------------------------
+    # GERAR DESCRIÇÃO
     # -------------------------------------------------
     if st.button("Criar descrição do post", use_container_width=True):
 
-        conceito = st.session_state.get("conceito_visual")
-        headline = st.session_state.get("headline_escolhida")
-
-        if conceito and headline:
-            with st.spinner("Criando descrição..."):
-                st.session_state["descricao_post"] = _gerar_descricao_post(
-                    conceito,
-                    headline
-                )
+        with st.spinner("Criando descrição..."):
+            st.session_state["descricao_post"] = _gerar_descricao_post(tipo)
 
 
     # -------------------------------------------------
@@ -61,7 +68,6 @@ def render_etapa_post():
         )
 
 
-        # 🔥 Canva (igual)
         st.link_button(
             "🎨 Criar post no Canva IA",
             "https://www.canva.com/ai",
@@ -69,9 +75,9 @@ def render_etapa_post():
         )
 
 
-        # =================================================
-        # 🔥 BOTÕES VOLTAR / PRÓXIMO (IGUAIS AO ORIGINAL)
-        # =================================================
+        # -------------------------------------------------
+        # NAVEGAÇÃO (intacto)
+        # -------------------------------------------------
         st.divider()
 
         col1, col2 = st.columns(2)
