@@ -18,13 +18,12 @@ def _gerar_legenda(contexto, texto_usuario, tons):
     prompt = f"""
 Você é um copywriter brasileiro especialista em Instagram.
 
-Escreva uma legenda humana, natural e envolvente.
-Use emojis estrategicamente.
+Escreva uma legenda humana, natural, envolvente e persuasiva.
 
 Regras:
 - 3 a 7 frases curtas
-- incluir uma CTA clara
-- incluir hashtags reais e relevantes
+- incluir CTA clara
+- incluir hashtags reais
 - linguagem brasileira natural
 
 Contexto:
@@ -33,7 +32,7 @@ Conceito: {contexto.get("conceito")}
 Texto do usuário: {texto_usuario}
 Tons: {tons_txt}
 
-Retorne o texto corrido, sem formatação especial.
+Formato: texto corrido normal.
 """
 
     bruto = gerar_texto(prompt).strip()
@@ -52,7 +51,7 @@ Retorne o texto corrido, sem formatação especial.
 
     import re
     frases = re.split(r'(?<=[.!?])\s+', texto)
-    frases = [f.strip() for f in frases if len(f.strip()) > 0]
+    frases = [f.strip() for f in frases if f.strip()]
 
     cta = ""
     frases_limpa = []
@@ -90,7 +89,12 @@ Retorne o texto corrido, sem formatação especial.
     else:
         partes.append("#zaz_app")
 
-    return "\n".join(partes).strip()
+    texto_final = "\n".join(partes).strip()
+
+    # 🔥 estabilidade extra
+    texto_final = texto_final[:2200]
+
+    return texto_final
 
 
 # =====================================================
@@ -170,25 +174,28 @@ def render_etapa_legenda():
     # =================================================
     if st.session_state.get("legenda_gerada"):
 
-        st.text_area(
-            "Legenda pronta",
+        # botão copiar automático
+        st.code(
             st.session_state["legenda_gerada"],
-            height=550
+            language="text"
         )
 
 
     # =================================================
-    # 🔥 NAVEGAÇÃO WIZARD (NOVO)
+    # NAVEGAÇÃO (CORRIGIDA)
     # =================================================
     st.divider()
 
     col1, col2 = st.columns(2)
 
+    # ⬅ VOLTAR (agora limpa estado corretamente)
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
+            st.session_state.pop("legenda_gerada", None)
             st.session_state.etapa = 7
             st.rerun()
 
+    # ➡ PROSSEGUIR
     with col2:
         if st.button("Prosseguir ➡", use_container_width=True):
 
