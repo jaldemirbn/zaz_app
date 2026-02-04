@@ -1,31 +1,30 @@
 # =====================================================
 # zAz — MÓDULO 06
-# ETAPA 06 - Post (SIMPLES)
+# ETAPA 06 - Post (ORQUESTRADOR)
 # =====================================================
 
 import streamlit as st
 from modules.ia_engine import gerar_texto
+
 from modules.post.post_simples import gerar_prompt_post_simples
+from modules.post.post_animado import gerar_prompt_post_animado
 
 
 # =====================================================
 # IA
 # =====================================================
 
-def _gerar_descricao_post(contexto):
+def _gerar_descricao_post(tipo, contexto):
 
-    base_prompt = gerar_prompt_post_simples()
+    if tipo == "Animado":
+        base_prompt = gerar_prompt_post_animado()
+    else:
+        base_prompt = gerar_prompt_post_simples()
 
-    prompt = (
-        contexto
-        + "\n\n"
-        + base_prompt
-        + "\n\nFormato: texto único, sem quebras, máximo 1200 caracteres."
-    )
+    prompt = contexto + "\n\n" + base_prompt
 
     texto = gerar_texto(prompt).strip()
 
-    # força 1 linha + limite
     texto = " ".join(texto.split())
     texto = texto[:1200]
 
@@ -45,6 +44,17 @@ def render_etapa_post():
 
 
     # -------------------------------------------------
+    # RADIO (MANTIDO — INTACTO)
+    # -------------------------------------------------
+    tipo = st.radio(
+        "Tipo de post:",
+        ["Simples", "Animado"],
+        horizontal=True,
+        key="tipo_post"
+    )
+
+
+    # -------------------------------------------------
     # GERAR
     # -------------------------------------------------
     if st.button("Criar descrição do post", use_container_width=True):
@@ -57,7 +67,10 @@ Texto base: {st.session_state.get("texto_escolhido")}
 """
 
         with st.spinner("Criando..."):
-            st.session_state["descricao_post"] = _gerar_descricao_post(contexto)
+            st.session_state["descricao_post"] = _gerar_descricao_post(
+                tipo,
+                contexto
+            )
 
 
     # -------------------------------------------------
@@ -65,22 +78,23 @@ Texto base: {st.session_state.get("texto_escolhido")}
     # -------------------------------------------------
     if st.session_state.get("descricao_post"):
 
-        # 🔥 botão copiar automático (canto do bloco)
+        # 🔥 botão copiar automático
         st.code(
             st.session_state["descricao_post"],
             language="text"
         )
 
-        # 🔥 garantia total
-        st.download_button(
-            "⬇ Baixar texto (.txt)",
-            st.session_state["descricao_post"],
-            file_name="descricao_post.txt",
-            mime="text/plain",
+
+        st.link_button(
+            "🎨 Criar post no Canva IA",
+            "https://www.canva.com/ai",
             use_container_width=True
         )
 
 
+        # -------------------------------------------------
+        # NAVEGAÇÃO (INALTERADA)
+        # -------------------------------------------------
         st.divider()
 
         col1, col2 = st.columns(2)
@@ -88,6 +102,7 @@ Texto base: {st.session_state.get("texto_escolhido")}
         with col1:
             if st.button("⬅ Voltar", use_container_width=True):
                 st.session_state.pop("descricao_post", None)
+                st.session_state.pop("tipo_post", None)
                 st.session_state.etapa = 4
                 st.rerun()
 
