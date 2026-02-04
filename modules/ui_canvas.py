@@ -29,47 +29,48 @@ def carregar_fonte(nome, tamanho):
         return ImageFont.load_default()
 
 
-def desenhar_grade_tercos(imagem, cor=(255, 255, 255, 120), largura=2):
-    w, h = imagem.size
-    draw = ImageDraw.Draw(imagem)
-    x1, x2 = w / 3, 2 * w / 3
-    y1, y2 = h / 3, 2 * h / 3
-    draw.line((x1, 0, x1, h), fill=cor, width=largura)
-    draw.line((x2, 0, x2, h), fill=cor, width=largura)
-    draw.line((0, y1, w, y1), fill=cor, width=largura)
-    draw.line((0, y2, w, y2), fill=cor, width=largura)
-    return imagem
+def desenhar_grade_tercos(img, cor=(255, 255, 255, 120), largura=2):
+    w, h = img.size
+    d = ImageDraw.Draw(img)
+    d.line((w/3, 0, w/3, h), fill=cor, width=largura)
+    d.line((2*w/3, 0, 2*w/3, h), fill=cor, width=largura)
+    d.line((0, h/3, w, h/3), fill=cor, width=largura)
+    d.line((0, 2*h/3, w, 2*h/3), fill=cor, width=largura)
+    return img
 
 
-def recortar_com_offset(img, ratio, offset_x, offset_y):
+def aplicar_zoom_e_offset(img, canvas_w, canvas_h, zoom, offset_x, offset_y):
     """
-    Recorta mantendo o ratio, mas permite deslocar a janela de recorte
-    com offsets normalizados (-1.0 a 1.0).
+    zoom >= 1.0
+    offset_x / offset_y ∈ [-1, 1]
     """
-    W, H = img.size
-    current = W / H
+    iw, ih = img.size
 
-    if current > ratio:
-        # imagem larga → recorte vertical
-        crop_h = H
-        crop_w = int(H * ratio)
-        max_dx = (W - crop_w) // 2
-        dx = int(offset_x * max_dx)
-        left = (W - crop_w) // 2 + dx
-        top = 0
-    else:
-        # imagem alta → recorte horizontal
-        crop_w = W
-        crop_h = int(W / ratio)
-        max_dy = (H - crop_h) // 2
-        dy = int(offset_y * max_dy)
-        left = 0
-        top = (H - crop_h) // 2 + dy
+    # escala base para cobrir o canvas
+    scale_base = max(canvas_w / iw, canvas_h / ih)
+    scale = scale_base * zoom
 
-    left = max(0, min(left, W - crop_w))
-    top = max(0, min(top, H - crop_h))
+    new_w = int(iw * scale)
+    new_h = int(ih * scale)
 
-    return img.crop((left, top, left + crop_w, top + crop_h))
+    img_resized = img.resize((new_w, new_h), Image.LANCZOS)
+
+    max_dx = max(0, new_w - canvas_w)
+    max_dy = max(0, new_h - canvas_h)
+
+    dx = int((max_dx / 2) + offset_x * (max_dx / 2))
+    dy = int((max_dy / 2) + offset_y * (max_dy / 2))
+
+    left = max(0, min(dx, max_dx))
+    top = max(0, min(dy, max_dy))
+
+    canvas = Image.new("RGBA", (canvas_w, canvas_h), (0, 0, 0, 0))
+    canvas.paste(
+        img_resized.crop((left, top, left + canvas_w, top + canvas_h)),
+        (0, 0)
+    )
+
+    return canvas
 
 
 # =====================================================
@@ -77,45 +78,34 @@ def recortar_com_offset(img, ratio, offset_x, offset_y):
 # =====================================================
 def render_etapa_canvas():
 
-    # -------------------------------------------------
-    # 1. TÍTULO
-    # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28;'>07. Canvas do post</h3>",
         unsafe_allow_html=True
     )
 
-    # -------------------------------------------------
-    # 2. CONFIGURAÇÕES
-    # -------------------------------------------------
     formato = st.selectbox(
         "Formato",
-        ["Original", "1:1", "4:5", "9:16", "16:9", "3:4"]
+        ["Original", "1:1", "4:5", "9:16", "16:9"]
     )
 
-    ratios = {
-        "1:1": 1 / 1,
-        "4:5": 4 / 5,
-        "9:16": 9 / 16,
-        "16:9": 16 / 9,
-        "3:4": 3 / 4
+    tamanhos = {
+        "1:1": (1080, 1080),
+        "4:5": (1080, 1350),
+        "9:16": (1080, 1920),
+        "16:9": (1920, 1080)
     }
 
     texto = st.text_area(
-        "Texto (use Enter para quebrar linha)",
+        "Texto",
         st.session_state.get("headline_escolhida", ""),
         height=120
     )
 
     c1, c2, c3, c4, c5 = st.columns(5)
-    with c1:
-        x = st.slider("X", 0, 2000, 40)
-    with c2:
-        y = st.slider("Y", 0, 2000, 40)
-    with c3:
-        tamanho = st.slider("Tamanho", 20, 200, 80)
-    with c4:
-        cor_texto = st.color_picker("Cor texto", "#FFFFFF")
+    with c1: x = st.slider("X", 0, 2000, 40)
+    with c2: y = st.slider("Y", 0, 2000, 40)
+    with c3: tamanho = st.slider("Tamanho", 20, 200, 80)
+    with c4: cor_texto = st.color_picker("Cor texto", "#FFFFFF")
     with c5:
         fonte_nome = st.selectbox(
             "Fonte",
@@ -126,97 +116,67 @@ def render_etapa_canvas():
     cor_fundo = st.color_picker("Cor fundo", "#000000")
     alpha = st.slider("Transparência", 0, 255, 140)
 
-    # -------------------------------------------------
-    # 3. AJUSTE MANUAL (REGRA DOS TERÇOS)
-    # -------------------------------------------------
     if formato != "Original":
-        st.markdown("**Ajuste manual do enquadramento (regra dos terços)**")
-        offset_x = st.slider("Deslocamento horizontal", -1.0, 1.0, 0.0, 0.01)
-        offset_y = st.slider("Deslocamento vertical", -1.0, 1.0, 0.0, 0.01)
+        zoom = st.slider("Zoom", 1.0, 3.0, 1.2, 0.01)
+        offset_x = st.slider("Mover horizontal", -1.0, 1.0, 0.0, 0.01)
+        offset_y = st.slider("Mover vertical", -1.0, 1.0, 0.0, 0.01)
     else:
+        zoom = 1.0
         offset_x = offset_y = 0.0
 
-    # -------------------------------------------------
-    # 4. UPLOAD
-    # -------------------------------------------------
     arquivo = st.file_uploader(
         "Envie o post (imagem ou vídeo)",
         type=["png", "jpg", "jpeg", "mp4", "mov", "webm"]
     )
 
-    if arquivo is not None:
+    if arquivo and arquivo.type.startswith("image"):
+        base = Image.open(arquivo).convert("RGBA")
 
-        # -----------------------------
-        # IMAGEM
-        # -----------------------------
-        if arquivo.type.startswith("image"):
-            base_img = Image.open(arquivo).convert("RGBA")
-
-            if formato != "Original":
-                base_img = recortar_com_offset(
-                    base_img, ratios[formato], offset_x, offset_y
-                )
-
-            font = carregar_fonte(fonte_nome, tamanho)
-
-            preview = base_img.copy()
-            overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
-            draw = ImageDraw.Draw(overlay)
-
-            if texto.strip():
-                bbox = draw.multiline_textbbox((x, y), texto, font=font, spacing=6)
-                padding = 20
-
-                if usar_fundo:
-                    r = int(cor_fundo[1:3], 16)
-                    g = int(cor_fundo[3:5], 16)
-                    b = int(cor_fundo[5:7], 16)
-                    draw.rectangle(
-                        (bbox[0]-padding, bbox[1]-padding, bbox[2]+padding, bbox[3]+padding),
-                        fill=(r, g, b, alpha)
-                    )
-
-                draw.multiline_text((x, y), texto, font=font, fill=cor_texto, spacing=6)
-
-            preview = Image.alpha_composite(preview, overlay)
-
-            if formato != "Original":
-                preview = desenhar_grade_tercos(preview)
-
-            st.image(preview, use_container_width=True)
-
-            buffer = io.BytesIO()
-            preview.convert("RGB").save(buffer, format="PNG")
-            st.session_state["midia_final_bytes"] = buffer.getvalue()
-            st.session_state["midia_tipo"] = "imagem"
-
-            st.download_button(
-                "⬇️ Baixar post final",
-                buffer.getvalue(),
-                "post_final.png",
-                "image/png",
-                use_container_width=True
-            )
-
-        # -----------------------------
-        # VÍDEO
-        # -----------------------------
+        if formato == "Original":
+            preview = base.copy()
         else:
-            st.video(arquivo)
-            st.session_state["midia_final_bytes"] = arquivo.read()
-            st.session_state["midia_tipo"] = "video"
+            cw, ch = tamanhos[formato]
+            preview = aplicar_zoom_e_offset(
+                base, cw, ch, zoom, offset_x, offset_y
+            )
+            preview = desenhar_grade_tercos(preview)
 
-    # -------------------------------------------------
-    # 5. NAVEGAÇÃO
-    # -------------------------------------------------
+        font = carregar_fonte(fonte_nome, tamanho)
+        overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
+        d = ImageDraw.Draw(overlay)
+
+        if texto.strip():
+            bbox = d.multiline_textbbox((x, y), texto, font=font, spacing=6)
+            pad = 20
+            if usar_fundo:
+                r = int(cor_fundo[1:3], 16)
+                g = int(cor_fundo[3:5], 16)
+                b = int(cor_fundo[5:7], 16)
+                d.rectangle(
+                    (bbox[0]-pad, bbox[1]-pad, bbox[2]+pad, bbox[3]+pad),
+                    fill=(r, g, b, alpha)
+                )
+            d.multiline_text((x, y), texto, font=font, fill=cor_texto, spacing=6)
+
+        preview = Image.alpha_composite(preview, overlay)
+        st.image(preview, use_container_width=True)
+
+        buf = io.BytesIO()
+        preview.convert("RGB").save(buf, format="PNG")
+        st.download_button(
+            "⬇️ Baixar post final",
+            buf.getvalue(),
+            "post_final.png",
+            "image/png",
+            use_container_width=True
+        )
+
     st.divider()
     col1, col2 = st.columns(2)
-
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
             st.session_state.etapa = 6
             st.rerun()
-
     with col2:
         if st.button("Próximo ➡", use_container_width=True):
             st.session_state.etapa = 8
