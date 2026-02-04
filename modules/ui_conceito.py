@@ -1,5 +1,6 @@
 # =====================================================
-# ETAPA 03 — CONCEITO
+# zAz — MÓDULO 04
+# ETAPA 04 — CONCEITO
 # =====================================================
 
 
@@ -7,39 +8,7 @@
 # IMPORTS
 # =====================================================
 import streamlit as st
-from modules.state_manager import (
-    limpar_conceito,
-    limpar_imagens,
-    limpar_texto,
-    limpar_postagem
-)
-
-
-# =====================================================
-# CSS / ESTILO GLOBAL
-# =====================================================
-st.markdown("""
-<style>
-
-div.stButton > button,
-div.stDownloadButton > button,
-div[data-testid="stLinkButton"] button {
-
-    background-color: transparent !important;
-    color: #FF9D28 !important;
-    border: 1px solid #FF9D28 !important;
-    font-weight: 700 !important;
-}
-
-div.stButton > button:hover,
-div.stDownloadButton > button:hover,
-div[data-testid="stLinkButton"] button:hover {
-
-    background-color: rgba(255,157,40,0.08) !important;
-}
-
-</style>
-""", unsafe_allow_html=True)
+from modules.state_manager import limpar_conceito
 
 
 # =====================================================
@@ -77,39 +46,26 @@ Iluminação:
 – direção de luz consistente
 – sombras suaves ou dramáticas conforme a emoção
 – contraste equilibrado
-– nada artificial ou plástico
-– textura real da pele, tecido e ambiente
 
 Cor e tratamento:
 – paleta coerente
-– tons de pele naturais
+– tons naturais
 – color grading cinematográfico sutil
-– sem oversaturation
-– sem HDR exagerado
-– sem aparência digital
 
 Qualidade técnica:
-– foco perfeito no sujeito
+– foco perfeito
 – nitidez alta
-– microtexturas visíveis
-– exposição correta
-– sem ruído excessivo
+– textura realista
 – proporções reais
-– 8k, ultra realista
-
-Acabamento:
-– leve grão de filme fotográfico
-– contraste orgânico
-– aparência de foto premiada de revista ou editorial
-– estética documental ou cinematográfica
+– ultra realista
 
 Resultado final:
-uma fotografia autêntica, sofisticada, profissional, como se tivesse sido capturada no mundo real por um fotógrafo veterano.
+uma fotografia autêntica, profissional e cinematográfica.
 """
 
 
 # =====================================================
-# FUNÇÕES AUXILIARES
+# FUNÇÃO AUXILIAR
 # =====================================================
 def _gerar_conceito(ideias, headline):
 
@@ -123,57 +79,54 @@ def _gerar_conceito(ideias, headline):
 
 
 # =====================================================
-# RENDER PRINCIPAL
+# RENDER
 # =====================================================
 def render_etapa_conceito():
 
+    # =================================================
+    # GATE → só entra se headline existir
+    # =================================================
     if not st.session_state.get("headline_escolhida"):
         return
 
 
-    # -------------------------------------------------
-    # STATES
-    # -------------------------------------------------
+    # -----------------------------
+    # STATE
+    # -----------------------------
     if "conceito_visual" not in st.session_state:
         st.session_state.conceito_visual = None
 
-    if "etapa_4_liberada" not in st.session_state:
-        st.session_state.etapa_4_liberada = False
 
-
-    # -------------------------------------------------
+    # -----------------------------
     # TÍTULO
-    # -------------------------------------------------
+    # -----------------------------
     st.markdown(
         "<h3 style='color:#FF9D28;'>04. Conceito visual</h3>",
         unsafe_allow_html=True
     )
 
 
-    # -------------------------------------------------
+    headline = st.session_state.get("headline_escolhida")
+    ideias = st.session_state.get("ideias_filtradas", [])
+
+
+    # =================================================
     # GERAR CONCEITO
-    # -------------------------------------------------
+    # =================================================
     if not st.session_state.conceito_visual:
 
         if st.button("✨ Gerar conceito", use_container_width=True):
 
             with st.spinner("IA pensando como fotógrafo profissional..."):
                 st.session_state.conceito_visual = _gerar_conceito(
-                    st.session_state.get("ideias", []),
-                    st.session_state.get("headline_escolhida")
+                    ideias,
+                    headline
                 )
 
             st.rerun()
 
     else:
-
-        # =================================================
-        # 🔥 PROMPT COM BOTÃO COPIAR AUTOMÁTICO
-        # =================================================
-        st.code(
-            st.session_state.conceito_visual,
-            language="text"
-        )
+        st.code(st.session_state.conceito_visual, language="text")
 
 
     # =================================================
@@ -183,14 +136,14 @@ def render_etapa_conceito():
     col1, col2, col3 = st.columns(3)
 
 
-    # NOVO CONCEITO
+    # 🔁 NOVO CONCEITO
     with col1:
         if st.button("🔁 Novo conceito", use_container_width=True):
             st.session_state.conceito_visual = None
             st.rerun()
 
 
-    # CRIAR IMAGEM
+    # 🎨 LINK IMAGEM
     with col2:
         st.link_button(
             "🎨 Criar imagem",
@@ -199,24 +152,17 @@ def render_etapa_conceito():
         )
 
 
-    # SEGUIR
+    # ➡ SEGUIR → próxima etapa automática
     with col3:
         if st.button("Seguir ➡", use_container_width=True):
-            st.session_state.etapa = 4
+            st.session_state.etapa += 1
             st.rerun()
 
 
-    # VOLTAR
+    # ⬅ VOLTAR → etapa anterior automática
     if st.button("⬅ Voltar", use_container_width=True):
 
         limpar_conceito()
-        limpar_imagens()
-        limpar_texto()
-        limpar_postagem()
 
-        st.session_state.etapa_4_liberada = False
-        st.session_state.etapa = 2
+        st.session_state.etapa -= 1
         st.rerun()
-
-
-
