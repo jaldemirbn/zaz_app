@@ -204,7 +204,7 @@ def render_etapa_legenda():
             st.rerun()
 
     with col2:
-        if st.button("Prosseguir ➡", use_container_width=True):
+        if st.button("Seguir ➡", use_container_width=True):
             if not st.session_state.get("legenda_gerada"):
                 st.warning("Crie a legenda antes de continuar.")
             else:
