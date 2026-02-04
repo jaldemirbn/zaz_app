@@ -1,49 +1,30 @@
 # =====================================================
 # zAz — MÓDULO 06
-# ETAPA 06 — POST
+# ETAPA 06 - Post
 # =====================================================
 
-
-# =====================================================
-# IMPORTS
-# =====================================================
 import streamlit as st
 from modules.ia_engine import gerar_texto
 
+# 👇 só terceiriza o prompt
+from modules.post.post_simples import gerar_prompt_post_simples
+
 
 # =====================================================
-# IA — GERAÇÃO DA DESCRIÇÃO
+# IA
 # =====================================================
+
 def _gerar_descricao_post(conceito, headline):
 
-    prompt = f"""
-Você é um designer gráfico profissional.
-
-Planeje a montagem do post usando a imagem base.
-
-Imagem:
-{conceito}
-
-Headline:
-{headline}
-
-Descreva tecnicamente:
-posição, fonte, tamanho, cor, contraste e estilo.
-"""
+    prompt = gerar_prompt_post_simples()
 
     return gerar_texto(prompt).strip()
 
 
 # =====================================================
-# LIMPEZA DA ETAPA
+# RENDER
 # =====================================================
-def _limpar_post():
-    st.session_state.pop("descricao_post", None)
 
-
-# =====================================================
-# RENDER PRINCIPAL
-# =====================================================
 def render_etapa_post():
 
     st.markdown(
@@ -52,9 +33,9 @@ def render_etapa_post():
     )
 
 
-    # =================================================
-    # GERAR DESCRIÇÃO
-    # =================================================
+    # -------------------------------------------------
+    # GERAR DESCRIÇÃO (EXATAMENTE COMO ERA)
+    # -------------------------------------------------
     if st.button("Criar descrição do post", use_container_width=True):
 
         conceito = st.session_state.get("conceito_visual")
@@ -68,47 +49,39 @@ def render_etapa_post():
                 )
 
 
-    # =================================================
-    # MOSTRAR DESCRIÇÃO (🔥 copiar 1 clique)
-    # =================================================
-    if not st.session_state.get("descricao_post"):
-        return
-
-
-    st.code(
-        st.session_state["descricao_post"],
-        language="text"
-    )
-
-
     # -------------------------------------------------
-    # LINK CANVA
+    # MOSTRA DESCRIÇÃO
     # -------------------------------------------------
-    st.link_button(
-        "🎨 Criar post no Canva IA",
-        "https://www.canva.com/ai",
-        use_container_width=True
-    )
+    if st.session_state.get("descricao_post"):
+
+        st.text_area(
+            "Descrição do post",
+            st.session_state["descricao_post"],
+            height=300
+        )
 
 
-    # =================================================
-    # BOTÕES — 🔥 PADRÃO ORIGINAL DO PROJETO
-    # =================================================
-    st.divider()
-
-    col1, col2 = st.columns(2)
-
-
-    # ⬅ VOLTAR
-    with col1:
-        if st.button("⬅ Voltar", use_container_width=True):
-            _limpar_post()
-            st.session_state.etapa = 4
-            st.rerun()
+        # 🔥 Canva (igual)
+        st.link_button(
+            "🎨 Criar post no Canva IA",
+            "https://www.canva.com/ai",
+            use_container_width=True
+        )
 
 
-    # ➡ SEGUIR
-    with col2:
-        if st.button("Seguir ➡", use_container_width=True):
-            st.session_state.etapa = 6
-            st.rerun()
+        # =================================================
+        # 🔥 BOTÕES VOLTAR / PRÓXIMO (IGUAIS AO ORIGINAL)
+        # =================================================
+        st.divider()
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button("⬅ Voltar", use_container_width=True):
+                st.session_state.etapa = 4
+                st.rerun()
+
+        with col2:
+            if st.button("Próximo ➡", use_container_width=True):
+                st.session_state.etapa = 6
+                st.rerun()
