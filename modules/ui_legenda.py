@@ -1,100 +1,206 @@
 # =====================================================
-# zAz — MÓDULO 08
-# ETAPA 08 — LEGENDA DO POST
+# zAz — MÓDULO 07
+# ETAPA 08 — LEGENDA
 # =====================================================
 
-# =====================================================
-# IMPORTS
-# =====================================================
 import streamlit as st
+from modules.ia_engine import gerar_texto
+
+
+# =====================================================
+# IA
+# =====================================================
+
+def _gerar_legenda(contexto, texto_usuario, tons):
+
+    tons_txt = ", ".join(tons)
+
+    prompt = f"""
+Você é um copywriter brasileiro especialista em Instagram.
+
+Escreva uma legenda humana, natural, envolvente e persuasiva.
+
+Regras:
+- 3 a 7 frases curtas
+- incluir CTA clara
+- incluir hashtags reais
+- linguagem brasileira natural
+
+Contexto:
+Headline: {contexto.get("headline")}
+Conceito: {contexto.get("conceito")}
+Texto do usuário: {texto_usuario}
+Tons: {tons_txt}
+
+Formato: texto corrido normal.
+"""
+
+    bruto = gerar_texto(prompt).strip()
+
+    palavras = bruto.split()
+    texto_sem_hashtags = []
+    hashtags = []
+
+    for p in palavras:
+        if p.startswith("#"):
+            hashtags.append(p)
+        else:
+            texto_sem_hashtags.append(p)
+
+    texto = " ".join(texto_sem_hashtags)
+
+    import re
+    frases = re.split(r'(?<=[.!?])\s+', texto)
+    frases = [f.strip() for f in frases if f.strip()]
+
+    cta = ""
+    frases_limpa = []
+
+    gatilhos_cta = [
+        "comenta", "clique", "salve", "compartilhe",
+        "envie", "manda", "chama", "fale", "confira"
+    ]
+
+    for f in frases:
+        if any(g in f.lower() for g in gatilhos_cta) and not cta:
+            cta = f
+        else:
+            frases_limpa.append(f)
+
+    if not cta and frases_limpa:
+        cta = frases_limpa.pop(-1)
+
+    partes = []
+
+    for f in frases_limpa:
+        partes.append(f)
+        partes.append("")
+
+    partes.append("")
+    partes.append(cta)
+    partes.append("")
+    partes.append("")
+    partes.append("Criado com @zAz_app")
+    partes.append("")
+    partes.append("")
+
+    if hashtags:
+        partes.append(" ".join(hashtags) + " #zaz_app")
+    else:
+        partes.append("#zaz_app")
+
+    texto_final = "\n".join(partes).strip()
+
+    # 🔥 estabilidade extra
+    texto_final = texto_final[:2200]
+
+    return texto_final
 
 
 # =====================================================
 # RENDER
 # =====================================================
+
 def render_etapa_legenda():
 
-    # -------------------------------------------------
-    # TÍTULO
-    # -------------------------------------------------
     st.markdown(
-        "<h3 style='color:#FF9D28;'>08. Legenda do post</h3>",
+        "<h3 style='color:#FF9D28;'>08. Legenda</h3>",
         unsafe_allow_html=True
     )
 
-    # -------------------------------------------------
-    # STATE
-    # -------------------------------------------------
-    if "legenda_final" not in st.session_state:
-        st.session_state.legenda_final = ""
-
-    if "legenda_base" not in st.session_state:
-        st.session_state.legenda_base = ""
-
-    # -------------------------------------------------
-    # TEXTO BASE (VINDO DA ETAPA 06, SE EXISTIR)
-    # -------------------------------------------------
-    texto_base = st.session_state.get("descricao_post", "")
-
-    if texto_base:
-        st.caption("Texto base sugerido (editável)")
-        st.text_area(
-            "Base da legenda",
-            value=texto_base,
-            height=140,
-            key="legenda_base"
-        )
-
-    # -------------------------------------------------
-    # CAMPO FINAL DE LEGENDA
-    # -------------------------------------------------
-    st.text_area(
-        "Legenda final",
-        value=st.session_state.legenda_final,
-        height=260,
-        key="legenda_final"
+    texto_usuario = st.text_area(
+        "O que você gostaria de colocar na legenda?",
+        height=110
     )
 
-    # -------------------------------------------------
-    # AÇÕES
-    # -------------------------------------------------
-    col_a, col_b = st.columns(2)
+    st.caption("Escolha o tom da legenda")
 
-    with col_a:
-        if st.button("Usar texto base", use_container_width=True):
-            st.session_state.legenda_final = texto_base
+    tons_lista = [
+        "Humorístico/Zueira",
+        "Informal/Coloquial",
+        "Irônico/Sarcástico",
+        "Resiliente/Perrengue",
+        "Acolhedor/Comunitário",
+        "Sarcasmo",
+        "Educativo/Didático",
+        "Inspiracional/Motivacional",
+        "Vulnerável/Autêntico",
+        "Visual/Emoji-heavy",
+        "Comercial/Promocional",
+        "Opinião/Polêmico",
+        "Profissional/Formal",
+        "Nostálgico",
+        "Regional/Cultural"
+    ]
 
-    with col_b:
-        if st.button("Limpar legenda", use_container_width=True):
-            st.session_state.legenda_final = ""
+    tons_escolhidos = []
 
-    # -------------------------------------------------
-    # PREVIEW (SÓ TEXTO)
-    # -------------------------------------------------
-    if st.session_state.legenda_final.strip():
-        st.caption("Preview da legenda")
+    for i in range(5):
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            if st.checkbox(tons_lista[i], key=f"tom_{i}"):
+                tons_escolhidos.append(tons_lista[i])
+
+        with col2:
+            if st.checkbox(tons_lista[i + 5], key=f"tom_{i + 5}"):
+                tons_escolhidos.append(tons_lista[i + 5])
+
+        with col3:
+            if st.checkbox(tons_lista[i + 10], key=f"tom_{i + 10}"):
+                tons_escolhidos.append(tons_lista[i + 10])
+
+
+    # =================================================
+    # GERAR
+    # =================================================
+    if st.button("Criar legenda", use_container_width=True):
+
+        contexto = {
+            "headline": st.session_state.get("headline_escolhida", ""),
+            "conceito": st.session_state.get("conceito_visual", "")
+        }
+
+        with st.spinner("Escrevendo legenda..."):
+            st.session_state["legenda_gerada"] = _gerar_legenda(
+                contexto,
+                texto_usuario,
+                tons_escolhidos
+            )
+
+
+    # =================================================
+    # RESULTADO
+    # =================================================
+    if st.session_state.get("legenda_gerada"):
+
+        # botão copiar automático
         st.code(
-            st.session_state.legenda_final,
+            st.session_state["legenda_gerada"],
             language="text"
         )
 
-    # -------------------------------------------------
-    # NAVEGAÇÃO
-    # -------------------------------------------------
+
+    # =================================================
+    # NAVEGAÇÃO (CORRIGIDA)
+    # =================================================
     st.divider()
+
     col1, col2 = st.columns(2)
 
-    # ⬅ VOLTAR → ETAPA 07 (CANVAS)
+    # ⬅ VOLTAR (agora limpa estado corretamente)
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
-            st.session_state.etapa = 7
+            st.session_state.pop("legenda_gerada", None)
+            st.session_state.etapa = 6
             st.rerun()
 
-    # ➡ PROSSEGUIR → ETAPA 09 (POSTAGEM)
+    # ➡ PROSSEGUIR
     with col2:
         if st.button("Prosseguir ➡", use_container_width=True):
-            if not st.session_state.legenda_final.strip():
-                st.warning("Finalize a legenda antes de continuar.")
+
+            if not st.session_state.get("legenda_gerada"):
+                st.warning("Crie a legenda antes de continuar.")
             else:
-                st.session_state.etapa = 9
+                st.session_state.etapa = 8
                 st.rerun()
