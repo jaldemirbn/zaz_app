@@ -1,6 +1,6 @@
-#======================================================
+# ======================================================
 #             Arquivo de Limpeza
-#======================================================
+# ======================================================
 import streamlit as st
 
 
@@ -85,4 +85,5 @@ def limpar_fluxo_completo():
     limpar_texto()
     limpar_postagem()
 
-    st.cache_data.clear()
+    # ❌ REMOVIDO: st.cache_data.clear()
+    # cache não deve ser limpo em fluxo de tela
