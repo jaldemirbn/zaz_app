@@ -167,5 +167,6 @@ def render_etapa_postagem():
     # =====================================================
     if st.button("⬅ Voltar", use_container_width=True):
         limpar_fluxo_postagem()
-        st.session_state.etapa = 7
+        st.session_state.etapa = 9
         st.rerun()
+
