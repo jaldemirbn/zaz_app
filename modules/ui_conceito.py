@@ -209,6 +209,21 @@ def render_etapa_conceito():
         )
 
 
+    # BOTÃO — VOLTAR
+    if st.button(
+        "⬅ Voltar",
+        key="btn_voltar",
+        use_container_width=True
+    ):
+
+        limpar_conceito()
+        limpar_imagens()
+        limpar_texto()
+        limpar_postagem()
+
+        st.session_state.etapa_4_liberada = False
+        st.session_state.etapa = 2
+        st.rerun()
 
     # -------------------------------------------------
     # BOTÃO — VOLTAR
@@ -225,4 +240,5 @@ def render_etapa_conceito():
         st.session_state.etapa_4_liberada = False
         st.session_state.etapa = 2
         st.rerun()
+
 
