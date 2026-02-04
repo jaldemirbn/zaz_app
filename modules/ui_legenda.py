@@ -1,5 +1,5 @@
 # =====================================================
-# zAz — MÓDULO 08
+# zAz — MÓDULO 07
 # ETAPA 08 — LEGENDA
 # =====================================================
 
@@ -192,7 +192,7 @@ def render_etapa_legenda():
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
             st.session_state.pop("legenda_gerada", None)
-            st.session_state.etapa = 7
+            st.session_state.etapa = 6
             st.rerun()
 
     # ➡ PROSSEGUIR
@@ -202,5 +202,5 @@ def render_etapa_legenda():
             if not st.session_state.get("legenda_gerada"):
                 st.warning("Crie a legenda antes de continuar.")
             else:
-                st.session_state.etapa = 9
+                st.session_state.etapa = 8
                 st.rerun()
