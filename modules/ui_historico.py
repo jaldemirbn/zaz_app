@@ -2,9 +2,6 @@
 # zAz — MÓDULO HISTÓRICO (SUPABASE)
 # =====================================================
 
-# =====================================================
-# IMPORTS
-# =====================================================
 import streamlit as st
 from supabase import create_client
 import base64
@@ -12,9 +9,6 @@ import io
 from PIL import Image
 
 
-# =====================================================
-# SUPABASE
-# =====================================================
 @st.cache_resource
 def conectar():
     return create_client(
@@ -23,9 +17,6 @@ def conectar():
     )
 
 
-# =====================================================
-# RENDER
-# =====================================================
 def render_etapa_historico():
 
     email = st.session_state.get("email")
@@ -33,24 +24,17 @@ def render_etapa_historico():
         st.info("Usuário não autenticado.")
         return
 
-    # -------------------------------------------------
-    # TÍTULO
-    # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28;'>Histórico de postagens</h3>",
         unsafe_allow_html=True
     )
 
-    # -------------------------------------------------
-    # BUSCAR POSTS (PROTEGIDO)
-    # -------------------------------------------------
     try:
         res = (
             conectar()
             .table("posts")
             .select("*")
             .eq("email", email)
-            .order("created_at", desc=True)  # ✅ corrigido
             .limit(10)
             .execute()
         )
@@ -63,9 +47,6 @@ def render_etapa_historico():
         st.info("Nenhum post salvo ainda.")
         return
 
-    # -------------------------------------------------
-    # LISTAGEM
-    # -------------------------------------------------
     for i, post in enumerate(posts, start=1):
 
         with st.expander(f"Postagem #{i}"):
@@ -73,9 +54,6 @@ def render_etapa_historico():
             imagem_base64 = post.get("imagem_base64")
             legenda = post.get("legenda", "")
 
-            # -----------------------------
-            # IMAGEM
-            # -----------------------------
             if imagem_base64:
                 try:
                     img_bytes = base64.b64decode(imagem_base64)
@@ -86,9 +64,6 @@ def render_etapa_historico():
             else:
                 st.warning("Imagem não encontrada.")
 
-            # -----------------------------
-            # LEGENDA (SOMENTE LEITURA)
-            # -----------------------------
             st.text_area(
                 "Legenda",
                 legenda,
@@ -97,9 +72,6 @@ def render_etapa_historico():
                 key=f"hist_leg_{i}"
             )
 
-            # -----------------------------
-            # DOWNLOADS
-            # -----------------------------
             col1, col2 = st.columns(2)
 
             with col1:
@@ -122,9 +94,6 @@ def render_etapa_historico():
                         use_container_width=True
                     )
 
-    # -------------------------------------------------
-    # VOLTAR AO APP
-    # -------------------------------------------------
     st.divider()
     if st.button("⬅ Voltar para o app", use_container_width=True):
         st.session_state.etapa = 1
