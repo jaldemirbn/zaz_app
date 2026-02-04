@@ -8,25 +8,20 @@
 # IMPORTS
 # =====================================================
 import streamlit as st
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, UnidentifiedImageError
 import io
 
 
 # =====================================================
 # FUNÇÕES AUXILIARES (LÓGICA PURA)
 # =====================================================
-def crop_aspect(img, ratio):
-    w, h = img.size
-    current = w / h
-
-    if current > ratio:
-        new_w = int(h * ratio)
-        offset = (w - new_w) // 2
-        return img.crop((offset, 0, offset + new_w, h))
-    else:
-        new_h = int(w * ratio)
-        offset = (h - new_h) // 2
-        return img.crop((0, offset, w, new_h + offset))
+def abrir_imagem_segura(imagem_bytes):
+    if not imagem_bytes or not isinstance(imagem_bytes, (bytes, bytearray)):
+        return None
+    try:
+        return Image.open(io.BytesIO(imagem_bytes)).convert("RGBA")
+    except (UnidentifiedImageError, Exception):
+        return None
 
 
 def carregar_fonte(nome, tamanho):
@@ -58,25 +53,41 @@ def render_etapa_canvas():
     )
 
     # =================================================
-    # BASE DO CANVAS (SEM IMAGEM)
+    # STATE DA IMAGEM BASE
     # =================================================
-    formato = st.selectbox(
-        "Formato",
-        ["1:1", "4:5", "9:16", "16:9", "3:4"]
+    if "imagem_base" not in st.session_state:
+        st.session_state.imagem_base = None
+
+    # =================================================
+    # UPLOAD DO POST PRONTO (SUBSTITUI IMAGEM BASE)
+    # =================================================
+    st.markdown("### 📤 Upload do post pronto")
+
+    arquivo = st.file_uploader(
+        "Envie o post criado fora do zAz (Canva, CapCut, Adobe, etc)",
+        type=["png", "jpg", "jpeg"]
     )
 
-    tamanhos = {
-        "1:1": (1080, 1080),
-        "4:5": (1080, 1350),
-        "9:16": (1080, 1920),
-        "16:9": (1920, 1080),
-        "3:4": (1080, 1440)
-    }
+    if arquivo is not None:
+        st.session_state.imagem_base = arquivo.read()
 
-    largura, altura = tamanhos[formato]
+    # =================================================
+    # ABERTURA SEGURA DA IMAGEM
+    # =================================================
+    base_img = abrir_imagem_segura(st.session_state.imagem_base)
 
-    # Canvas transparente
-    img = Image.new("RGBA", (largura, altura), (0, 0, 0, 0))
+    if base_img is None:
+        st.info("Faça upload de um post pronto para continuar.")
+
+        st.divider()
+        col1, _ = st.columns(2)
+
+        with col1:
+            if st.button("⬅ Voltar", use_container_width=True):
+                st.session_state.etapa = 6
+                st.rerun()
+
+        return
 
     # =================================================
     # CONTROLES
@@ -90,9 +101,9 @@ def render_etapa_canvas():
     c1, c2, c3, c4, c5 = st.columns(5)
 
     with c1:
-        x = st.slider("X", 0, largura, 40)
+        x = st.slider("X", 0, base_img.width, 40)
     with c2:
-        y = st.slider("Y", 0, altura, 40)
+        y = st.slider("Y", 0, base_img.height, 40)
     with c3:
         tamanho = st.slider("Tamanho", 20, 200, 80)
     with c4:
@@ -112,7 +123,8 @@ def render_etapa_canvas():
     # =================================================
     font = carregar_fonte(fonte_nome, tamanho)
 
-    overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    preview = base_img.copy()
+    overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
 
     if texto.strip():
@@ -131,7 +143,7 @@ def render_etapa_canvas():
 
         draw.multiline_text((x, y), texto, font=font, fill=cor_texto, spacing=6)
 
-    preview = Image.alpha_composite(img, overlay)
+    preview = Image.alpha_composite(preview, overlay)
 
     # =================================================
     # PREVIEW + DOWNLOAD
