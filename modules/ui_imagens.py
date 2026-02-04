@@ -82,8 +82,9 @@ def render_etapa_imagens():
             st.rerun()
 
 
-    # PRÓXIMO (post)
+    # SEGUIR (post)
     with col2:
-        if st.button("Próximo ➡", use_container_width=True):
+        if st.button("Seguir ➡", use_container_width=True):
             st.session_state.etapa = 5
             st.rerun()
+
