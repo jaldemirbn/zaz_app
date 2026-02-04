@@ -1,10 +1,19 @@
+# =====================================================
+# zAz — MÓDULO 07
+# ETAPA 07 — CANVAS DO POST
+# =====================================================
+
+
+# =====================================================
+# IMPORTS
+# =====================================================
 import streamlit as st
 from PIL import Image, ImageDraw, ImageFont
 import io
 
 
 # =====================================================
-# CROP CENTRAL POR PROPORÇÃO
+# FUNÇÕES AUXILIARES
 # =====================================================
 def crop_aspect(img, ratio):
     w, h = img.size
@@ -21,25 +30,51 @@ def crop_aspect(img, ratio):
 
 
 # =====================================================
-# RENDER CANVAS
+# RENDER PRINCIPAL
 # =====================================================
 def render_etapa_canvas():
 
+    # -------------------------------------------------
+    # TÍTULO
+    # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28;'>07. Canvas do post</h3>",
         unsafe_allow_html=True
     )
 
+
+    # =================================================
+    # VALIDAÇÃO — SEM IMAGEM
+    # =================================================
     if "imagem_bytes" not in st.session_state:
+
         st.info("Envie uma imagem na etapa anterior para continuar.")
+
+        st.divider()
+        col1, col2 = st.columns(2)
+
+        # -------------------------------------------------
+        # BOTÃO — VOLTAR
+        # -------------------------------------------------
+        with col1:
+            if st.button("⬅ Voltar", use_container_width=True):
+                st.session_state.etapa = 5
+                st.rerun()
+
         return
 
 
+    # =================================================
+    # PREPARAR IMAGEM BASE
+    # =================================================
     base_img = Image.open(
         io.BytesIO(st.session_state["imagem_bytes"])
     ).convert("RGBA")
 
 
+    # =================================================
+    # CONTROLES
+    # =================================================
     formato = st.selectbox(
         "Formato",
         ["Original", "1:1", "4:5", "9:16", "16:9", "3:4"]
@@ -53,10 +88,7 @@ def render_etapa_canvas():
         "3:4": 3/4
     }
 
-    if formato != "Original":
-        img = crop_aspect(base_img, ratios[formato])
-    else:
-        img = base_img.copy()
+    img = crop_aspect(base_img, ratios[formato]) if formato != "Original" else base_img.copy()
 
 
     texto = st.text_area(
@@ -92,6 +124,9 @@ def render_etapa_canvas():
     alpha = st.slider("Transparência", 0, 255, 140)
 
 
+    # =================================================
+    # DESENHO
+    # =================================================
     fontes = {
         "Sans": "DejaVuSans.ttf",
         "Sans Bold": "DejaVuSans-Bold.ttf",
@@ -102,7 +137,6 @@ def render_etapa_canvas():
     }
 
     font = ImageFont.truetype(fontes[fonte_nome], tamanho)
-
 
     preview = img.copy()
     overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
@@ -121,22 +155,18 @@ def render_etapa_canvas():
             fill=(r, g, b, alpha)
         )
 
-    draw.multiline_text(
-        (x, y),
-        texto,
-        font=font,
-        fill=cor_texto,
-        spacing=6
-    )
+    draw.multiline_text((x, y), texto, font=font, fill=cor_texto, spacing=6)
 
     preview = Image.alpha_composite(preview, overlay)
 
-    st.image(preview, use_container_width=True)
 
+    # =================================================
+    # PREVIEW + DOWNLOAD
+    # =================================================
+    st.image(preview, use_container_width=True)
 
     buffer = io.BytesIO()
     preview.convert("RGB").save(buffer, format="PNG")
-
     st.session_state["imagem_final_bytes"] = buffer.getvalue()
 
     st.download_button(
@@ -148,16 +178,26 @@ def render_etapa_canvas():
     )
 
 
+    # =================================================
+    # BOTÕES
+    # =================================================
     st.divider()
-
     col1, col2 = st.columns(2)
 
+
+    # -------------------------------------------------
+    # BOTÃO — VOLTAR
+    # -------------------------------------------------
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
-            st.session_state.etapa = 6
+            st.session_state.etapa = 5
             st.rerun()
 
+
+    # -------------------------------------------------
+    # BOTÃO — PRÓXIMO
+    # -------------------------------------------------
     with col2:
         if st.button("Próximo ➡", use_container_width=True):
-            st.session_state.etapa = 7   # ← CORREÇÃO AQUI
+            st.session_state.etapa = 7
             st.rerun()
