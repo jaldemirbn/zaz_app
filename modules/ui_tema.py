@@ -58,7 +58,10 @@ def render_etapa_tema():
             label_visibility="collapsed"
         )
 
-        gerar = st.form_submit_button("Gerar ideias", use_container_width=True)
+        gerar = st.form_submit_button(
+            "Gerar ideias",
+            use_container_width=True
+        )
 
         if gerar and tema:
 
@@ -68,5 +71,24 @@ def render_etapa_tema():
             ideias = [i.strip() for i in resposta.split("\n") if i.strip()]
 
             st.session_state.ideias_originais = ideias
+
+
+    # -----------------------------
+    # RESULTADO
+    # -----------------------------
+    if st.session_state.ideias_originais:
+        st.success(f"{len(st.session_state.ideias_originais)} ideias geradas ✔")
+
+
+    # -----------------------------
+    # NAVEGAÇÃO (SEMPRE POR ÚLTIMO)
+    # -----------------------------
+    st.divider()
+
+    if st.button("Seguir ➡", use_container_width=True):
+
+        if not st.session_state.ideias_originais:
+            st.warning("Gere as ideias primeiro.")
+        else:
             st.session_state.etapa = 2
             st.rerun()
