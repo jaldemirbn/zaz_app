@@ -94,30 +94,36 @@ def render_etapa_headline():
         st.rerun()
 
 
-    # =================================================
-    # BOTÕES INFERIORES CENTRALIZADOS
+      # =================================================
+    # BOTÕES INFERIORES (CENTRALIZADOS)
     # =================================================
     st.divider()
 
-    espaco, centro = st.columns([1, 2])
+    espaco_esq, centro, espaco_dir = st.columns([1, 3, 1])
 
-    # TROCAR
-    with col1:
-        if escolhida:
-            if st.button("🔁 Trocar", use_container_width=True):
-                st.session_state["headline_escolhida"] = None
+    with centro:
+
+        col1, col2, col3 = st.columns(3)
+
+
+        # TROCAR
+        with col1:
+            if escolhida:
+                if st.button("🔁 Trocar", use_container_width=True):
+                    st.session_state["headline_escolhida"] = None
+                    st.rerun()
+
+
+        # VOLTAR
+        with col2:
+            if st.button("⬅ Voltar", use_container_width=True):
+                st.session_state.etapa = 1
                 st.rerun()
 
 
-    # VOLTAR
-    with col2:
-        if st.button("⬅ Voltar", use_container_width=True):
-            st.session_state.etapa = 1
-            st.rerun()
+        # PRÓXIMO
+        with col3:
+            if st.button("Próximo ➡", use_container_width=True):
+                st.session_state.etapa = 3
+                st.rerun()
 
-
-    # PRÓXIMO
-    with col3:
-        if st.button("Próximo ➡", use_container_width=True):
-            st.session_state.etapa = 3
-            st.rerun()
