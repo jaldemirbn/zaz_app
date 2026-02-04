@@ -6,64 +6,61 @@
 def gerar_prompt_post_simples():
 
     prompt = """
-Melhore esta fotografia mantendo 100% do realismo original.
+Aja como um diretor de arte publicitário e designer gráfico sênior altamente criativo.
 
-Objetivo:
-aprimorar qualidade técnica sem alterar a identidade da imagem, sem filtros artificiais e sem aparência de IA.
+Sua missão é criar a IDEIA visual de um post estático impactante para redes sociais.
 
-Correções obrigatórias:
+Não pense como editor de layout comum.
+Pense como um criativo de agência: primeiro o conceito, depois o design.
 
-Nitidez e foco:
-– aumentar nitidez de forma natural
-– preservar textura real de pele, tecido e superfícies
-– sem oversharpen ou halos
+Evite soluções óbvias ou genéricas.
+Busque uma abordagem original, inteligente e memorável.
 
-Iluminação:
-– corrigir exposição geral
-– recuperar altas luzes estouradas
-– recuperar sombras sem criar ruído
-– melhorar contraste de forma orgânica
-– manter direção de luz consistente
+Tema: [TEMA]
+Objetivo: [VENDA / ENGAJAMENTO / AUTORIDADE / POSICIONAMENTO]
+Público: [PÚBLICO]
+Tom emocional: [MODERNO / OUSADO / PREMIUM / POÉTICO / ENERGÉTICO]
 
-Cores:
-– balanço de branco preciso
-– tons de pele naturais
-– remover dominantes de cor indesejadas
-– paleta equilibrada
-– sem oversaturation
-– sem efeito HDR artificial
+Gere:
 
-Qualidade técnica:
-– reduzir ruído digital
-– remover granulação excessiva
-– eliminar artefatos de compressão
-– corrigir distorções de lente
-– corrigir perspectiva
-– aumentar resolução mantendo detalhes reais
-– melhorar microtexturas
+1. Conceito criativo principal
+– ideia central forte ou metáfora visual
+– sensação que o post deve causar
+– por que essa ideia chama atenção no feed
 
-Limpeza:
-– remover manchas, poeira, sujeira do sensor ou distrações pequenas
-– preservar marcas naturais do ambiente
-– não plastificar pele
-– não suavizar excessivamente rostos
+2. Direção artística
+– estilo visual sugerido (fotográfico, minimalista, dramático, urbano, elegante, etc)
+– clima de luz e cor
+– atmosfera geral
 
-Estética:
-– aparência de fotografia profissional
-– contraste cinematográfico suave
-– profundidade de campo preservada
-– resultado orgânico, natural, elegante
-– como foto tratada por fotógrafo sênior no Lightroom
+3. Proposta de composição
+– como os elementos se distribuem
+– ponto focal principal
+– hierarquia visual
+– uso de espaço negativo
+– equilíbrio estético
+(não usar layouts padrão ou previsíveis)
 
-Restrições:
-– não alterar composição
-– não mudar expressões ou formas do corpo
-– não adicionar elementos
-– não transformar em arte digital
-– manter fidelidade total ao momento real
+4. Elementos do post
+– headline impactante
+– texto de apoio (se necessário)
+– CTA
+– imagens ou símbolos sugeridos
 
-Resultado final:
-imagem limpa, nítida, equilibrada, ultra realista, com qualidade de câmera full frame profissional, pronta para impressão ou revista.
+5. Recomendações de design
+– paleta de cores
+– tipografia
+– texturas ou efeitos sutis
+– estilo profissional e sofisticado
+– poucos elementos, máximo impacto
+
+Regras:
+priorize criatividade e personalidade.
+evite poluição visual.
+evite aparência de template.
+o resultado deve parecer capa de campanha publicitária ou peça de portfólio profissional.
+
+Saída em formato de briefing criativo claro, não técnico demais.
 """
 
     return prompt
