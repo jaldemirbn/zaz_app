@@ -24,6 +24,9 @@ def render_etapa_selecao_ideias():
     if "ideias_visiveis" not in st.session_state:
         st.session_state.ideias_visiveis = st.session_state.ideias_originais.copy()
 
+    if "ideias_filtradas" not in st.session_state:
+        st.session_state.ideias_filtradas = []
+
 
     # -----------------------------
     # TÍTULO
@@ -51,6 +54,7 @@ def render_etapa_selecao_ideias():
 
         if selecionadas:
             st.session_state.ideias_visiveis = selecionadas
+            st.session_state.ideias_filtradas = selecionadas
             st.success(f"{len(selecionadas)} ideias selecionadas ✓")
             st.rerun()
         else:
@@ -58,24 +62,25 @@ def render_etapa_selecao_ideias():
 
 
     # -----------------------------
-    # MOSTRAR TODAS (restaura)
+    # MOSTRAR TODAS (restaura lista)
     # -----------------------------
     if st.session_state.ideias_visiveis != st.session_state.ideias_originais:
         if st.button("Mostrar ideias"):
             st.session_state.ideias_visiveis = st.session_state.ideias_originais.copy()
+            st.session_state.ideias_filtradas = []
             st.rerun()
 
 
     # -----------------------------
-    # NAVEGAÇÃO
+    # NAVEGAÇÃO (SEMPRE ÚLTIMO)
     # -----------------------------
     st.divider()
 
     col1, col2 = st.columns(2)
 
+    # 🔥 VOLTAR NÃO LIMPA NADA — SÓ NAVEGA
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
-            st.session_state.ideias_visiveis = st.session_state.ideias_originais.copy()
             st.session_state.etapa = 1
             st.rerun()
 
@@ -83,8 +88,7 @@ def render_etapa_selecao_ideias():
         if st.button(
             "Seguir ➜",
             use_container_width=True,
-            disabled=not selecionadas
+            disabled=not st.session_state.ideias_filtradas
         ):
-            st.session_state.ideias_filtradas = selecionadas
             st.session_state.etapa = 3
             st.rerun()
