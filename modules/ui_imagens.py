@@ -1,6 +1,6 @@
 # =====================================================
 # zAz — MÓDULO MÍDIA
-# ETAPA 05 — UPLOAD IMAGEM OU VÍDEO
+# ETAPA 04 — UPLOAD IMAGEM OU VÍDEO
 # =====================================================
 
 import streamlit as st
@@ -104,3 +104,4 @@ def render_etapa_imagens():
         if st.button("Seguir ➡", use_container_width=True):
             st.session_state.etapa = 5
             st.rerun()
+
