@@ -43,18 +43,25 @@ def render_etapa_selecao_ideias():
     selecionadas = []
 
     for ideia in st.session_state.ideias_visiveis:
-        if st.checkbox(ideia, key=f"ideia_{ideia}"):
+
+        marcado = st.checkbox(
+            ideia,
+            key=f"ideia_{ideia}",
+            value=ideia in st.session_state.ideias_filtradas
+        )
+
+        if marcado:
             selecionadas.append(ideia)
 
 
     # -----------------------------
-    # CONFIRMAR (filtra visualmente)
+    # CONFIRMAR
     # -----------------------------
     if st.button("Confirmar ideias", use_container_width=True):
 
         if selecionadas:
-            st.session_state.ideias_visiveis = selecionadas
             st.session_state.ideias_filtradas = selecionadas
+            st.session_state.ideias_visiveis = selecionadas
             st.success(f"{len(selecionadas)} ideias selecionadas ✓")
             st.rerun()
         else:
@@ -62,23 +69,28 @@ def render_etapa_selecao_ideias():
 
 
     # -----------------------------
-    # MOSTRAR TODAS (restaura lista)
+    # MOSTRAR TODAS (mantém checks)
     # -----------------------------
     if st.session_state.ideias_visiveis != st.session_state.ideias_originais:
+
         if st.button("Mostrar ideias"):
+
             st.session_state.ideias_visiveis = st.session_state.ideias_originais.copy()
-            st.session_state.ideias_filtradas = []
+
+            # 🔥 restaura checks
+            for ideia in st.session_state.ideias_filtradas:
+                st.session_state[f"ideia_{ideia}"] = True
+
             st.rerun()
 
 
     # -----------------------------
-    # NAVEGAÇÃO (SEMPRE ÚLTIMO)
+    # NAVEGAÇÃO
     # -----------------------------
     st.divider()
 
     col1, col2 = st.columns(2)
 
-    # 🔥 VOLTAR NÃO LIMPA NADA — SÓ NAVEGA
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
             st.session_state.etapa = 1
