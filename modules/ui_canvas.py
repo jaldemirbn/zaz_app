@@ -157,8 +157,7 @@ def render_etapa_canvas():
 
         font = carregar_fonte(fonte_nome, tamanho)
 
-        preview = img.copy()
-        overlay = Image.new("RGBA", preview.size, (0, 0, 0, 0))
+        overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
         draw = ImageDraw.Draw(overlay)
 
         if texto.strip():
@@ -177,9 +176,9 @@ def render_etapa_canvas():
 
             draw.multiline_text((x, y), texto, font=font, fill=cor_texto, spacing=6)
 
-        preview = Image.alpha_composite(preview, overlay)
+        preview = Image.alpha_composite(img, overlay)
 
-        st.image(preview, use_container_width=True)
+        # (REMOVIDO) st.image(preview, use_container_width=True)
 
         buffer = io.BytesIO()
         preview.convert("RGB").save(buffer, format="PNG")
