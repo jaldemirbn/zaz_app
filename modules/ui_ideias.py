@@ -7,13 +7,50 @@
 # ETAPA IDEIAS
 # =====================================================
 
+
+# =====================================================
+# IMPORTS
+# =====================================================
 import streamlit as st
 from modules.ia_engine import gerar_ideias
-from modules.state_manager import limpar_fluxo_completo  # 🔥 NOVO
+from modules.state_manager import limpar_fluxo_completo
 
 
+# =====================================================
+# CSS / ESTILO
+# =====================================================
+st.markdown(
+    """
+    <style>
+    div.stButton button p {
+        color: #ff9d28 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
+# =====================================================
+# FUNÇÕES AUXILIARES (ETAPA 03 - LÓGICA)
+# =====================================================
+def preparar_etapa_imagens():
+
+    if "descricoes_imagem" not in st.session_state:
+        st.session_state.descricoes_imagem = {}
+
+    if "descricao_escolhida" not in st.session_state:
+        st.session_state.descricao_escolhida = {}
+
+
+# =====================================================
+# RENDER PRINCIPAL
+# =====================================================
 def render_etapa_ideias():
 
+    # -------------------------------------------------
+    # TÍTULO
+    # -------------------------------------------------
     st.markdown(
         """
         <h3 style='color:#ff9d28; text-align:left; margin-bottom:8px;'>
@@ -23,21 +60,10 @@ def render_etapa_ideias():
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        """
-        <style>
-        div.stButton button p {
-            color: #ff9d28 !important;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
 
-
-    # -------------------------------------------------
-    # STATE
-    # -------------------------------------------------
+    # =================================================
+    # STATES
+    # =================================================
     if "ideias" not in st.session_state:
         st.session_state.ideias = []
 
@@ -48,9 +74,9 @@ def render_etapa_ideias():
         st.session_state.modo_filtrado = False
 
 
-    # -------------------------------------------------
-    # INPUT + BOTÃO
-    # -------------------------------------------------
+    # =================================================
+    # INPUT + GERAR IDEIAS
+    # =================================================
     with st.form("form_gerar_ideias", clear_on_submit=False):
 
         col_input, col_btn = st.columns([7, 2], gap="small")
@@ -80,20 +106,20 @@ def render_etapa_ideias():
             st.session_state.modo_filtrado = False
 
 
-    # -------------------------------------------------
-    # LIMPAR (🔥 CORREÇÃO AQUI)
-    # -------------------------------------------------
+    # =================================================
+    # BOTÃO — LIMPAR FLUXO
+    # =================================================
     col_space, col_reset = st.columns([7, 2], gap="small")
 
     with col_reset:
         if st.button("Limpar", use_container_width=True):
-            limpar_fluxo_completo()  # 🔥 NÃO USA CLEAR()
+            limpar_fluxo_completo()
             st.rerun()
 
 
-    # -------------------------------------------------
-    # ETAPA 02
-    # -------------------------------------------------
+    # =================================================
+    # LISTA DE IDEIAS
+    # =================================================
     if st.session_state.ideias:
 
         st.markdown(
@@ -112,22 +138,33 @@ def render_etapa_ideias():
             if marcado:
                 selecionadas.append(ideia)
 
+
+        # -------------------------------------------------
+        # BOTÃO — FILTRAR IDEIAS
+        # -------------------------------------------------
         if st.button("Ideias escolhidas"):
             if selecionadas:
                 st.session_state.ideias = selecionadas
                 st.session_state.modo_filtrado = True
                 st.rerun()
 
+
+        # -------------------------------------------------
+        # BOTÃO — MOSTRAR TODAS
+        # -------------------------------------------------
         if st.session_state.ideias != st.session_state.ideias_originais:
             if st.button("Mostrar ideias"):
                 st.session_state.ideias = st.session_state.ideias_originais.copy()
+
                 for ideia in st.session_state.ideias_originais:
                     st.session_state.pop(f"ideia_{ideia}", None)
+
                 st.session_state.modo_filtrado = False
                 st.rerun()
 
+
         # =================================================
-        # 🔥 PROSSEGUIR
+        # BOTÃO — PROSSEGUIR
         # =================================================
         st.divider()
 
@@ -138,15 +175,3 @@ def render_etapa_ideias():
             else:
                 st.session_state.etapa = 2
                 st.rerun()
-
-
-# -------------------------------------------------
-# ETAPA 03 (LÓGICA)
-# -------------------------------------------------
-def preparar_etapa_imagens():
-
-    if "descricoes_imagem" not in st.session_state:
-        st.session_state.descricoes_imagem = {}
-
-    if "descricao_escolhida" not in st.session_state:
-        st.session_state.descricao_escolhida = {}
