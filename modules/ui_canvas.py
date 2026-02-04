@@ -201,6 +201,6 @@ def render_etapa_canvas():
             st.rerun()
 
     with col2:
-        if st.button("Próximo ➡", use_container_width=True):
+        if st.button("Seguir ➡", use_container_width=True):
             st.session_state.etapa = 8
             st.rerun()
