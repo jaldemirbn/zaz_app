@@ -1,9 +1,15 @@
 # =====================================================
 # zAz — MÓDULO 07
 # ETAPA 07 — CANVAS DO POST
-# Layout manual + upload opcional
+# Responsabilidade:
+#   • montar layout manual OU
+#   • receber post pronto (upload)
 # =====================================================
 
+
+# =====================================================
+# IMPORTS
+# =====================================================
 import streamlit as st
 from PIL import Image, ImageDraw, ImageFont
 import io
@@ -41,9 +47,19 @@ def render_etapa_canvas():
 
 
     # =================================================
-    # 🔥 NOVO — UPLOAD DE POST PRONTO (OPCIONAL)
+    # STATES
     # =================================================
-    st.markdown("### Ou envie um post já pronto")
+    imagem_base = st.session_state.get("imagem_bytes")
+    imagem_final = st.session_state.get("imagem_final_bytes")
+
+
+    # =================================================
+    # =================================================
+    # 🔥 MODO 1 — UPLOAD DO POST PRONTO
+    # =================================================
+    # =================================================
+    st.divider()
+    st.markdown("### 📤 Ou envie um post já pronto")
 
     arquivo_pronto = st.file_uploader(
         "Upload do post final",
@@ -53,48 +69,46 @@ def render_etapa_canvas():
 
     if arquivo_pronto:
 
-        tipo = arquivo_pronto.type
         dados = arquivo_pronto.read()
 
-        if tipo.startswith("image"):
+        if arquivo_pronto.type.startswith("image"):
             st.image(dados, use_container_width=True)
-
-        elif tipo.startswith("video"):
+        else:
             st.video(dados)
 
         st.session_state["imagem_final_bytes"] = dados
 
-        st.success("Post carregado ✓")
-
-        st.divider()
-        col1, col2 = st.columns(2)
-
-        with col1:
-            if st.button("⬅ Voltar", use_container_width=True):
-                st.session_state.etapa = 6
-                st.rerun()
-
-        with col2:
-            if st.button("Próximo ➜", use_container_width=True):
-                st.session_state.etapa = 8
-                st.rerun()
-
-        return  # para aqui se usou upload
-
-
-    # =================================================
-    # CANVAS ORIGINAL (MANTIDO)
-    # =================================================
-    if "imagem_bytes" not in st.session_state:
-        st.info("Envie uma imagem na etapa anterior.")
+        _render_navegacao(voltar=6, proximo=8)
         return
 
 
-    base_img = Image.open(
-        io.BytesIO(st.session_state["imagem_bytes"])
-    ).convert("RGBA")
+    # =================================================
+    # =================================================
+    # 🔥 MODO 2 — CANVAS MANUAL (ORIGINAL)
+    # =================================================
+    # =================================================
+    st.divider()
+    st.markdown("### ✏️ Ou montar layout aqui dentro")
 
 
+    # -------------------------------------------------
+    # VALIDAÇÃO
+    # -------------------------------------------------
+    if not imagem_base:
+        st.info("Envie uma imagem na etapa anterior.")
+        _render_navegacao(voltar=5, proximo=None)
+        return
+
+
+    # -------------------------------------------------
+    # BASE
+    # -------------------------------------------------
+    base_img = Image.open(io.BytesIO(imagem_base)).convert("RGBA")
+
+
+    # -------------------------------------------------
+    # CONTROLES
+    # -------------------------------------------------
     formato = st.selectbox(
         "Formato",
         ["Original", "1:1", "4:5", "9:16", "16:9", "3:4"]
@@ -117,10 +131,17 @@ def render_etapa_canvas():
         height=120
     )
 
+    col1, col2, col3 = st.columns(3)
 
-    x = st.slider("X", 0, img.width, 40)
-    y = st.slider("Y", 0, img.height, 40)
-    tamanho = st.slider("Tamanho", 20, 200, 80)
+    with col1:
+        x = st.slider("X", 0, img.width, 40)
+
+    with col2:
+        y = st.slider("Y", 0, img.height, 40)
+
+    with col3:
+        tamanho = st.slider("Tamanho", 20, 200, 80)
+
 
     cor_texto = st.color_picker("Cor texto", "#FFFFFF")
     usar_fundo = st.checkbox("Fundo atrás do texto", True)
@@ -128,6 +149,9 @@ def render_etapa_canvas():
     alpha = st.slider("Transparência", 0, 255, 140)
 
 
+    # -------------------------------------------------
+    # DESENHO
+    # -------------------------------------------------
     font = ImageFont.truetype("DejaVuSans-Bold.ttf", tamanho)
 
     preview = img.copy()
@@ -152,6 +176,9 @@ def render_etapa_canvas():
     preview = Image.alpha_composite(preview, overlay)
 
 
+    # -------------------------------------------------
+    # PREVIEW
+    # -------------------------------------------------
     st.image(preview, use_container_width=True)
 
     buffer = io.BytesIO()
@@ -167,15 +194,27 @@ def render_etapa_canvas():
     )
 
 
+    # -------------------------------------------------
+    # NAVEGAÇÃO
+    # -------------------------------------------------
+    _render_navegacao(voltar=6, proximo=8)
+
+
+
+# =====================================================
+# COMPONENTE PADRÃO — NAVEGAÇÃO
+# =====================================================
+def _render_navegacao(voltar=None, proximo=None):
+
     st.divider()
     col1, col2 = st.columns(2)
 
     with col1:
-        if st.button("⬅ Voltar", use_container_width=True):
-            st.session_state.etapa = 6
+        if voltar and st.button("⬅ Voltar", use_container_width=True):
+            st.session_state.etapa = voltar
             st.rerun()
 
     with col2:
-        if st.button("Próximo ➜", use_container_width=True):
-            st.session_state.etapa = 8
+        if proximo and st.button("Próximo ➜", use_container_width=True):
+            st.session_state.etapa = proximo
             st.rerun()
