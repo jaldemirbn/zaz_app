@@ -100,7 +100,7 @@ Retorne o texto corrido, sem formatação especial.
 def render_etapa_legenda():
 
     st.markdown(
-        "<h3 style='color:#FF9D28;'>07. Legenda</h3>",
+        "<h3 style='color:#FF9D28;'>08. Legenda</h3>",
         unsafe_allow_html=True
     )
 
