@@ -8,7 +8,6 @@
 # IMPORTS
 # =====================================================
 import streamlit as st
-from modules.state_manager import limpar_fluxo_completo
 
 
 # =====================================================
@@ -17,13 +16,14 @@ from modules.state_manager import limpar_fluxo_completo
 def render_etapa_selecao_ideias():
 
     # -----------------------------
-    # STATES
+    # STATE
     # -----------------------------
     if "ideias_originais" not in st.session_state:
         st.session_state.ideias_originais = []
 
     if "ideias_filtradas" not in st.session_state:
         st.session_state.ideias_filtradas = []
+
 
     ideias_base = (
         st.session_state.ideias_filtradas
@@ -33,25 +33,10 @@ def render_etapa_selecao_ideias():
 
 
     # -----------------------------
-    # CSS
-    # -----------------------------
-    st.markdown(
-        """
-        <style>
-        div.stButton button p {
-            color: #ff9d28 !important;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-    # -----------------------------
     # TÍTULO
     # -----------------------------
     st.markdown(
-        "<h3 style='color:#ff9d28;'>02. Ideias para serem postadas</h3>",
+        "<h3 style='color:#ff9d28;'>02. Escolha as ideias que quer usar</h3>",
         unsafe_allow_html=True
     )
 
@@ -62,45 +47,35 @@ def render_etapa_selecao_ideias():
     selecionadas = []
 
     for ideia in ideias_base:
-        marcado = st.checkbox(ideia, key=f"ideia_{ideia}")
-        if marcado:
+        if st.checkbox(ideia, key=f"ideia_{ideia}"):
             selecionadas.append(ideia)
 
 
     # -----------------------------
-    # BOTÃO PRINCIPAL (filtrar)
+    # BOTÃO PRINCIPAL (CONFIRMAR)
     # -----------------------------
-    if st.button("Ideias escolhidas", use_container_width=True):
+    if st.button("Confirmar ideias", use_container_width=True):
+
         if selecionadas:
             st.session_state.ideias_filtradas = selecionadas
-            st.rerun()
+            st.success(f"{len(selecionadas)} ideias selecionadas ✓")
+        else:
+            st.warning("Selecione pelo menos uma ideia.")
 
 
     # -----------------------------
-    # UTILITÁRIOS
-    # -----------------------------
-    col1, col2 = st.columns(2)
-
-    with col1:
-        if st.button("Mostrar todas"):
-            st.session_state.ideias_filtradas = []
-            st.rerun()
-
-    with col2:
-        if st.button("Limpar fluxo"):
-            limpar_fluxo_completo()
-            st.rerun()
-
-
-    # -----------------------------
-    # NAVEGAÇÃO
+    # NAVEGAÇÃO (SEMPRE ÚLTIMO)
     # -----------------------------
     st.divider()
 
-    if st.button("Seguir ➡", use_container_width=True):
+    col1, col2 = st.columns(2)
 
-        if not st.session_state.ideias_filtradas:
-            st.warning("Escolha pelo menos uma ideia.")
-        else:
+    with col1:
+        if st.button("⬅ Voltar", use_container_width=True):
+            st.session_state.etapa = 1
+            st.rerun()
+
+    with col2:
+        if st.button("Seguir ➜", use_container_width=True, disabled=not st.session_state.ideias_filtradas):
             st.session_state.etapa = 3
             st.rerun()
