@@ -93,3 +93,4 @@ Dicas finais (importantes)
 - O app ajuda, mas você decide.
 
 Pronto. Agora é só repetir o processo sempre que quiser criar um novo post.
+""")
