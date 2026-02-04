@@ -1,78 +1,136 @@
 # =====================================================
-# 🤖 zAz — DNA VISUAL FOTOGRÁFICO GLOBAL
-# TODAS as imagens do sistema devem seguir este padrão
+#             Etapa 04 - Conceito (VERSÃO SEGURA)
 # =====================================================
 
+import streamlit as st
+from modules.state_manager import (
+    limpar_conceito,
+    limpar_imagens,
+    limpar_texto,
+    limpar_postagem
+)
+
+
+# =====================================================
+# 🤖 PROMPT FOTOGRÁFICO EMBUTIDO (SEM IMPORT EXTERNO)
+# =====================================================
 PROMPT_BASE_FOTOGRAFICO = """
 Gere uma fotografia profissional, não ilustração, não arte digital.
 
 Tema principal: {assunto}.
 
-A imagem deve parecer capturada por um fotógrafo experiente em uma situação real, com naturalidade e credibilidade.
+A imagem deve parecer capturada por um fotógrafo experiente em uma situação real.
 
 Intenção narrativa:
 – transmitir {emocao}
-– momento espontâneo, não posado
+– momento espontâneo
 – sensação de história acontecendo
 
-Composição fotográfica:
-– regra dos terços ou enquadramento intencional
-– linhas guia naturais
-– equilíbrio visual
-– negative space bem distribuído
-– camadas de profundidade (foreground, midground, background)
-– sem elementos distraindo
+Composição:
+– regra dos terços
+– profundidade (foreground, midground, background)
+– sem distrações
 
-Lente e câmera:
-– lente {lente}
-– profundidade de campo realista
-– compressão natural
-– leve bokeh orgânico
+Lente:
+– {lente}
+– bokeh orgânico
 
-Iluminação:
-– luz natural realista
-– sombras coerentes
-– contraste equilibrado
-– textura real de pele, tecido e ambiente
-
-Cor e tratamento:
-– tons naturais
-– color grading cinematográfico sutil
-– sem oversaturation
-– sem aparência digital
-
-Qualidade técnica:
-– foco perfeito
-– nitidez alta
-– microtexturas visíveis
-– proporções reais
-– ultra realista
-
-Acabamento:
-– leve grão de filme
-– estética editorial/documental
-– aparência de foto profissional premiada
-
-Resultado:
-uma fotografia autêntica, sofisticada e profissional.
+Iluminação natural
+Cores naturais
+Ultra realista
+Aparência profissional de revista.
 """
 
 
-# =====================================================
-# FUNÇÃO OFICIAL DO SISTEMA
-# =====================================================
-def montar_prompt_fotografico(
-    assunto: str,
-    emocao: str = "autenticidade",
-    lente: str = "50mm"
-):
-    """
-    Monta o prompt fotográfico padrão do zAz.
-    Sempre use essa função para gerar descrições de imagem.
-    """
+def _gerar_conceito(ideias, headline):
+
+    assunto = f"{headline} | {', '.join(ideias)}"
 
     return PROMPT_BASE_FOTOGRAFICO.format(
         assunto=assunto,
-        emocao=emocao,
-        lente=lente
+        emocao="autenticidade",
+        lente="50mm"
     )
+
+
+# =====================================================
+# RENDER
+# =====================================================
+def render_etapa_conceito():
+
+    if not st.session_state.get("headline_escolhida"):
+        return
+
+    if "conceito_visual" not in st.session_state:
+        st.session_state.conceito_visual = None
+
+
+    st.markdown(
+        "<h3 style='color:#FF9D28;'>04. Conceito visual</h3>",
+        unsafe_allow_html=True
+    )
+
+
+    # -------------------------------------------------
+    # GERAR
+    # -------------------------------------------------
+    if not st.session_state.conceito_visual:
+
+        if st.button("✨ Gerar conceito", use_container_width=True):
+
+            with st.spinner("Gerando conceito..."):
+                st.session_state.conceito_visual = _gerar_conceito(
+                    st.session_state.get("ideias", []),
+                    st.session_state.get("headline_escolhida")
+                )
+
+            st.rerun()
+
+        return
+
+
+    # -------------------------------------------------
+    # MOSTRAR
+    # -------------------------------------------------
+    st.text_area(
+        "Prompt fotográfico",
+        st.session_state.conceito_visual,
+        height=300
+    )
+
+
+    col1, col2, col3 = st.columns(3)
+
+
+    with col1:
+        if st.button("🔁 Novo conceito", use_container_width=True):
+            st.session_state.conceito_visual = None
+            st.rerun()
+
+
+    with col2:
+        st.markdown(
+            "[🎨 Criar imagem](https://labs.google/fx/tools/image-fx)"
+        )
+
+
+    with col3:
+        if st.button("Continuar ➡", use_container_width=True):
+            st.session_state.etapa = 4
+            st.rerun()
+
+
+    # -------------------------------------------------
+    # VOLTAR
+    # -------------------------------------------------
+    st.divider()
+
+    if st.button("⬅ Voltar", use_container_width=True):
+
+        limpar_conceito()
+        limpar_imagens()
+        limpar_texto()
+        limpar_postagem()
+
+        st.session_state.etapa = 2
+        st.rerun()
