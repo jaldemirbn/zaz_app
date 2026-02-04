@@ -23,7 +23,7 @@ def render_etapa_canvas():
     )
 
     # -------------------------------------------------
-    # 2. STATE
+    # 2. STATES
     # -------------------------------------------------
     if "arquivo_upload" not in st.session_state:
         st.session_state.arquivo_upload = None
@@ -36,7 +36,8 @@ def render_etapa_canvas():
     # -------------------------------------------------
     arquivo = st.file_uploader(
         "Envie o post (imagem ou vídeo)",
-        type=["png", "jpg", "jpeg", "mp4", "mov", "webm"]
+        type=["png", "jpg", "jpeg", "mp4", "mov", "webm"],
+        accept_multiple_files=False
     )
 
     if arquivo is not None:
@@ -45,13 +46,20 @@ def render_etapa_canvas():
             "video" if arquivo.type.startswith("video") else "imagem"
         )
 
+    # -------------------------------------------------
+    # 4. FEEDBACK VISUAL (CONFIRMAÇÃO)
+    # -------------------------------------------------
     if st.session_state.arquivo_upload is None:
         st.info("Envie uma imagem ou vídeo para continuar.")
     else:
-        st.success(f"Arquivo carregado ({st.session_state.tipo_upload}).")
+        if st.session_state.tipo_upload == "video":
+            st.success("Vídeo carregado com sucesso.")
+            st.video(st.session_state.arquivo_upload)
+        else:
+            st.success("Imagem carregada com sucesso.")
 
     # -------------------------------------------------
-    # 4. NAVEGAÇÃO (SEMPRE POR ÚLTIMO)
+    # 5. NAVEGAÇÃO (SEMPRE POR ÚLTIMO)
     # -------------------------------------------------
     st.divider()
     col1, col2 = st.columns(2)
