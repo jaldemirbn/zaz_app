@@ -24,7 +24,7 @@ def crop_aspect(img, ratio):
         offset = (w - new_w) // 2
         return img.crop((offset, 0, offset + new_w, h))
     else:
-        new_h = int(w / ratio)
+        new_h = int(w * ratio)
         offset = (h - new_h) // 2
         return img.crop((0, offset, w, new_h + offset))
 
@@ -44,9 +44,20 @@ def render_etapa_canvas():
 
 
     # =================================================
+    # STATE BASE DA IMAGEM (NOVO — PASSO 1)
+    # =================================================
+    if "imagem_base" not in st.session_state:
+        st.session_state.imagem_base = None
+
+    # Alimenta imagem_base a partir do fluxo antigo (LEGADO)
+    if st.session_state.imagem_base is None and "imagem_bytes" in st.session_state:
+        st.session_state.imagem_base = st.session_state["imagem_bytes"]
+
+
+    # =================================================
     # VALIDAÇÃO — SEM IMAGEM
     # =================================================
-    if "imagem_bytes" not in st.session_state:
+    if st.session_state.imagem_base is None:
 
         st.info("Envie uma imagem na etapa anterior para continuar.")
 
@@ -68,7 +79,7 @@ def render_etapa_canvas():
     # PREPARAR IMAGEM BASE
     # =================================================
     base_img = Image.open(
-        io.BytesIO(st.session_state["imagem_bytes"])
+        io.BytesIO(st.session_state.imagem_base)
     ).convert("RGBA")
 
 
