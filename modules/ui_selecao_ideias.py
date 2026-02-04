@@ -64,6 +64,15 @@ def render_etapa_selecao_ideias():
 
 
     # -----------------------------
+    # UTILITÁRIO (MOSTRAR TODAS)
+    # -----------------------------
+    if st.session_state.ideias_filtradas:
+        if st.button("Mostrar ideias"):
+            st.session_state.ideias_filtradas = []
+            st.rerun()
+
+
+    # -----------------------------
     # NAVEGAÇÃO (SEMPRE ÚLTIMO)
     # -----------------------------
     st.divider()
@@ -72,10 +81,15 @@ def render_etapa_selecao_ideias():
 
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
+            st.session_state.ideias_filtradas = []  # 🔥 limpa ao voltar
             st.session_state.etapa = 1
             st.rerun()
 
     with col2:
-        if st.button("Seguir ➜", use_container_width=True, disabled=not st.session_state.ideias_filtradas):
+        if st.button(
+            "Seguir ➜",
+            use_container_width=True,
+            disabled=not st.session_state.ideias_filtradas
+        ):
             st.session_state.etapa = 3
             st.rerun()
