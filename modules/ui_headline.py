@@ -101,16 +101,23 @@ def render_etapa_headline():
 
     espaco, centro = st.columns([1, 2])
 
-    with centro:
-
-        col_voltar, col_prox = st.columns(2)
-
-        with col_voltar:
-            if st.button("⬅ Voltar", use_container_width=True):
-                st.session_state.etapa = 1
+    # TROCAR
+    with col1:
+        if escolhida:
+            if st.button("🔁 Trocar", use_container_width=True):
+                st.session_state["headline_escolhida"] = None
                 st.rerun()
 
-        with col_prox:
-            if st.button("Próximo ➡", use_container_width=True):
-                st.session_state.etapa = 3
-                st.rerun()
+
+    # VOLTAR
+    with col2:
+        if st.button("⬅ Voltar", use_container_width=True):
+            st.session_state.etapa = 1
+            st.rerun()
+
+
+    # PRÓXIMO
+    with col3:
+        if st.button("Próximo ➡", use_container_width=True):
+            st.session_state.etapa = 3
+            st.rerun()
