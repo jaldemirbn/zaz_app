@@ -21,15 +21,8 @@ def render_etapa_selecao_ideias():
     if "ideias_originais" not in st.session_state:
         st.session_state.ideias_originais = []
 
-    if "ideias_filtradas" not in st.session_state:
-        st.session_state.ideias_filtradas = []
-
-
-    ideias_base = (
-        st.session_state.ideias_filtradas
-        if st.session_state.ideias_filtradas
-        else st.session_state.ideias_originais
-    )
+    if "ideias_visiveis" not in st.session_state:
+        st.session_state.ideias_visiveis = st.session_state.ideias_originais.copy()
 
 
     # -----------------------------
@@ -42,38 +35,39 @@ def render_etapa_selecao_ideias():
 
 
     # -----------------------------
-    # RESULTADO (checkboxes)
+    # CHECKBOXES
     # -----------------------------
     selecionadas = []
 
-    for ideia in ideias_base:
+    for ideia in st.session_state.ideias_visiveis:
         if st.checkbox(ideia, key=f"ideia_{ideia}"):
             selecionadas.append(ideia)
 
 
     # -----------------------------
-    # BOTÃO PRINCIPAL (CONFIRMAR)
+    # CONFIRMAR (filtra visualmente)
     # -----------------------------
     if st.button("Confirmar ideias", use_container_width=True):
 
         if selecionadas:
-            st.session_state.ideias_filtradas = selecionadas
+            st.session_state.ideias_visiveis = selecionadas
             st.success(f"{len(selecionadas)} ideias selecionadas ✓")
+            st.rerun()
         else:
             st.warning("Selecione pelo menos uma ideia.")
 
 
     # -----------------------------
-    # UTILITÁRIO (MOSTRAR TODAS)
+    # MOSTRAR TODAS (restaura)
     # -----------------------------
-    if st.session_state.ideias_filtradas:
+    if st.session_state.ideias_visiveis != st.session_state.ideias_originais:
         if st.button("Mostrar ideias"):
-            st.session_state.ideias_filtradas = []
+            st.session_state.ideias_visiveis = st.session_state.ideias_originais.copy()
             st.rerun()
 
 
     # -----------------------------
-    # NAVEGAÇÃO (SEMPRE ÚLTIMO)
+    # NAVEGAÇÃO
     # -----------------------------
     st.divider()
 
@@ -81,7 +75,7 @@ def render_etapa_selecao_ideias():
 
     with col1:
         if st.button("⬅ Voltar", use_container_width=True):
-            st.session_state.ideias_filtradas = []  # 🔥 limpa ao voltar
+            st.session_state.ideias_visiveis = st.session_state.ideias_originais.copy()
             st.session_state.etapa = 1
             st.rerun()
 
@@ -89,7 +83,8 @@ def render_etapa_selecao_ideias():
         if st.button(
             "Seguir ➜",
             use_container_width=True,
-            disabled=not st.session_state.ideias_filtradas
+            disabled=not selecionadas
         ):
+            st.session_state.ideias_filtradas = selecionadas
             st.session_state.etapa = 3
             st.rerun()
