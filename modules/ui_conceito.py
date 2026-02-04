@@ -23,17 +23,18 @@ st.markdown("""
 
 div.stButton > button,
 div.stDownloadButton > button,
-div[data-testid="stLinkButton"] > button {
+div[data-testid="stLinkButton"] button {
+
     background-color: transparent !important;
     color: #FF9D28 !important;
-    font-weight: 700 !important;
     border: 1px solid #FF9D28 !important;
-    border-radius: 8px !important;
+    font-weight: 700 !important;
 }
 
 div.stButton > button:hover,
 div.stDownloadButton > button:hover,
-div[data-testid="stLinkButton"] > button:hover {
+div[data-testid="stLinkButton"] button:hover {
+
     background-color: rgba(255,157,40,0.08) !important;
 }
 
@@ -224,3 +225,4 @@ def render_etapa_conceito():
         st.session_state.etapa_4_liberada = False
         st.session_state.etapa = 2
         st.rerun()
+
