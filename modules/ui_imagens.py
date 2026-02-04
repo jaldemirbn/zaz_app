@@ -1,29 +1,38 @@
 # =====================================================
-# zAz — MÓDULO MÍDIA
-# ETAPA 05 — UPLOAD IMAGEM OU VÍDEO
+# zAz — MÓDULO 05
+# ETAPA 05 — IMAGEM (UPLOAD)
 # =====================================================
 
+
+# =====================================================
+# IMPORTS
+# =====================================================
 import streamlit as st
 from PIL import Image
 import io
 
 
 # =====================================================
-# RENDER PRINCIPAL
+# RENDER
 # =====================================================
 def render_etapa_imagens():
 
+    # -------------------------------------------------
+    # TÍTULO
+    # -------------------------------------------------
     st.markdown(
-        "<h3 style='color:#FF9D28; margin-top:0;'>05. Enviar mídia</h3>",
+        "<h3 style='color:#FF9D28;'>05. Enviar imagem ou vídeo</h3>",
         unsafe_allow_html=True
     )
 
-    st.caption("Envie uma imagem ou vídeo do seu computador.")
+    st.caption(
+        "Envie a imagem criada no ImageFX ou qualquer mídia salva no seu dispositivo."
+    )
 
 
-    # -------------------------------------------------
-    # UPLOADER
-    # -------------------------------------------------
+    # =================================================
+    # UPLOAD
+    # =================================================
     arquivo = st.file_uploader(
         "Selecione ou arraste a mídia",
         type=["png", "jpg", "jpeg", "mp4", "mov", "webm"],
@@ -32,61 +41,49 @@ def render_etapa_imagens():
 
 
     # =================================================
-    # SEM ARQUIVO → mantém tela
+    # PREVIEW + SALVAR
     # =================================================
-    if not arquivo:
-        st.info("Faça upload de uma imagem ou vídeo para continuar.")
+    if arquivo:
+
+        tipo = arquivo.type
+
+
+        # -------------------------
+        # IMAGEM
+        # -------------------------
+        if tipo.startswith("image"):
+
+            img = Image.open(arquivo)
+
+            buffer = io.BytesIO()
+            img.save(buffer, format="PNG")
+
+            st.session_state["imagem_bytes"] = buffer.getvalue()
+            st.session_state.pop("video_bytes", None)
+
+            st.image(img, use_container_width=True)
+
+
+        # -------------------------
+        # VÍDEO
+        # -------------------------
+        elif tipo.startswith("video"):
+
+            video_bytes = arquivo.read()
+
+            st.session_state["video_bytes"] = video_bytes
+            st.session_state.pop("imagem_bytes", None)
+
+            st.video(video_bytes)
+
+
+    else:
+        st.info("Faça upload para continuar.")
         return
 
 
-    tipo = arquivo.type
-
-
     # =================================================
-    # IMAGEM
-    # =================================================
-    if tipo.startswith("image"):
-
-        img = Image.open(arquivo)
-
-        buffer = io.BytesIO()
-        img.save(buffer, format="PNG")
-
-        st.session_state["imagem_bytes"] = buffer.getvalue()
-        st.session_state.pop("video_bytes", None)
-
-        st.image(img, use_container_width=True)
-
-
-    # =================================================
-    # VÍDEO
-    # =================================================
-    elif tipo.startswith("video"):
-
-        video_bytes = arquivo.read()
-
-        st.session_state["video_bytes"] = video_bytes
-        st.session_state.pop("imagem_bytes", None)
-
-        st.video(video_bytes)
-
-
-    # =================================================
-    # DOWNLOAD (imagem)
-    # =================================================
-    if "imagem_bytes" in st.session_state:
-
-        st.download_button(
-            label="⬇️ Baixar imagem",
-            data=st.session_state["imagem_bytes"],
-            file_name="post.png",
-            mime="image/png",
-            use_container_width=True
-        )
-
-
-    # =================================================
-    # NAVEGAÇÃO (padrão wizard)
+    # NAVEGAÇÃO
     # =================================================
     st.divider()
     col1, col2 = st.columns(2)
