@@ -1,33 +1,23 @@
 # ========================================
-# POST SIMPLES — PROMPT ENXUTO
+# POST SIMPLES — PROMPT ULTRA ENXUTO
 # ========================================
 
 def gerar_prompt_post_simples():
 
     prompt = """
-Melhore a fotografia mantendo 100% do realismo.
+Aprimore a foto mantendo 100% realismo.
 
-Objetivo:
-elevar qualidade técnica sem alterar identidade ou parecer IA.
+Ajuste:
+nitidez natural, luz equilibrada, cores fiéis, menos ruído, corrigir lente/perspectiva, remover sujeiras pequenas.
 
-Ajustes obrigatórios:
-• nitidez natural, sem halos
-• exposição equilibrada, recuperar luzes e sombras
-• contraste orgânico
-• cores fiéis, tons de pele naturais, sem HDR ou saturação excessiva
-• reduzir ruído e artefatos
-• corrigir lente e perspectiva
-• remover sujeiras/manchas pequenas
-• preservar textura real (sem plastificar pele)
+Estilo:
+profissional, limpo, cinematográfico.
 
-Estética:
-fotografia profissional, limpa, elegante, cinematográfica.
-
-Restrições:
-não alterar composição, formas ou elementos.
+Proibido:
+HDR, filtros, oversharpen, pele plastificada, alterar composição.
 
 Resultado:
-imagem nítida, equilibrada, ultra realista, padrão câmera full-frame profissional.
+imagem nítida, natural, padrão câmera profissional.
 """
 
     return prompt
