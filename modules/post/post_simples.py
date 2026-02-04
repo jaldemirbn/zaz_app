@@ -1,21 +1,25 @@
 # ========================================
-# POST SIMPLES — PROMPT CRIATIVO PROFISSIONAL
+# POST SIMPLES — DIREÇÃO DE ARTE (LAYOUT)
 # ========================================
 
 def gerar_prompt_post_simples():
 
     prompt = """
-Aja como diretor de arte, designer gráfico e copywriter sênior de agência de publicidade.
+Aja como diretor de arte e designer gráfico sênior.
 
-Use o contexto fornecido (ideia, conceito visual, headline e texto) para criar um post estático profissional, criativo, visualmente marcante e persuasivo.
+Use EXCLUSIVAMENTE a imagem já existente descrita no contexto. Não crie, não altere e não gere nova imagem.
 
-Primeiro defina um conceito criativo forte e a emoção que o post deve transmitir; depois descreva a execução visual com precisão: composição, ponto focal, hierarquia, grid, enquadramento, tipografia (peso, escala, contraste), paleta estratégica, luz/sombra, profundidade, respiro, equilíbrio e posicionamento do CTA.
+Sua função é apenas planejar a montagem do post sobre essa imagem.
 
-O design deve parecer peça de campanha premium, moderno, elegante, legível no mobile e conduzir o olhar do usuário até a ação.
+Crie a direção criativa e descreva tecnicamente o layout: conceito, emoção, hierarquia, posicionamento de textos, headline, subtítulo, CTA, tipografia (peso, tamanho, contraste), cores de apoio, sombras, respiros, alinhamentos e equilíbrio visual.
 
-Seja criativo, específico e direto, evitando explicações.
+Defina como os elementos serão distribuídos SOBRE a imagem para guiar o olhar e aumentar conversão.
 
-Formato obrigatório: entregar somente a descrição final em um único parágrafo contínuo, sem quebras de linha, máximo 1200 caracteres.
+Não descreva nova cena, não invente objetos, não refaça a fotografia.
+
+Entregue somente instruções de design/layout.
+
+Formato obrigatório: um único parágrafo contínuo, sem quebras de linha, máximo 1200 caracteres.
 """
 
     return prompt
