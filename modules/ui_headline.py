@@ -121,9 +121,9 @@ def render_etapa_headline():
                 st.rerun()
 
 
-        # PRÓXIMO
+        # SEGUIR
         with col3:
-            if st.button("Próximo ➡", use_container_width=True):
+            if st.button("Seguir ➡", use_container_width=True):
                 st.session_state.etapa = 3
                 st.rerun()
 
