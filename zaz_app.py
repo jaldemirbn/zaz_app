@@ -6,7 +6,10 @@ from modules.ui_cadastro import render_cadastro
 from modules.ui_senha import render_trocar_senha
 from modules.ui_logo import render_logo
 
-from modules.ui_ideias import render_etapa_ideias
+# NOVOS MÓDULOS (Tema + Seleção)
+from modules.ui_tema import render_etapa_tema
+from modules.ui_selecao_ideias import render_etapa_selecao_ideias
+
 from modules.ui_headline import render_etapa_headline
 from modules.ui_conceito import render_etapa_conceito
 from modules.ui_imagens import render_etapa_imagens
@@ -85,7 +88,7 @@ with st.sidebar:
     st.markdown("### zAz app")
 
     if st.button("📚 Histórico", use_container_width=True):
-        st.session_state.etapa = 9
+        st.session_state.etapa = 10
         st.rerun()
 
 
@@ -123,33 +126,36 @@ with col2:
 
 
 # =====================================================
-# WIZARD
+# WIZARD (FLUXO OFICIAL)
 # =====================================================
 etapa = st.session_state.etapa
 
 if etapa == 1:
-    render_etapa_ideias()
+    render_etapa_tema()
 
 elif etapa == 2:
-    render_etapa_headline()
+    render_etapa_selecao_ideias()
 
 elif etapa == 3:
-    render_etapa_conceito()
+    render_etapa_headline()
 
 elif etapa == 4:
-    render_etapa_imagens()
+    render_etapa_conceito()
 
 elif etapa == 5:
-    render_etapa_post()
+    render_etapa_imagens()
 
 elif etapa == 6:
-    render_etapa_canvas()
+    render_etapa_post()
 
 elif etapa == 7:
-    render_etapa_legenda()
+    render_etapa_canvas()
 
 elif etapa == 8:
-    render_etapa_postagem()
+    render_etapa_legenda()
 
 elif etapa == 9:
+    render_etapa_postagem()
+
+elif etapa == 10:
     render_etapa_historico()
