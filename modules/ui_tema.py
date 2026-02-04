@@ -24,6 +24,9 @@ def render_etapa_tema():
     if "ideias_originais" not in st.session_state:
         st.session_state.ideias_originais = []
 
+    if "tema" not in st.session_state:
+        st.session_state.tema = ""
+
 
     # -----------------------------
     # TÍTULO
@@ -35,17 +38,20 @@ def render_etapa_tema():
 
 
     # -----------------------------
-    # INPUT
+    # INPUT (PERSISTENTE)
     # -----------------------------
-    tema = st.text_input(
+    st.text_input(
         "",
         placeholder="Sem ideia? Digita uma palavra. A gente cria o post.",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="tema"
     )
+
+    tema = st.session_state.tema
 
 
     # -----------------------------
-    # BOTÃO PRINCIPAL (GERAR)
+    # GERAR
     # -----------------------------
     if st.button("Gerar ideias", use_container_width=True):
 
@@ -61,19 +67,21 @@ def render_etapa_tema():
     # RESULTADO
     # -----------------------------
     if st.session_state.ideias_originais:
+
         st.success("Ideias prontas. Pode seguir ➜")
 
 
         # -----------------------------
-        # UTILITÁRIO (LIMPAR FLUXO)
+        # LIMPAR FLUXO (zera tudo)
         # -----------------------------
         if st.button("Limpar fluxo"):
             limpar_fluxo_completo()
+            st.session_state.tema = ""   # 🔥 limpa texto também
             st.rerun()
 
 
         # -----------------------------
-        # NAVEGAÇÃO (ÚLTIMO)
+        # NAVEGAÇÃO
         # -----------------------------
         st.divider()
 
