@@ -9,6 +9,13 @@ from openai import OpenAI
 
 
 # =====================================================
+# CONTADOR DE TOKENS (MEDIÇÃO DE CUSTO)
+# =====================================================
+if "tokens_total" not in st.session_state:
+    st.session_state.tokens_total = 0
+
+
+# =====================================================
 # CLIENTE OPENAI
 # =====================================================
 def _client():
@@ -29,6 +36,15 @@ def gerar_texto(prompt: str) -> str:
         ],
         temperature=0.8,
     )
+
+    # =================================================
+    # MEDIÇÃO DE TOKENS
+    # =================================================
+    usados = r.usage.total_tokens
+    st.session_state.tokens_total += usados
+
+    print("Tokens usados nessa chamada:", usados)
+    print("Tokens acumulados:", st.session_state.tokens_total)
 
     return r.choices[0].message.content.strip()
 
