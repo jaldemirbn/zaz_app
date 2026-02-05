@@ -5,16 +5,27 @@
 
 import streamlit as st
 from modules.post.copywriter import gerar_copy
+from modules.post.designer import gerar_direcao_arte
 
+
+# =====================================================
+# RENDER
+# =====================================================
 
 def render_etapa_post():
 
+    # =================================================
+    # TÍTULO
+    # =================================================
     st.markdown(
         "<h3 style='color:#FF9D28;'>06. Criação do post</h3>",
         unsafe_allow_html=True
     )
 
 
+    # =================================================
+    # INPUTS
+    # =================================================
     tipo = st.radio(
         "Tipo de post:",
         ["Simples", "Animado"],
@@ -23,8 +34,10 @@ def render_etapa_post():
     )
 
 
-    # GERAR COPY
-    if st.button("✨ Gerar descrição do post", use_container_width=True):
+    # =================================================
+    # AÇÃO PRINCIPAL
+    # =================================================
+    if st.button("✨ Criar post", use_container_width=True):
 
         contexto = f"""
 Tema: {st.session_state.get("tema")}
@@ -33,12 +46,24 @@ Headline base: {st.session_state.get("headline_escolhida")}
 Tipo: {tipo}
 """
 
-        with st.spinner("Criando copy..."):
-            st.session_state["descricao_post"] = gerar_copy(contexto)
+        with st.spinner("Gerando copy e direção de arte..."):
+
+            # 1️⃣ COPY
+            copy = gerar_copy(contexto)
+            st.session_state["copy_post"] = copy
+
+            # 2️⃣ DESIGN (DIREÇÃO DE ARTE)
+            direcao = gerar_direcao_arte(contexto, copy, tipo)
+            st.session_state["descricao_post"] = direcao
 
 
-    # RESULTADO (só exibe texto)
+    # =================================================
+    # RESULTADO
+    # =================================================
     if st.session_state.get("descricao_post"):
+
+        st.markdown("### 🧠 Direção de arte do post")
+
         st.code(
             st.session_state["descricao_post"],
             language="text"
@@ -52,7 +77,7 @@ Tipo: {tipo}
 
 
     # =================================================
-    # NAVEGAÇÃO (SEMPRE VISÍVEL)
+    # NAVEGAÇÃO (SEMPRE POR ÚLTIMO)
     # =================================================
     st.divider()
     col1, col2 = st.columns(2)
