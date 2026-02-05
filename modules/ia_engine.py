@@ -1,7 +1,6 @@
 # =====================================================
 # zAz — IA ENGINE
 # Motor único de geração de texto com OpenAI
-# REGRA: sempre retornar STRING
 # =====================================================
 
 import streamlit as st
@@ -9,7 +8,7 @@ from openai import OpenAI
 
 
 # =====================================================
-# CONTADOR DE TOKENS (MEDIÇÃO DE CUSTO)
+# CONTADOR GLOBAL DE TOKENS
 # =====================================================
 if "tokens_total" not in st.session_state:
     st.session_state.tokens_total = 0
@@ -23,7 +22,7 @@ def _client():
 
 
 # =====================================================
-# FUNÇÃO BASE (GENÉRICA)
+# FUNÇÃO BASE
 # =====================================================
 def gerar_texto(prompt: str) -> str:
 
@@ -37,19 +36,17 @@ def gerar_texto(prompt: str) -> str:
         temperature=0.8,
     )
 
-    # =================================================
-    # MEDIÇÃO DE TOKENS
-    # =================================================
+    # ===== MEDIÇÃO DE TOKENS =====
     usados = r.usage.total_tokens
     st.session_state.tokens_total += usados
 
-   st.info(f"🧮 Tokens acumulados: {st.session_state.tokens_total}")
+    st.info(f"🧮 Tokens acumulados: {st.session_state.tokens_total}")
 
     return r.choices[0].message.content.strip()
 
 
 # =====================================================
-# IDEIAS (usada pelo ui_ideias.py)
+# IDEIAS
 # =====================================================
 def gerar_ideias(tema: str) -> str:
 
@@ -67,4 +64,3 @@ Regras:
 """
 
     return gerar_texto(prompt)
-
