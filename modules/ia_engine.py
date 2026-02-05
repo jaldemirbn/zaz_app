@@ -43,8 +43,7 @@ def gerar_texto(prompt: str) -> str:
     usados = r.usage.total_tokens
     st.session_state.tokens_total += usados
 
-    print("Tokens usados nessa chamada:", usados)
-    print("Tokens acumulados:", st.session_state.tokens_total)
+   st.info(f"🧮 Tokens acumulados: {st.session_state.tokens_total}")
 
     return r.choices[0].message.content.strip()
 
@@ -68,3 +67,4 @@ Regras:
 """
 
     return gerar_texto(prompt)
+
