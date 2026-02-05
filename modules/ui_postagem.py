@@ -7,8 +7,6 @@
 # IMPORTS
 # =====================================================
 import streamlit as st
-from PIL import Image
-import io
 import base64
 from supabase import create_client
 
@@ -29,7 +27,7 @@ def conectar():
 # =====================================================
 def limpar_estado_postagem():
     campos = [
-        "imagem_final_bytes",
+        "midia_final_bytes",
         "legenda_gerada",
         "layout_final"
     ]
@@ -44,7 +42,7 @@ def limpar_estado_postagem():
 # =====================================================
 def salvar_post():
     try:
-        if "imagem_final_bytes" not in st.session_state:
+        if "midia_final_bytes" not in st.session_state:
             return False
 
         if "legenda_gerada" not in st.session_state:
@@ -55,7 +53,7 @@ def salvar_post():
             return False
 
         imagem_b64 = base64.b64encode(
-            st.session_state["imagem_final_bytes"]
+            st.session_state["midia_final_bytes"]
         ).decode()
 
         dados = {
@@ -93,39 +91,19 @@ def finalizar_postagem():
 # =====================================================
 def render_etapa_postagem():
 
-    # -------------------------------------------------
-    # CSS (DENTRO DO RENDER)
-    # -------------------------------------------------
-    st.markdown("""
-    <style>
-    div.stButton > button,
-    div.stDownloadButton > button {
-        background-color: transparent !important;
-        color: #FF9D28 !important;
-        font-weight: 700;
-        border: 1px solid #FF9D28 !important;
-    }
-    div.stButton > button:hover,
-    div.stDownloadButton > button:hover {
-        background-color: rgba(255,157,40,0.08) !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    # -------------------------------------------------
-    # TÍTULO
-    # -------------------------------------------------
     st.markdown(
         "<h3 style='color:#FF9D28;'>09. Postagem</h3>",
         unsafe_allow_html=True
     )
 
     # -------------------------------------------------
-    # PREVIEW DA IMAGEM
+    # PREVIEW DA IMAGEM (AGORA CORRETO)
     # -------------------------------------------------
-    if "imagem_final_bytes" in st.session_state:
-        img = Image.open(io.BytesIO(st.session_state["imagem_final_bytes"]))
-        st.image(img, use_container_width=True)
+    if "midia_final_bytes" in st.session_state:
+        st.image(
+            st.session_state["midia_final_bytes"],
+            use_container_width=True
+        )
     else:
         st.info("⚠️ Gere o Canvas para visualizar a imagem final.")
 
@@ -147,10 +125,10 @@ def render_etapa_postagem():
     col1, col2 = st.columns(2)
 
     with col1:
-        if "imagem_final_bytes" in st.session_state:
+        if "midia_final_bytes" in st.session_state:
             st.download_button(
                 "⬇️ Baixar imagem",
-                st.session_state["imagem_final_bytes"],
+                st.session_state["midia_final_bytes"],
                 "post_final.png",
                 "image/png",
                 use_container_width=True
@@ -170,7 +148,7 @@ def render_etapa_postagem():
     # FINALIZAR
     # -------------------------------------------------
     if (
-        "imagem_final_bytes" in st.session_state
+        "midia_final_bytes" in st.session_state
         and "legenda_gerada" in st.session_state
     ):
         st.divider()
@@ -178,7 +156,7 @@ def render_etapa_postagem():
             finalizar_postagem()
 
     # -------------------------------------------------
-    # VOLTAR (SEM RESET)
+    # VOLTAR
     # -------------------------------------------------
     st.divider()
     if st.button("⬅ Voltar", use_container_width=True):
