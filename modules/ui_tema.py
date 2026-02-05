@@ -18,9 +18,9 @@ from modules.state_manager import limpar_fluxo_completo
 # =====================================================
 def render_etapa_tema():
 
-    # -----------------------------
+    # =================================================
     # STATES
-    # -----------------------------
+    # =================================================
     if "ideias_originais" not in st.session_state:
         st.session_state.ideias_originais = []
 
@@ -28,18 +28,18 @@ def render_etapa_tema():
         st.session_state.tema = ""
 
 
-    # -----------------------------
+    # =================================================
     # TÍTULO
-    # -----------------------------
+    # =================================================
     st.markdown(
         "<h3 style='color:#ff9d28;'>01. O que você deseja postar hoje?</h3>",
         unsafe_allow_html=True
     )
 
 
-    # -----------------------------
+    # =================================================
     # INPUT (PERSISTÊNCIA MANUAL)
-    # -----------------------------
+    # =================================================
     tema = st.text_input(
         "",
         placeholder="Sem ideia? Digita uma palavra. A gente cria o post.",
@@ -51,39 +51,44 @@ def render_etapa_tema():
     st.session_state.tema = tema
 
 
-    # -----------------------------
+    # =================================================
     # BOTÃO PRINCIPAL (GERAR)
-    # -----------------------------
+    # =================================================
     if st.button("Gerar ideias", use_container_width=True):
 
         if tema:
             with st.spinner("Gerando ideias..."):
                 resposta = gerar_ideias(tema)
 
-            ideias = [i.strip() for i in resposta.split("\n") if i.strip()]
+            ideias = [
+                i.strip()
+                for i in resposta.split("\n")
+                if i.strip()
+            ]
+
             st.session_state.ideias_originais = ideias
 
 
-    # -----------------------------
+    # =================================================
     # RESULTADO + AÇÕES
-    # -----------------------------
+    # =================================================
     if st.session_state.ideias_originais:
 
         st.success("Ideias prontas. Pode seguir ➜")
 
 
-        # -----------------------------
-        # UTILITÁRIO (LIMPAR)
-        # -----------------------------
+        # =============================================
+        # LIMPAR FLUXO
+        # =============================================
         if st.button("Limpar fluxo"):
             limpar_fluxo_completo()
-            st.session_state.tema = ""   # 🔥 só aqui apaga texto
+            st.session_state.tema = ""
             st.rerun()
 
 
-        # -----------------------------
-        # NAVEGAÇÃO (SEMPRE ÚLTIMO)
-        # -----------------------------
+        # =============================================
+        # NAVEGAÇÃO
+        # =============================================
         st.divider()
 
         if st.button("Seguir ➜", use_container_width=True):
